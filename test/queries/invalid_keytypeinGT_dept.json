@@ -1,0 +1,19 @@
+{
+    "title": "Invalid key type in GT for dept",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_dept": "adhe"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

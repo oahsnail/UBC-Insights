@@ -1,0 +1,30 @@
+{
+    "title": "SELECT dept, instructor, title, uuid, id, instructor is walker, judith",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "walker, judith"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_instructor",
+                "courses_title",
+                "courses_id",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "math",
+            "courses_instructor": "",
+            "courses_title": "df calc ap ph sc",
+            "courses_id": "100",
+            "courses_uuid": "89960"
+        }
+    ]
+}

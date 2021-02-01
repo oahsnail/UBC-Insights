@@ -1,0 +1,49 @@
+{
+    "title": "SELECT NOT avg = 4 OR is dept busi OR > avg 4 OR fail < 2",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "OR": [
+                    {
+                        "EQ": {
+                            "courses_avg": 4
+                        }
+                    },
+                    {
+                        "IS": {
+                            "courses_dept": "busi"
+                        }
+                    },
+                    {
+                        "GT": {
+                            "courses_avg": 4
+                        }
+                    },
+                    {
+                        "LT": {
+                            "courses_fail": 2
+                        }
+                    }
+                ]
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_pass",
+                "courses_fail"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "wood",
+            "courses_avg": 1,
+            "courses_pass": 0,
+            "courses_fail": 2
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "title": "Invalid value type in pass LT 97, should be number",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "courses_fail": [
+                    87,
+                    65
+                ]
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_fail"
+            ],
+            "ORDER": "courses_fail"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -1,0 +1,51 @@
+{
+    "title": "SELECT dept NOT avg > 10 or is NOT lfs",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "OR": [
+                    {
+                        "GT": {
+                            "courses_avg": 10
+                        }
+                    },
+                    {
+                        "IS": {
+                            "courses_dept": "lfs"
+                        }
+                    }
+                ]
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "frst",
+            "courses_avg": 0
+        },
+        {
+            "courses_dept": "wood",
+            "courses_avg": 1
+        },
+        {
+            "courses_dept": "busi",
+            "courses_avg": 4
+        },
+        {
+            "courses_dept": "busi",
+            "courses_avg": 4
+        },
+        {
+            "courses_dept": "fopr",
+            "courses_avg": 4.5
+        }
+    ]
+}

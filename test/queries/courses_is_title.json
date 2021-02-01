@@ -1,0 +1,51 @@
+{
+    "title": "SELECT dept, instructor, title, uuid, id, title is prog wd prod app",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_title": "prog wd prod app"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_instructor",
+                "courses_title",
+                "courses_id",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "85319"
+        },
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "smith, gregory",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "85318"
+        },
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "54368"
+        },
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "smith, gregory",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "54367"
+        }
+    ]
+}

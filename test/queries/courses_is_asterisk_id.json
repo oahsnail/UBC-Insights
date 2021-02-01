@@ -1,0 +1,271 @@
+{
+    "title": "SELECT dept is adhe",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "*392"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_id"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 73.74,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 73.74,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "hist",
+            "courses_avg": 74.83,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "hist",
+            "courses_avg": 74.83,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 75.85,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 75.85,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 76.18,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 76.18,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 76.75,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 76.75,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "hist",
+            "courses_avg": 77.43,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "hist",
+            "courses_avg": 77.43,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 77.58,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 77.58,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 77.86,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 77.86,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 78.38,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 78.38,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 78.56,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 78.56,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 80.11,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 80.11,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 80.28,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 80.28,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 80.3,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 80.3,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 80.84,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 80.84,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 80.88,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_avg": 80.88,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 81.41,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 81.41,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 81.71,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 81.71,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 81.82,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 81.82,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 82.29,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 82.29,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 82.46,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 82.46,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 83.34,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 83.34,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 83.65,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 83.65,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 83.74,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 83.74,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 85.51,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "mech",
+            "courses_avg": 85.51,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 86.29,
+            "courses_id": "392"
+        },
+        {
+            "courses_dept": "anat",
+            "courses_avg": 86.29,
+            "courses_id": "392"
+        }
+    ]
+}

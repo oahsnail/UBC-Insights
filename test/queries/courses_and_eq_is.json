@@ -1,0 +1,33 @@
+{
+    "title": "SELECT dept IS adhe AND avg = 67.5",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "EQ": {
+                        "courses_avg": 67.5
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "adhe"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "adhe",
+            "courses_avg": 67.5
+        }
+    ]
+}

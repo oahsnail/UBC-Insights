@@ -1,0 +1,13 @@
+{
+    "title": "Very invalid query missing columns",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 97
+            }
+        },
+        "OPTIONS": {}
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

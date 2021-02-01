@@ -1,0 +1,19 @@
+{
+    "title": "Invalid value type in audit EQ lfs, should be number",
+    "query": {
+        "WHERE": {
+            "EQ": {
+                "courses_audit": "lfs"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_audit"
+            ],
+            "ORDER": "courses_audit"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -1,0 +1,49 @@
+{
+    "title": "SELECT dept IS adhe AND avg < 70",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "LT": {
+                        "courses_avg": 70
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "adhe"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "adhe",
+            "courses_avg": 67.5
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_avg": 67.95
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_avg": 68.29
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_avg": 68.89
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_avg": 69.96
+        }
+    ]
+}

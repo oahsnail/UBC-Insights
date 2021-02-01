@@ -1,0 +1,19 @@
+{
+    "title": "Invalid key courses_depts in IT",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_depts": "adhe"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -1,0 +1,20 @@
+{
+    "title": "Invalid IS, null",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": null
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_id"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

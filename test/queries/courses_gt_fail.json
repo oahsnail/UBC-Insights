@@ -1,0 +1,744 @@
+{
+    "title": "SELECT dept and fail WHERE avg > 97",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 80
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_fail"
+            ],
+            "ORDER": "courses_fail"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "busi",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "comm",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 81
+        },
+        {
+            "courses_dept": "busi",
+            "courses_fail": 82
+        },
+        {
+            "courses_dept": "comm",
+            "courses_fail": 82
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 82
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 83
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 83
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 83
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 84
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 84
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 84
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 84
+        },
+        {
+            "courses_dept": "phil",
+            "courses_fail": 84
+        },
+        {
+            "courses_dept": "eosc",
+            "courses_fail": 85
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 85
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 85
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 86
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 86
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 86
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 87
+        },
+        {
+            "courses_dept": "phil",
+            "courses_fail": 87
+        },
+        {
+            "courses_dept": "wrds",
+            "courses_fail": 87
+        },
+        {
+            "courses_dept": "busi",
+            "courses_fail": 88
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 90
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 90
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 90
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 91
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 91
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 91
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 91
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 93
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 93
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 94
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 94
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 95
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 95
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 95
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 95
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 96
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 96
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 96
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 96
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 97
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 97
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 97
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 98
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 98
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 98
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 99
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 99
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 99
+        },
+        {
+            "courses_dept": "comm",
+            "courses_fail": 100
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 100
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 100
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 100
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 100
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 101
+        },
+        {
+            "courses_dept": "comm",
+            "courses_fail": 102
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 102
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 102
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 103
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 106
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 106
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 107
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 107
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 107
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 107
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 107
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 107
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 108
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 108
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 109
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 110
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 110
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 110
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 111
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 111
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 112
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 112
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 112
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 113
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 113
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 114
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 114
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 115
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 115
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 116
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 116
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 118
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 118
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_fail": 118
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 119
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 120
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 120
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 121
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 122
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 122
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 123
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 123
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 125
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 126
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 128
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 129
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 131
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 132
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 133
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 134
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 135
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 135
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 135
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 135
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 136
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 137
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_fail": 141
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 142
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 142
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 142
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 143
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 144
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 145
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 145
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 145
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 146
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 147
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 147
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 147
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 149
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 150
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_fail": 150
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 157
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_fail": 157
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 162
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 162
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 162
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 166
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 168
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 169
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 170
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 171
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 171
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 172
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 172
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 175
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_fail": 175
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 177
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 180
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 181
+        },
+        {
+            "courses_dept": "phys",
+            "courses_fail": 184
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 186
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 186
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 187
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 187
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 188
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 190
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_fail": 190
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 190
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 190
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 192
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 193
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 196
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 203
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 204
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 205
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 213
+        },
+        {
+            "courses_dept": "econ",
+            "courses_fail": 221
+        },
+        {
+            "courses_dept": "math",
+            "courses_fail": 222
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 226
+        },
+        {
+            "courses_dept": "biol",
+            "courses_fail": 230
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 235
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 250
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 251
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 260
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 264
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 266
+        },
+        {
+            "courses_dept": "chem",
+            "courses_fail": 287
+        }
+    ]
+}

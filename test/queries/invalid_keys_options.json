@@ -1,0 +1,23 @@
+{
+    "title": "Invalid keys in OPTIONS",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "NOT": {
+                    "GT": {
+                        "courses_avg": 99
+                    }
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER2": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

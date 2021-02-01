@@ -1,0 +1,19 @@
+{
+    "title": "Invalid key type in NOT for dept",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "courses_avg": "adhe"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
