@@ -1,0 +1,107 @@
+{
+    "title": "SELECT dept, audit, uuid, year, avg WHERE avg = 60",
+    "query": {
+        "WHERE": {
+            "EQ": {
+                "courses_avg": 60
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_audit",
+                "courses_uuid",
+                "courses_year"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "busi",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "50667",
+            "courses_year": 1900
+        },
+        {
+            "courses_dept": "busi",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "74220",
+            "courses_year": 1900
+        },
+        {
+            "courses_dept": "chem",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "42591",
+            "courses_year": 2010
+        },
+        {
+            "courses_dept": "chem",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "42592",
+            "courses_year": 1900
+        },
+        {
+            "courses_dept": "dhyg",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "18549",
+            "courses_year": 2007
+        },
+        {
+            "courses_dept": "dhyg",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "18554",
+            "courses_year": 2007
+        },
+        {
+            "courses_dept": "dhyg",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "18562",
+            "courses_year": 2007
+        },
+        {
+            "courses_dept": "dhyg",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "32796",
+            "courses_year": 2010
+        },
+        {
+            "courses_dept": "hist",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "79752",
+            "courses_year": 2008
+        },
+        {
+            "courses_dept": "phar",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "72745",
+            "courses_year": 2015
+        },
+        {
+            "courses_dept": "phil",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "20366",
+            "courses_year": 2009
+        },
+        {
+            "courses_dept": "test",
+            "courses_avg": 60,
+            "courses_audit": 0,
+            "courses_uuid": "25945",
+            "courses_year": 1900
+        }
+    ]
+}

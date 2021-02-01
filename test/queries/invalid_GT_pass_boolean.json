@@ -1,0 +1,20 @@
+{
+    "title": "Invalid GT, boolean",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_pass": false
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_id"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

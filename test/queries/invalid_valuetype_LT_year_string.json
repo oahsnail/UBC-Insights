@@ -1,0 +1,19 @@
+{
+    "title": "Invalid value type in year LT lfs, should be number",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "courses_year": "lfs"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_year"
+            ],
+            "ORDER": "courses_year"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

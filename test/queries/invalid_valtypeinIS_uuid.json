@@ -1,0 +1,19 @@
+{
+    "title": "Invalid key type in IS, should be string for uuid",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": 97
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_uuid"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

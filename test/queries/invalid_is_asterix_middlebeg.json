@@ -1,0 +1,22 @@
+{
+    "title": "Invalid astericks can only be the first or last characters of input strings",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "*2*2"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_instructor",
+                "courses_uuid",
+                "courses_id"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

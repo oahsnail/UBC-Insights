@@ -1,0 +1,19 @@
+{
+    "title": "Invalid value type IS, instructor",
+    "query": {
+        "WHERE": {
+          "IS": {
+            "courses_instructor": ["mark", "tam"]
+          }
+        },
+        "OPTIONS": {
+          "COLUMNS": [
+            "courses_dept",
+            "courses_instructor"
+          ],
+          "ORDER": "courses_instructor"
+        }
+      },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

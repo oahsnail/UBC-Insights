@@ -1,0 +1,30 @@
+{
+    "title": "Invalid for AND, should have 1 key, but has 2",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "OR": [
+                    {
+                        "GT": {
+                            "courses_avg": 4
+                        },
+                        "LT": {
+                            "courses_fail": 2
+                        }
+                    }
+                ]
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_pass",
+                "courses_fail"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

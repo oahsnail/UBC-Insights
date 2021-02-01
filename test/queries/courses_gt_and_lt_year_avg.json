@@ -1,0 +1,35 @@
+{
+    "title": "SELECT dept, avg, year WHERE year > 2015 and avg < 10",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_year": 2015
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_avg": 10
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_year",
+                "courses_avg"
+            ],
+            "ORDER": "courses_year"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "busi",
+            "courses_year": 2016,
+            "courses_avg": 4
+        }
+    ]
+}

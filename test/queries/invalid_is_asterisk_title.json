@@ -1,0 +1,19 @@
+{
+    "title": "Invalid asterisks can only be first or last char",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_title": "*m*t*"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

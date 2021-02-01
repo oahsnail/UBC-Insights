@@ -1,0 +1,30 @@
+{
+    "title": "SELECT dept, instructor, title, uuid, id, uuid is 89960",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": "89960"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_instructor",
+                "courses_title",
+                "courses_id",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "math",
+            "courses_instructor": "",
+            "courses_title": "df calc ap ph sc",
+            "courses_id": "100",
+            "courses_uuid": "89960"
+        }
+    ]
+}

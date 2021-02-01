@@ -1,0 +1,2652 @@
+{
+    "title": "SELECT dept and audit WHERE audit > 2",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_audit": 2
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_audit"
+            ],
+            "ORDER": "courses_audit"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "stat",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "russ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "russ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rmes",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rmes",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "relg",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "relg",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "port",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "port",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "poli",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "poli",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "plan",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "plan",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "phys",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "phys",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "phil",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "phil",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "phil",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "onco",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "onco",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "medi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "medi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "medi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "medi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "math",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "math",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "libr",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "libr",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "libr",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "libr",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "lfs",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "law",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "law",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "law",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "law",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "law",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "latn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "latn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "latn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "korn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "korn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "korn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "hinu",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "hinu",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "geog",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "geog",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "geob",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "geob",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "food",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "food",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fnh",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fnh",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fist",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fish",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "fish",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "eosc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "engl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "edcp",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "edcp",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "crwr",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cons",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cons",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cons",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cons",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cnps",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cnps",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "cnps",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "ccst",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "ccst",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "biof",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "bafi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "bafi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "astr",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "asia",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "asia",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "asia",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "asia",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "apsc",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "apbi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "apbi",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "anth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "anth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "anth",
+            "courses_audit": 3
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "soci",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "soci",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "phys",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "phys",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "math",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "math",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "math",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "korn",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "kin",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "grek",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "geog",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "geog",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "geog",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "geob",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fnh",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fnh",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "fist",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "eosc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "eosc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "eosc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "engl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "engl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "crwr",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "cohr",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "cohr",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "cnto",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "cnps",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "cnps",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "cnps",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chem",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "bioc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "bioc",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "bafi",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "bafi",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "asia",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "asia",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "asia",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 4
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "psyc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "phil",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "mech",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "libr",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "libr",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "hist",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "eece",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "edcp",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "edcp",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "bafi",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "bafi",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "arth",
+            "courses_audit": 5
+        },
+        {
+            "courses_dept": "stat",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "soci",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "soci",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "mtrl",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "mine",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "japn",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "ital",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "geob",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "geob",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "educ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "econ",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "chin",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 6
+        },
+        {
+            "courses_dept": "spph",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "span",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "musc",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "civl",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 7
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "micb",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "germ",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "comm",
+            "courses_audit": 8
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "epse",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "cons",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "cnto",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "aanb",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "aanb",
+            "courses_audit": 9
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 10
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 10
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 10
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 10
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 10
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 11
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 11
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 11
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 11
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 12
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 12
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 12
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 12
+        },
+        {
+            "courses_dept": "fren",
+            "courses_audit": 12
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 12
+        },
+        {
+            "courses_dept": "biol",
+            "courses_audit": 12
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 13
+        },
+        {
+            "courses_dept": "cnto",
+            "courses_audit": 13
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 14
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 14
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 15
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 15
+        },
+        {
+            "courses_dept": "cons",
+            "courses_audit": 15
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 17
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 18
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 18
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 19
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 19
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 19
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 19
+        },
+        {
+            "courses_dept": "frst",
+            "courses_audit": 19
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 20
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 21
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_audit": 21
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_audit": 23
+        }
+    ]
+}

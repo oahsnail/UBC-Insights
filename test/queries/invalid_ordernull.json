@@ -1,0 +1,20 @@
+{
+    "title": "Invalid ORDER cannot be null",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 99
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_id"
+            ],
+            "ORDER": null
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

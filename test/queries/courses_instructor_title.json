@@ -1,0 +1,40 @@
+{
+    "title": "SELECT dept and instructor and title, avg WHERE avg > 99",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 99
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_instructor",
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "cnps",
+            "courses_instructor": "cox, daniel",
+            "courses_title": "career planning",
+            "courses_avg": 99.19
+        },
+        {
+            "courses_dept": "math",
+            "courses_instructor": "gomez, jose",
+            "courses_title": "algb topology i",
+            "courses_avg": 99.78
+        },
+        {
+            "courses_dept": "math",
+            "courses_instructor": "",
+            "courses_title": "algb topology i",
+            "courses_avg": 99.78
+        }
+    ]
+}

@@ -1,0 +1,982 @@
+{
+    "title": "SELECT dept, instructor, title, uuid, id, where id is 241",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "241"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_instructor",
+                "courses_title",
+                "courses_id",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "85319"
+        },
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "smith, gregory",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "85318"
+        },
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "54368"
+        },
+        {
+            "courses_dept": "wood",
+            "courses_instructor": "smith, gregory",
+            "courses_title": "prog wd prod app",
+            "courses_id": "241",
+            "courses_uuid": "54367"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "83292"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "pina, manuel",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "83291"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "pina, manuel",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "83290"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "53933"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "53932"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "d'onofrio, christine",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "53931"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "53930"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "53929"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "52498"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "52497"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "pina, manuel",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "52496"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "52495"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "19939"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "tamer, damla",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "19938"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "19937"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "14677"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "tamer, damla",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "14676"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "pina, manuel",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "14675"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "14674"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "5748"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "pina, manuel",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "5747"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "5746"
+        },
+        {
+            "courses_dept": "visa",
+            "courses_instructor": "jones, barrie",
+            "courses_title": "int digital phot",
+            "courses_id": "241",
+            "courses_uuid": "5745"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "98860"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "98859"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "98858"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "97789"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "ushey, kevin michael",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "97788"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "85805"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "marin, michael",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "85804"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "marin, michael",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "85803"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "81949"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "81948"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "81947"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "73751"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lee, melissa",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "73750"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lee, melissa",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "73749"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "69593"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "69592"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "69591"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "68700"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "68699"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "65430"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "marin, michael",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "65429"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "58309"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "yu, hoi yin eugenia",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "58308"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "58307"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "52138"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "marin, michael",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "52137"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "marin, michael",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "52136"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "43513"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lee, melissa",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "43512"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lee, melissa",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "43511"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "43159"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "43158"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "36731"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "36730"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "19902"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "19901"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "2928"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei;yapa, gaitri",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "2927"
+        },
+        {
+            "courses_dept": "stat",
+            "courses_instructor": "lim, yew wei",
+            "courses_title": "intro prob&stats",
+            "courses_id": "241",
+            "courses_uuid": "2926"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "93822"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "93821"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "93820"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "93288"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "93287"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "93286"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "77921"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "enns, alice",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "77920"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "enns, alice",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "77919"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "65911"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.;enns, alice",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "65910"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.;enns, alice",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "65909"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "40904"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "40903"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "40902"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "28748"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "28747"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "28746"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "19351"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.;enns, alice",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "19350"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.;enns, alice",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "19349"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "7174"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "7173"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "7172"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "212"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "211"
+        },
+        {
+            "courses_dept": "musc",
+            "courses_instructor": "chen chai, susan m.c.",
+            "courses_title": "class piano ii",
+            "courses_id": "241",
+            "courses_uuid": "210"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "36106"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "36105"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "36104"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "36103"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "36102"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "34539"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "34538"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "34537"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "34536"
+        },
+        {
+            "courses_dept": "law",
+            "courses_instructor": "",
+            "courses_title": "torts",
+            "courses_id": "241",
+            "courses_uuid": "34535"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "76831"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "gyenge, christina",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "76830"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "63586"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "63585"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "58534"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "gyenge, christina",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "58533"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "56426"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "gyenge, elod lajos",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "56425"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "49052"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "gyenge, elod lajos",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "49051"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "45638"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "gyenge, elod lajos",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "45637"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "37099"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "verrett, jonathan",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "37098"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "30136"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "posarac, dusko",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "30135"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "12933"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "gyenge, christina",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "12932"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "7860"
+        },
+        {
+            "courses_dept": "chbe",
+            "courses_instructor": "gyenge, elod lajos",
+            "courses_title": "mass&enrgy balnc",
+            "courses_id": "241",
+            "courses_uuid": "7859"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "91495"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "levell, nicola",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "91494"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "levell, nicola",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "91493"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "86203"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "levell, nicola",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "86202"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "",
+            "courses_title": "museums, colnlsm",
+            "courses_id": "241",
+            "courses_uuid": "69687"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "wagelie, jennifer",
+            "courses_title": "museums, colnlsm",
+            "courses_id": "241",
+            "courses_uuid": "69686"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "wagelie, jennifer",
+            "courses_title": "museums, colnlsm",
+            "courses_id": "241",
+            "courses_uuid": "69685"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "59939"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "levell, nicola",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "59938"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "25174"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "gordon-walker, caitlin",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "25173"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "12192"
+        },
+        {
+            "courses_dept": "anth",
+            "courses_instructor": "marsh, diana",
+            "courses_title": "intro museology",
+            "courses_id": "241",
+            "courses_uuid": "12191"
+        }
+    ]
+}
