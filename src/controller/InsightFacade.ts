@@ -37,14 +37,16 @@ export default class InsightFacade implements IInsightFacade {
         // };
         // example output: Promise<[Idataset1, Idataset2]>;
         // let existingDatasets: InsightDataset[] = [];
-        // const relativePath = "../data/";
         // let zip = new JSZip();
+        // const relativePath = "../data/";
+        // zip.file("data/")
 
-        // zip.folder("test").forEach(function (relativePath, file) {
-        //     existingDatasets.push(relativePath);
+        // return new Promise<InsightDataset[]>(() => {
+        //     zip.folder("data").forEach(function (relativePath, file) {
+        //         existingDatasets.push(relativePath);
+        //     });
         // });
 
-        // sreturn existingDatasets;
         return Promise.reject("Not implemented.");
     }
 }
