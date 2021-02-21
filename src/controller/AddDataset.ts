@@ -8,12 +8,14 @@ import { outputFile } from "fs-extra";
 export default class AddDataInsightFacade {
 
     public listOfDatasetIds: string[];
+    public listOfDatasets: InsightDataset[];
     constructor() {
         this.listOfDatasetIds = [];
+        this.listOfDatasets = [];
     }
 
     /**
-     * Add a dataset to insightUBC.s
+     * Add a dataset to insightUBC.ts
      *
      * @param id  The id of the dataset being added. Follows the format /^[^_]+$/
      * @param content  The base64 content of the dataset. This content should be in the form of a serialized zip file.
@@ -43,11 +45,25 @@ export default class AddDataInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         let zip = new JSZip();
-        zip.folder("\data").forEach(function (relativePath, file) {
-            // reads every file in the zip folder
-            fs.readFileSync(relativePath);
+        zip.folder("data").forEach(function (relativePath, file) {
+            fs.readFile(relativePath, function (err, data) {
+                if (err) {
+                    return new Promise<string[]>((resolve, reject) => {
+                        reject(new InsightError("Invalid data can't read file"));
+                    });
+                }
+                zip.loadAsync(data, { base64: true });
 
-            fs.writeFileSync(relativePath, JSON.stringify(file));
+            });
+            fs.writeFile(relativePath, JSON.stringify(zip), function (err) {
+                if (err) {
+                    return new Promise<string[]>((resolve, reject) => {
+                        reject(new InsightError("Invalid data can't write file"));
+                    });
+                }
+            });
+            // reads every file in the zip folder
+            // fs.readFileSync(relativePath);
         });
 
         return new Promise<string[]>((resolve, reject) => {
@@ -63,6 +79,7 @@ export default class AddDataInsightFacade {
                 reject(new InsightError("Cannot add, ID already exists"));
             } else {
                 this.listOfDatasetIds.push(id);
+                // this.listOfDatasets.push(id, kind, numRows);
                 resolve(this.listOfDatasetIds);
             }
         });

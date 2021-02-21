@@ -11,16 +11,16 @@ import AddDataInsightFacade from "./AddDataset";
  *
  */
 export default class InsightFacade implements IInsightFacade {
-    public addDataInsinsightFacade: AddDataInsightFacade;
+    private addDataInsightFacade: AddDataInsightFacade;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
-        this.addDataInsinsightFacade = new AddDataInsightFacade();
+        this.addDataInsightFacade = new AddDataInsightFacade();
 
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        const addDataResult: Promise<string[]> = this.addDataInsinsightFacade.addDataset(id, content, kind);
+        const addDataResult: Promise<string[]> = this.addDataInsightFacade.addDataset(id, content, kind);
         return addDataResult;
     }
 
@@ -43,16 +43,11 @@ export default class InsightFacade implements IInsightFacade {
         // };
         // example output: Promise<[Idataset1, Idataset2]>;
         // let existingDatasets: InsightDataset[] = [];
-        // let zip = new JSZip();
-        // const relativePath = "../data/";
-        // zip.file("data/")
 
-        // return new Promise<InsightDataset[]>(() => {
-        //     zip.folder("data").forEach(function (relativePath, file) {
-        //         existingDatasets.push(relativePath);
-        //     });
-        // });
-
-        return Promise.reject("Not implemented.");
+        return new Promise<InsightDataset[]>((resolve, reject) => {
+            // let idExisiting = this.addDataInsightFacade.listOfDatasetIds.pop();
+            resolve(this.addDataInsightFacade.listOfDatasets);
+        });
+        // return Promise.reject("Not implemented.");
     }
 }
