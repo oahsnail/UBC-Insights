@@ -3,11 +3,12 @@ import * as fs from "fs";
 import Log from "../Util";
 import { IInsightFacade, InsightDataset, InsightDatasetKind } from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
+import { outputFile } from "fs-extra";
 
 export default class AddDataInsightFacade {
 
     public listOfDatasetIds: string[];
-    constructor(listOfDatasetIds: string[]) {
+    constructor() {
         this.listOfDatasetIds = [];
     }
 
@@ -42,6 +43,12 @@ export default class AddDataInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         let zip = new JSZip();
+        zip.folder("\data").forEach(function (relativePath, file) {
+            // reads every file in the zip folder
+            fs.readFileSync(relativePath);
+
+            fs.writeFileSync(relativePath, JSON.stringify(file));
+        });
 
         return new Promise<string[]>((resolve, reject) => {
             let matchUnderscore: RegExp = /^[^_]+$/;
@@ -59,7 +66,5 @@ export default class AddDataInsightFacade {
                 resolve(this.listOfDatasetIds);
             }
         });
-
-        // return Promise.reject("Not implemented.");
     }
 }

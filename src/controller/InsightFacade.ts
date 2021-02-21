@@ -3,19 +3,25 @@ import Log from "../Util";
 import { IInsightFacade, InsightDataset, InsightDatasetKind } from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
 
+import AddDataInsightFacade from "./AddDataset";
+
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
  *
  */
 export default class InsightFacade implements IInsightFacade {
+    public addDataInsinsightFacade: AddDataInsightFacade;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
+        this.addDataInsinsightFacade = new AddDataInsightFacade();
+
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        return Promise.reject("Not implemented.");
+        const addDataResult: Promise<string[]> = this.addDataInsinsightFacade.addDataset(id, content, kind);
+        return addDataResult;
     }
 
     public removeDataset(id: string): Promise<string> {
