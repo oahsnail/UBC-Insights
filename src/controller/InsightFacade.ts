@@ -19,52 +19,57 @@ export default class InsightFacade implements IInsightFacade {
     private addDataInsightFacade: AddDataInsightFacade;
     public listOfDatasetIds: string[];
     public listOfDatasets: InsightDataset[];
+    public listOfJson: string[];
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
         this.addDataInsightFacade = new AddDataInsightFacade();
         this.listOfDatasetIds = [];
         this.listOfDatasets = [];
+        this.listOfJson = [];
     }
 
-    public addDataset(
-        id: string,
-        content: string,
-        kind: InsightDatasetKind,
-    ): Promise<string[]> {
+    public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+        // check the zip file is valid
 
-        // let zip = new JSZip();
-        // zip.folder("data").forEach(function (relativePath, file) {
-        //     fs.readFile(relativePath, function (err, data) {
-        //         if (err) {
-        //             return new Promise<string[]>((resolve, reject) => {
-        //                 reject(new InsightError("Invalid data can't read file"));
-        //             });
-        //         }
-        //         zip.loadAsync(data, { base64: true });
-
-        //     });
-        //     fs.writeFile(relativePath, JSON.stringify(zip), function (err) {
-        //         if (err) {
-        //             return new Promise<string[]>((resolve, reject) => {
-        //                 reject(new InsightError("Invalid data can't write file"));
-        //             });
-        //         }
-        //     });
-        //     // reads every file in the zip folder
-        //     // fs.readFileSync(relativePath);
-        // });
-
+        // every file is {"result": [{}]} if allEmpty = true
+        let allEmpty: boolean = true;
+        let invalidJson: boolean = false;
+        let invalidZip: boolean = false;
+        // z = unzipped jszip object
         let zip = new JSZip();
-        fs.readFile(content, function (err, data) {
-            if (err) {
-                return new Promise<string[]>((resolve, reject) => {
-                    reject(new InsightError("Invalid data can't read file"));
+        zip.loadAsync(content, { base64: true }).then(function successZip(z: JSZip) {
+            z.folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
+                file.async("base64").then(function successJson(returnedResult) {
+                    /* if("result:[{...}]"){ */
+                    // if empty, add to listOfJson
+                    // all empty means every file is this
+
+                    let parsedJson = JSON.parse(returnedResult, function (key, value) {
+                        if (key === "result") {
+                            // do something
+                        }
+
+
+                    });
+
+
+                }).catch(() => {
+                    invalidJson = true;
                 });
-            }
-            zip.loadAsync(data, { base64: true }).then(function (z) {
-                // TODO
+                // check if each file is valid json
+                // validate that it's a valid section: each json represents a-
+                // course and can contain zero or more course sections
+                // a valid dataset has to contain at least one valid course section
+                // valid section : contains exactly one of each of the 10 keys-
+                // dept, id, avg, instructor, title, pass, fail, audit, uuid, and year
+                // if not throw an error
+                // if valid -> append to listOfJson
             });
+            // writefile
+            // fs.writeFileSync(relativePathToWrite(), JSON.stringify(zip));
+        }).catch(() => {
+            invalidZip = true;
         });
 
         return new Promise<string[]>((resolve, reject) => {
@@ -78,6 +83,16 @@ export default class InsightFacade implements IInsightFacade {
                 reject(new InsightError("Should not add dataset kind rooms"));
             } else if (this.listOfDatasetIds.includes(id)) {
                 reject(new InsightError("Cannot add, ID already exists"));
+            } else if (allEmpty) {
+                reject(
+                    new InsightError(
+                        "Missing at least one valid course section",
+                    ),
+                );
+            } else if (invalidJson) {
+                reject(new InsightError("Invalid json file"));
+            } else if (invalidZip) {
+                reject(new InsightError("Invalid zip file"));
             } else {
                 this.listOfDatasetIds.push(id);
                 // this.listOfDatasets.push(id, kind, numRows);
