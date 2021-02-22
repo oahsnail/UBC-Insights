@@ -1,7 +1,11 @@
 import JSZip = require("jszip");
 import * as fs from "fs";
 import Log from "../Util";
-import { IInsightFacade, InsightDataset, InsightDatasetKind } from "./IInsightFacade";
+import {
+    IInsightFacade,
+    InsightDataset,
+    InsightDatasetKind,
+} from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
 
 import AddDataInsightFacade from "./AddDataset";
@@ -21,33 +25,46 @@ export default class InsightFacade implements IInsightFacade {
         this.addDataInsightFacade = new AddDataInsightFacade();
         this.listOfDatasetIds = [];
         this.listOfDatasets = [];
-
     }
 
-    public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        // const addDataResult: Promise<string[]> = this.addDataInsightFacade.addDataset(id, content, kind);
-        // return addDataResult;
+    public addDataset(
+        id: string,
+        content: string,
+        kind: InsightDatasetKind,
+    ): Promise<string[]> {
+
+        // let zip = new JSZip();
+        // zip.folder("data").forEach(function (relativePath, file) {
+        //     fs.readFile(relativePath, function (err, data) {
+        //         if (err) {
+        //             return new Promise<string[]>((resolve, reject) => {
+        //                 reject(new InsightError("Invalid data can't read file"));
+        //             });
+        //         }
+        //         zip.loadAsync(data, { base64: true });
+
+        //     });
+        //     fs.writeFile(relativePath, JSON.stringify(zip), function (err) {
+        //         if (err) {
+        //             return new Promise<string[]>((resolve, reject) => {
+        //                 reject(new InsightError("Invalid data can't write file"));
+        //             });
+        //         }
+        //     });
+        //     // reads every file in the zip folder
+        //     // fs.readFileSync(relativePath);
+        // });
 
         let zip = new JSZip();
-        zip.folder("data").forEach(function (relativePath, file) {
-            fs.readFile(relativePath, function (err, data) {
-                if (err) {
-                    return new Promise<string[]>((resolve, reject) => {
-                        reject(new InsightError("Invalid data can't read file"));
-                    });
-                }
-                zip.loadAsync(data, { base64: true });
-
+        fs.readFile(content, function (err, data) {
+            if (err) {
+                return new Promise<string[]>((resolve, reject) => {
+                    reject(new InsightError("Invalid data can't read file"));
+                });
+            }
+            zip.loadAsync(data, { base64: true }).then(function (z) {
+                // TODO
             });
-            fs.writeFile(relativePath, JSON.stringify(zip), function (err) {
-                if (err) {
-                    return new Promise<string[]>((resolve, reject) => {
-                        reject(new InsightError("Invalid data can't write file"));
-                    });
-                }
-            });
-            // reads every file in the zip folder
-            // fs.readFileSync(relativePath);
         });
 
         return new Promise<string[]>((resolve, reject) => {
@@ -67,7 +84,6 @@ export default class InsightFacade implements IInsightFacade {
                 resolve(this.listOfDatasetIds);
             }
         });
-
     }
 
     public removeDataset(id: string): Promise<string> {
@@ -99,10 +115,16 @@ export default class InsightFacade implements IInsightFacade {
             } else if (matchOnlySpaces.test(id)) {
                 reject(new InsightError("Only whitespaces"));
             } else if (!this.listOfDatasetIds.includes(id)) {
-                reject(new NotFoundError("Cannot remove, dataset not yet added"));
+                reject(
+                    new NotFoundError("Cannot remove, dataset not yet added"),
+                );
             } else {
-                this.listOfDatasetIds = this.listOfDatasetIds.filter((value) => value !== id);
-                this.listOfDatasets = this.listOfDatasets.filter((value) => value.id !== id);
+                this.listOfDatasetIds = this.listOfDatasetIds.filter(
+                    (value) => value !== id,
+                );
+                this.listOfDatasets = this.listOfDatasets.filter(
+                    (value) => value.id !== id,
+                );
                 resolve(id);
             }
         });
