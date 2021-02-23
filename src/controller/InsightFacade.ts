@@ -19,7 +19,8 @@ export default class InsightFacade implements IInsightFacade {
     private addDataInsightFacade: AddDataInsightFacade;
     public listOfDatasetIds: string[];
     public listOfDatasets: InsightDataset[];
-    public listOfJson: string[];
+    public listOfJson: [];
+    public numRows: number;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
@@ -27,6 +28,7 @@ export default class InsightFacade implements IInsightFacade {
         this.listOfDatasetIds = [];
         this.listOfDatasets = [];
         this.listOfJson = [];
+        this.numRows = 0;
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -44,16 +46,32 @@ export default class InsightFacade implements IInsightFacade {
                     /* if("result:[{...}]"){ */
                     // if empty, add to listOfJson
                     // all empty means every file is this
-
-                    let parsedJson = JSON.parse(returnedResult, function (key, value) {
-                        if (key === "result") {
-                            // do something
+                    if (returnedResult) {
+                        try {
+                            let object = JSON.parse(returnedResult, function (key, value) {
+                                Log.test(object);
+                                if (object.result === "[]") {
+                                    this.listOfJson.push(returnedResult);
+                                } else if (
+                                    object.dept &&
+                                    object.id &&
+                                    object.avg &&
+                                    object.instructor &&
+                                    object.title &&
+                                    object.pass &&
+                                    object.fail &&
+                                    object.audit &&
+                                    object.uuid &&
+                                    object.year) {
+                                    allEmpty = false;
+                                    this.listOfJson.push(returnedResult);
+                                    this.numRows += Object.keys(object).length;
+                                }
+                            });
+                        } catch {
+                            invalidJson = true;
                         }
-
-
-                    });
-
-
+                    }
                 }).catch(() => {
                     invalidJson = true;
                 });
@@ -66,8 +84,17 @@ export default class InsightFacade implements IInsightFacade {
                 // if not throw an error
                 // if valid -> append to listOfJson
             });
-            // writefile
-            // fs.writeFileSync(relativePathToWrite(), JSON.stringify(zip));
+
+            let coursePromises: Array<Promise<string>> = [];
+
+            // return Promise.all(coursePromises).then((courses: string[]) => {
+            // put json parsing stuff here
+            // resolve/reject here
+            // })
+
+            if (!allEmpty) {
+                fs.writeFileSync("data", JSON.stringify(this.listOfJson));
+            }
         }).catch(() => {
             invalidZip = true;
         });
@@ -76,27 +103,32 @@ export default class InsightFacade implements IInsightFacade {
             let matchUnderscore: RegExp = /^[^_]+$/;
             let matchOnlySpaces: RegExp = /^\s+$/;
             if (!matchUnderscore.test(id)) {
-                reject(new InsightError("Underscore in id"));
-            } else if (matchOnlySpaces.test(id)) {
-                reject(new InsightError("Only whitespaces"));
-            } else if (kind === InsightDatasetKind.Rooms) {
-                reject(new InsightError("Should not add dataset kind rooms"));
+                return reject(new InsightError("Underscore in id"));
+            }
+
+            if (matchOnlySpaces.test(id)) {
+                return reject(new InsightError("Only whitespaces"));
+            }
+
+            if (kind === InsightDatasetKind.Rooms) {
+                return reject(new InsightError("Should not add dataset kind rooms"));
             } else if (this.listOfDatasetIds.includes(id)) {
-                reject(new InsightError("Cannot add, ID already exists"));
+                return reject(new InsightError("Cannot add, ID already exists"));
             } else if (allEmpty) {
-                reject(
+                return reject(
                     new InsightError(
                         "Missing at least one valid course section",
                     ),
                 );
             } else if (invalidJson) {
-                reject(new InsightError("Invalid json file"));
+                return reject(new InsightError("Invalid json file"));
             } else if (invalidZip) {
-                reject(new InsightError("Invalid zip file"));
+                return reject(new InsightError("Invalid zip file"));
             } else {
+                const aVal: InsightDataset = { id: id, kind: InsightDatasetKind.Courses, numRows: this.numRows };
                 this.listOfDatasetIds.push(id);
-                // this.listOfDatasets.push(id, kind, numRows);
-                resolve(this.listOfDatasetIds);
+                this.listOfDatasets.push(aVal);
+                return resolve(this.listOfDatasetIds);
             }
         });
     }
