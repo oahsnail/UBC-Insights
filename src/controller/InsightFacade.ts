@@ -1,13 +1,8 @@
 import JSZip = require("jszip");
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import Log from "../Util";
-import {
-    IInsightFacade,
-    InsightDataset,
-    InsightDatasetKind,
-} from "./IInsightFacade";
+import { IInsightFacade, InsightDataset, InsightDatasetKind } from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
-
 import AddDataInsightFacade from "./AddDataset";
 
 /**
@@ -31,36 +26,44 @@ export default class InsightFacade implements IInsightFacade {
         this.numRows = 0;
     }
 
+    // tests id and returns error message.
+    public idTestHelper(id: string, kind: InsightDatasetKind): string {
+        let matchUnderscore: RegExp = /^[^_]+$/;
+        let matchOnlySpaces: RegExp = /^\s+$/;
+        if (!matchUnderscore.test(id)) {
+            return "Underscore in id";
+        }
+        if (matchOnlySpaces.test(id)) {
+            return "Only whitespaces";
+        }
+        if (kind === InsightDatasetKind.Rooms) {
+            return "Should not add dataset kind rooms";
+        }
+        if (this.listOfDatasetIds.includes(id)) {
+            return "Cannot add, ID already exists";
+        }
+        return null;
+    }
+
     // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // check the zip file is valid
 
         // every file is {"result": [{}]} if allEmpty = true
         let allEmpty: boolean = true;
-        let invalidJson: boolean = false;
-        let invalidZip: boolean = false;
         let coursePromisesArray: Array<Promise<string>> = [];
 
         let zip = new JSZip();
 
-        // eslint-disable-next-line @typescript-eslint/tslint/config
         return new Promise<string[]>((resolve, reject) => {
-            let matchUnderscore: RegExp = /^[^_]+$/;
-            let matchOnlySpaces: RegExp = /^\s+$/;
-            if (!matchUnderscore.test(id)) {
-                return reject(new InsightError("Underscore in id"));
+
+            let idTestRet = this.idTestHelper(id, kind);
+            if (idTestRet !== null) {
+                return reject(new InsightError(idTestRet));
             }
-            if (matchOnlySpaces.test(id)) {
-                return reject(new InsightError("Only whitespaces"));
-            }
-            if (kind === InsightDatasetKind.Rooms) {
-                return reject(new InsightError("Should not add dataset kind rooms"));
-            }
-            if (this.listOfDatasetIds.includes(id)) {
-                return reject(new InsightError("Cannot add, ID already exists"));
-            }
+
             // z = unzipped jszip object
-            return zip.loadAsync(content, { base64: true }).then(function successZip(z: JSZip) {
+            return zip.loadAsync(content, { base64: true }).then((z: JSZip) => {
                 z.folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
                     // put the json string into each element of coursePromisesArray
                     coursePromisesArray.push(file.async("base64"));
@@ -75,10 +78,8 @@ export default class InsightFacade implements IInsightFacade {
                                 if (object.result === "[]") {
                                     this.listOfJson.push(courseJSONString);
                                 } else if (
-                                    object.Subject && object.Course &&
-                                    object.Avg && object.Professor &&
-                                    object.Title && object.Pass &&
-                                    object.Fail && object.Audit &&
+                                    object.Subject && object.Course && object.Avg && object.Professor &&
+                                    object.Title && object.Pass && object.Fail && object.Audit &&
                                     object.id && object.Year) {
                                     allEmpty = false;
                                     this.listOfJson.push(courseJSONString);

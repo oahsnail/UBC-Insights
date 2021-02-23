@@ -30,7 +30,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         coursesnovalid: "./test/data/coursesnovalid.zip",
         coursesonevalidjson: "./test/data/coursesonevalidjson.zip",
         coursesnovalidjson: "./test/data/coursesnovalidjson.zip",
-        onlyOne: "./test/data/onlyOne.zip"
+        onlyOne: "./test/data/onlyOne.zip",
+        coursesempty: "./test/data/coursesempty.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -80,6 +81,19 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         const expected: string[] = [id];
         const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected);
+    });
+
+    it("Should reject a empty dataset", function () {
+        const id: string = "coursesempty";
+        const expected: string[] = [id];
+        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        return expect(futureResult).to.be.rejectedWith(InsightError);
+    });
+
+    it("Should not add a dataset with an underscore", function () {
+        const id: string = "courses_2";
+        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should add dataset for rooms and reject it", function () {
@@ -139,12 +153,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
             return expect(futureResult).to.eventually.deep.equal(expected);
         });
-    });
-
-    it("Should not add a dataset with an underscore", function () {
-        const id: string = "courses_2";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-        return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should not add an invalid dataset zip file with no valid files", function () {
