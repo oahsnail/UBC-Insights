@@ -66,48 +66,44 @@ export default class InsightFacade implements IInsightFacade {
                     coursePromisesArray.push(file.async("base64"));
                 });
                 // promises in coursePromisesArray not ever resolved so the next line never runs?
-                return Promise.all(coursePromisesArray).then((resolvedCourses: string[]) => {
-                    for (const courseJSONString of resolvedCourses) {
-                        if (courseJSONString) {
-                            try {
-                                let object = JSON.parse(courseJSONString, function (key, value) {
-                                    if (object.result === "[]") {
-                                        this.listOfJson.push(courseJSONString);
-                                    } else if (
-                                        object.Subject && object.Course &&
-                                        object.Avg && object.Professor &&
-                                        object.Title && object.Pass &&
-                                        object.Fail &&
-                                        object.Audit &&
-                                        object.id &&
-                                        object.Year) {
-                                        allEmpty = false;
-                                        this.listOfJson.push(courseJSONString);
-                                        this.numRows += Object.keys(object).length;
-                                    }
-                                });
-                            } catch {
-                                return new InsightError("error message");
-                            }
+                return Promise.all(coursePromisesArray);
+            }).then((resolvedCourses: string[]) => {
+                for (const courseJSONString of resolvedCourses) {
+                    if (courseJSONString) {
+                        try {
+                            let object = JSON.parse(courseJSONString, function (key, value) {
+                                if (object.result === "[]") {
+                                    this.listOfJson.push(courseJSONString);
+                                } else if (
+                                    object.Subject && object.Course &&
+                                    object.Avg && object.Professor &&
+                                    object.Title && object.Pass &&
+                                    object.Fail && object.Audit &&
+                                    object.id && object.Year) {
+                                    allEmpty = false;
+                                    this.listOfJson.push(courseJSONString);
+                                    this.numRows += Object.keys(object).length;
+                                }
+                            });
+                        } catch {
+                            return new InsightError("Invalid JSON file");
                         }
                     }
-                    if (allEmpty) {
-                        // fs.writeFileSync("/data", this.listOfJson);
-                        const retDataset: InsightDataset = {
-                            id: id,
-                            kind: InsightDatasetKind.Courses,
-                            numRows: this.numRows
-                        };
-                        this.listOfDatasetIds.push(id);
-                        this.listOfDatasets.push(retDataset);
-                        return resolve(this.listOfDatasetIds);
-                    }
-                });
+                }
+                if (allEmpty) {
+                    fs.writeFileSync(__dirname + "../../data/" + id + ".json", this.listOfJson);
+                    const retDataset: InsightDataset = {
+                        id: id,
+                        kind: InsightDatasetKind.Courses,
+                        numRows: this.numRows
+                    };
+                    this.listOfDatasetIds.push(id);
+                    this.listOfDatasets.push(retDataset);
+                    return resolve(this.listOfDatasetIds);
+                }
             }).catch(() => {
                 return new InsightError("Invalid zip file");
             });
-
-
         });
     }
 
