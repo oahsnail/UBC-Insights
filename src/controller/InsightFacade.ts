@@ -67,7 +67,7 @@ export default class InsightFacade implements IInsightFacade {
             return Promise.all([zip.loadAsync(content, { base64: true })]).then((z: JSZip[]) => {
                 z[0].folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
                     // put the json string into each element of coursePromisesArray
-                    coursePromisesArray.push(file.async("base64"));
+                    coursePromisesArray.push(file.async("text"));
                 });
                 // promises in coursePromisesArray not ever resolved so the next line never runs?
                 return Promise.all(coursePromisesArray);
@@ -76,7 +76,7 @@ export default class InsightFacade implements IInsightFacade {
                     if (courseJSONString) {
                         try {
                             let object = JSON.parse(courseJSONString, function (key, value) {
-                                if (object.result === "[]") {
+                                if (courseJSONString === "{\"result\":[],\"rank\":0}") {
                                     this.listOfJson.push(courseJSONString);
                                 } else if (
                                     object.Subject && object.Course && object.Avg && object.Professor &&
