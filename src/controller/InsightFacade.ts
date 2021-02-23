@@ -4,6 +4,7 @@ import Log from "../Util";
 import { IInsightFacade, InsightDataset, InsightDatasetKind } from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
 import AddDataInsightFacade from "./AddDataset";
+import PerformQuery from "./PerformQuery";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -27,27 +28,29 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     // tests id and returns error message.
-    public idTestHelper(id: string, kind: InsightDatasetKind): string {
+    public idTestHelper(id: string, op: string, kind?: InsightDatasetKind) {
         let matchUnderscore: RegExp = /^[^_]+$/;
         let matchOnlySpaces: RegExp = /^\s+$/;
         if (!matchUnderscore.test(id)) {
-            return "Underscore in id";
+            return new InsightError("Underscore in id");
         }
         if (matchOnlySpaces.test(id)) {
-            return "Only whitespaces";
+            return new InsightError("Only whitespaces");
         }
         if (kind === InsightDatasetKind.Rooms) {
-            return "Should not add dataset kind rooms";
+            return new InsightError("Should not add dataset kind rooms");
         }
-        if (this.listOfDatasetIds.includes(id)) {
-            return "Cannot add, ID already exists";
+        if (this.listOfDatasetIds.includes(id) && op === "add") {
+            return new InsightError("Cannot add, ID already exists");
+        }
+        if (!this.listOfDatasetIds.includes(id) && op === "remove") {
+            return new NotFoundError("Cannot remove, ID does not exists");
         }
         return null;
     }
 
     // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        // check the zip file is valid
 
         // every file is {"result": [{}]} if allEmpty = true
         let allEmpty: boolean = true;
@@ -56,15 +59,13 @@ export default class InsightFacade implements IInsightFacade {
         let zip = new JSZip();
 
         return new Promise<string[]>((resolve, reject) => {
-
-            let idTestRet = this.idTestHelper(id, kind);
+            let idTestRet = this.idTestHelper(id, "add", kind);
             if (idTestRet !== null) {
-                return reject(new InsightError(idTestRet));
+                return reject(idTestRet);
             }
-
             // z = unzipped jszip object
-            return zip.loadAsync(content, { base64: true }).then((z: JSZip) => {
-                z.folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
+            return Promise.all([zip.loadAsync(content, { base64: true })]).then((z: JSZip[]) => {
+                z[0].folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
                     // put the json string into each element of coursePromisesArray
                     coursePromisesArray.push(file.async("base64"));
                 });
@@ -109,52 +110,27 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public removeDataset(id: string): Promise<string> {
-        /**
-         * Remove a dataset from insightUBC.
-         *
-         * @param id  The id of the dataset to remove. Follows the format /^[^_]+$/
-         *
-         * @return Promise <string>
-         *
-         * The promise should fulfill upon a successful removal, reject on any error.
-         * Attempting to remove a dataset that hasn't been added yet counts as an error.
-         *
-         * An id is invalid if it contains an underscore, or is only whitespace characters.
-         *
-         * The promise should fulfill the id of the dataset that was removed.
-         * The promise should reject with a NotFoundError (if a valid id was not yet added)
-         * or an InsightError (invalid id or any other source of failure) describing the error.
-         *
-         * This will delete both disk and memory caches for the dataset for the id meaning
-         * that subsequent queries for that id should fail unless a new addDataset happens first.
-         */
-
         return new Promise<string>((resolve, reject) => {
-            let matchUnderscore: RegExp = /^[^_]+$/;
-            let matchOnlySpaces: RegExp = /^\s+$/;
-            if (!matchUnderscore.test(id)) {
-                reject(new InsightError("Underscore in id"));
-            } else if (matchOnlySpaces.test(id)) {
-                reject(new InsightError("Only whitespaces"));
-            } else if (!this.listOfDatasetIds.includes(id)) {
-                reject(
-                    new NotFoundError("Cannot remove, dataset not yet added"),
-                );
-            } else {
-                this.listOfDatasetIds = this.listOfDatasetIds.filter(
-                    (value) => value !== id,
-                );
-                this.listOfDatasets = this.listOfDatasets.filter(
-                    (value) => value.id !== id,
-                );
-                resolve(id);
+            let idTestRet = this.idTestHelper(id, "remove");
+            if (idTestRet !== null) {
+                return reject(idTestRet);
             }
+            this.listOfDatasetIds = this.listOfDatasetIds.filter(
+                (value) => value !== id,
+            );
+            this.listOfDatasets = this.listOfDatasets.filter(
+                (value) => value.id !== id,
+            );
+            resolve(id);
         });
         // return Promise.reject("Not implemented.");
     }
 
     public performQuery(query: any): Promise<any[]> {
-        return Promise.reject("Not implemented.");
+
+
+        let p = new PerformQuery();
+        return p.performQuery(query);
     }
 
     public listDatasets(): Promise<InsightDataset[]> {

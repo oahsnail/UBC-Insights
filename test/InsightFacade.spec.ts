@@ -419,8 +419,13 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
  * You can still make tests the normal way, this is just a convenient tool for a majority of queries.
  */
 describe("InsightFacade PerformQuery", () => {
-    const datasetsToQuery: { [id: string]: { path: string, kind: InsightDatasetKind } } = {
-        courses: { path: "./test/data/courses.zip", kind: InsightDatasetKind.Courses },
+    const datasetsToQuery: {
+        [id: string]: { path: string; kind: InsightDatasetKind };
+    } = {
+        courses: {
+            path: "./test/data/courses.zip",
+            kind: InsightDatasetKind.Courses,
+        },
     };
     let insightFacade: InsightFacade;
     let testQueries: ITestQuery[] = [];
@@ -434,7 +439,11 @@ describe("InsightFacade PerformQuery", () => {
         try {
             testQueries = TestUtil.readTestQueries();
         } catch (err) {
-            expect.fail("", "", `Failed to read one or more test queries. ${err}`);
+            expect.fail(
+                "",
+                "",
+                `Failed to read one or more test queries. ${err}`,
+            );
         }
 
         // Load the datasets specified in datasetsToQuery and add them to InsightFacade.
@@ -444,7 +453,9 @@ describe("InsightFacade PerformQuery", () => {
         for (const id of Object.keys(datasetsToQuery)) {
             const ds = datasetsToQuery[id];
             const data = fs.readFileSync(ds.path).toString("base64");
-            loadDatasetPromises.push(insightFacade.addDataset(id, data, ds.kind));
+            loadDatasetPromises.push(
+                insightFacade.addDataset(id, data, ds.kind),
+            );
         }
         return Promise.all(loadDatasetPromises).catch((err) => {
             /* *IMPORTANT NOTE: This catch is to let this run even without the implemented addDataset,
@@ -473,7 +484,9 @@ describe("InsightFacade PerformQuery", () => {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
             for (const test of testQueries) {
                 it(`[${test.filename}] ${test.title}`, function () {
-                    const futureResult: Promise<any[]> = insightFacade.performQuery(test.query);
+                    const futureResult: Promise<
+                        any[]
+                    > = insightFacade.performQuery(test.query);
                     return TestUtil.verifyQueryResult(futureResult, test);
                 });
             }
