@@ -74,13 +74,13 @@ export default class InsightFacade implements IInsightFacade {
                                     if (object.result === "[]") {
                                         this.listOfJson.push(courseJSONString);
                                     } else if (
-                                        object.dept && object.id &&
-                                        object.avg && object.instructor &&
-                                        object.title && object.pass &&
-                                        object.fail &&
-                                        object.audit &&
-                                        object.uuid &&
-                                        object.year) {
+                                        object.Subject && object.Course &&
+                                        object.Avg && object.Professor &&
+                                        object.Title && object.Pass &&
+                                        object.Fail &&
+                                        object.Audit &&
+                                        object.id &&
+                                        object.Year) {
                                         allEmpty = false;
                                         this.listOfJson.push(courseJSONString);
                                         this.numRows += Object.keys(object).length;
