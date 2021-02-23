@@ -31,6 +31,7 @@ export default class InsightFacade implements IInsightFacade {
         this.numRows = 0;
     }
 
+    // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // check the zip file is valid
 
@@ -38,98 +39,75 @@ export default class InsightFacade implements IInsightFacade {
         let allEmpty: boolean = true;
         let invalidJson: boolean = false;
         let invalidZip: boolean = false;
-        // z = unzipped jszip object
+        let coursePromisesArray: Array<Promise<string>> = [];
+
         let zip = new JSZip();
-        zip.loadAsync(content, { base64: true }).then(function successZip(z: JSZip) {
-            z.folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
-                file.async("base64").then(function successJson(returnedResult) {
-                    /* if("result:[{...}]"){ */
-                    // if empty, add to listOfJson
-                    // all empty means every file is this
-                    if (returnedResult) {
-                        try {
-                            let object = JSON.parse(returnedResult, function (key, value) {
-                                Log.test(object);
-                                if (object.result === "[]") {
-                                    this.listOfJson.push(returnedResult);
-                                } else if (
-                                    object.dept &&
-                                    object.id &&
-                                    object.avg &&
-                                    object.instructor &&
-                                    object.title &&
-                                    object.pass &&
-                                    object.fail &&
-                                    object.audit &&
-                                    object.uuid &&
-                                    object.year) {
-                                    allEmpty = false;
-                                    this.listOfJson.push(returnedResult);
-                                    this.numRows += Object.keys(object).length;
-                                }
-                            });
-                        } catch {
-                            invalidJson = true;
-                        }
-                    }
-                }).catch(() => {
-                    invalidJson = true;
-                });
-                // check if each file is valid json
-                // validate that it's a valid section: each json represents a-
-                // course and can contain zero or more course sections
-                // a valid dataset has to contain at least one valid course section
-                // valid section : contains exactly one of each of the 10 keys-
-                // dept, id, avg, instructor, title, pass, fail, audit, uuid, and year
-                // if not throw an error
-                // if valid -> append to listOfJson
-            });
 
-            let coursePromises: Array<Promise<string>> = [];
-
-            // return Promise.all(coursePromises).then((courses: string[]) => {
-            // put json parsing stuff here
-            // resolve/reject here
-            // })
-
-            if (!allEmpty) {
-                fs.writeFileSync("data", JSON.stringify(this.listOfJson));
-            }
-        }).catch(() => {
-            invalidZip = true;
-        });
-
+        // eslint-disable-next-line @typescript-eslint/tslint/config
         return new Promise<string[]>((resolve, reject) => {
             let matchUnderscore: RegExp = /^[^_]+$/;
             let matchOnlySpaces: RegExp = /^\s+$/;
             if (!matchUnderscore.test(id)) {
                 return reject(new InsightError("Underscore in id"));
             }
-
             if (matchOnlySpaces.test(id)) {
                 return reject(new InsightError("Only whitespaces"));
             }
-
             if (kind === InsightDatasetKind.Rooms) {
                 return reject(new InsightError("Should not add dataset kind rooms"));
-            } else if (this.listOfDatasetIds.includes(id)) {
-                return reject(new InsightError("Cannot add, ID already exists"));
-            } else if (allEmpty) {
-                return reject(
-                    new InsightError(
-                        "Missing at least one valid course section",
-                    ),
-                );
-            } else if (invalidJson) {
-                return reject(new InsightError("Invalid json file"));
-            } else if (invalidZip) {
-                return reject(new InsightError("Invalid zip file"));
-            } else {
-                const aVal: InsightDataset = { id: id, kind: InsightDatasetKind.Courses, numRows: this.numRows };
-                this.listOfDatasetIds.push(id);
-                this.listOfDatasets.push(aVal);
-                return resolve(this.listOfDatasetIds);
             }
+            if (this.listOfDatasetIds.includes(id)) {
+                return reject(new InsightError("Cannot add, ID already exists"));
+            }
+            // z = unzipped jszip object
+            return zip.loadAsync(content, { base64: true }).then(function successZip(z: JSZip) {
+                z.folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
+                    // put the json string into each element of coursePromisesArray
+                    coursePromisesArray.push(file.async("base64"));
+                });
+                // promises in coursePromisesArray not ever resolved so the next line never runs?
+                return Promise.all(coursePromisesArray).then((resolvedCourses: string[]) => {
+                    for (const courseJSONString of resolvedCourses) {
+                        if (courseJSONString) {
+                            try {
+                                let object = JSON.parse(courseJSONString, function (key, value) {
+                                    if (object.result === "[]") {
+                                        this.listOfJson.push(courseJSONString);
+                                    } else if (
+                                        object.dept && object.id &&
+                                        object.avg && object.instructor &&
+                                        object.title && object.pass &&
+                                        object.fail &&
+                                        object.audit &&
+                                        object.uuid &&
+                                        object.year) {
+                                        allEmpty = false;
+                                        this.listOfJson.push(courseJSONString);
+                                        this.numRows += Object.keys(object).length;
+                                    }
+                                });
+                            } catch {
+                                return new InsightError("error message");
+                            }
+                        }
+                    }
+                    if (allEmpty) {
+                        // fs.writeFileSync("/data", this.listOfJson);
+                        const retDataset: InsightDataset = {
+                            id: id,
+                            kind: InsightDatasetKind.Courses,
+                            numRows: this.numRows
+                        };
+                        this.listOfDatasetIds.push(id);
+                        this.listOfDatasets.push(retDataset);
+                        return resolve(this.listOfDatasetIds);
+                    }
+                });
+            }).catch(() => {
+                return new InsightError("Invalid zip file");
+            });
+
+
         });
     }
 
