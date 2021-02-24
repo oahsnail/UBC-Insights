@@ -3,7 +3,6 @@ import * as fs from "fs-extra";
 import Log from "../Util";
 import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredCourseProperties } from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
-import AddDataInsightFacade from "./AddDataset";
 import PerformQuery from "./PerformQuery";
 
 /**
@@ -12,15 +11,15 @@ import PerformQuery from "./PerformQuery";
  *
  */
 export default class InsightFacade implements IInsightFacade {
-    private addDataInsightFacade: AddDataInsightFacade;
     public listOfDatasetIds: string[];
     public listOfDatasets: InsightDataset[];
-    public listOfJson: string[];
+    public listOfJson: string[]; // dont need
+
+    public listOfSections: any[]; // use this instead
     public numRows: number;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
-        this.addDataInsightFacade = new AddDataInsightFacade();
         this.listOfDatasetIds = [];
         this.listOfDatasets = [];
         this.listOfJson = [];
@@ -50,6 +49,7 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     // tests to see if a json object has all the required properties
+    // put this in own class
     public testJSONHasRequiredProperties(jsonObj: object): boolean {
         let requiredValues = Object.values(RequiredCourseProperties);
         for (const v of requiredValues) {
@@ -110,8 +110,8 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
                 if (allEmpty) { return reject(new InsightError("zip contains only empty jsons")); }
+                fs.writeFileSync("data/" + id + ".json", JSON.stringify(this.listOfJson));
 
-                fs.writeFileSync(__dirname + "../../data/" + id + ".json", this.listOfJson);
                 const retDataset: InsightDataset = {
                     id: id,
                     kind: InsightDatasetKind.Courses,
@@ -121,8 +121,8 @@ export default class InsightFacade implements IInsightFacade {
                 this.listOfDatasets.push(retDataset);
                 return resolve(this.listOfDatasetIds);
 
-            }).catch(() => {
-                return reject(new InsightError("Invalid zip file"));
+            }).catch((err) => {
+                return reject(new InsightError(err));
             });
         });
     }
@@ -163,7 +163,7 @@ export default class InsightFacade implements IInsightFacade {
 
         return new Promise<InsightDataset[]>((resolve, reject) => {
             // let idExisiting = this.addDataInsightFacade.listOfDatasetIds.pop();
-            resolve(this.addDataInsightFacade.listOfDatasets);
+            resolve(this.listOfDatasets);
         });
         // return Promise.reject("Not implemented.");
     }

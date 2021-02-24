@@ -110,11 +110,11 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
-    it("Should add a valid dataset", function () {
+    it("Should not add a dataset with a txt file", function () {
         const id: string = "coursesonevalidjson";
         const expected: string[] = [id];
         const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-        return expect(futureResult).to.eventually.deep.equal(expected);
+        return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should not add an invalid dataset with an invalid json in zip", function () {
