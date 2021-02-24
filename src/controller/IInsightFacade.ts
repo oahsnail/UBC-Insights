@@ -22,6 +22,11 @@ export enum RequiredCourseProperties {
     Year = "Year"
 }
 
+export enum RequiredQueryKeys {
+    WHERE = "WHERE",
+    OPTIONS = "OPTIONS"
+}
+
 export interface InsightDataset {
     id: string;
     kind: InsightDatasetKind;
