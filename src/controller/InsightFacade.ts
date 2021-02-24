@@ -1,7 +1,7 @@
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import Log from "../Util";
-import { IInsightFacade, InsightDataset, InsightDatasetKind } from "./IInsightFacade";
+import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredCourseProperties } from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
 import AddDataInsightFacade from "./AddDataset";
 import PerformQuery from "./PerformQuery";
@@ -15,7 +15,7 @@ export default class InsightFacade implements IInsightFacade {
     private addDataInsightFacade: AddDataInsightFacade;
     public listOfDatasetIds: string[];
     public listOfDatasets: InsightDataset[];
-    public listOfJson: [];
+    public listOfJson: string[];
     public numRows: number;
 
     constructor() {
@@ -49,6 +49,17 @@ export default class InsightFacade implements IInsightFacade {
         return null;
     }
 
+    // tests to see if a json object has all the required properties
+    public testJSONHasRequiredProperties(jsonObj: object): boolean {
+        let requiredValues = Object.values(RequiredCourseProperties);
+        for (const v of requiredValues) {
+            if (!jsonObj.hasOwnProperty(v)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 
@@ -58,6 +69,7 @@ export default class InsightFacade implements IInsightFacade {
 
         let zip = new JSZip();
 
+        // eslint-disable-next-line @typescript-eslint/tslint/config
         return new Promise<string[]>((resolve, reject) => {
             let idTestRet = this.idTestHelper(id, "add", kind);
             if (idTestRet !== null) {
@@ -72,39 +84,45 @@ export default class InsightFacade implements IInsightFacade {
                 // promises in coursePromisesArray not ever resolved so the next line never runs?
                 return Promise.all(coursePromisesArray);
             }).then((resolvedCourses: string[]) => {
+                if (!resolvedCourses.length) {
+                    return reject(new InsightError("empty"));
+                }
                 for (const courseJSONString of resolvedCourses) {
                     if (courseJSONString) {
                         try {
-                            let object = JSON.parse(courseJSONString, function (key, value) {
-                                if (courseJSONString === "{\"result\":[],\"rank\":0}") {
-                                    this.listOfJson.push(courseJSONString);
-                                } else if (
-                                    object.Subject && object.Course && object.Avg && object.Professor &&
-                                    object.Title && object.Pass && object.Fail && object.Audit &&
-                                    object.id && object.Year) {
-                                    allEmpty = false;
-                                    this.listOfJson.push(courseJSONString);
-                                    this.numRows += Object.keys(object).length;
+                            let object = JSON.parse(courseJSONString);
+                            if (object.result.length === 0) {
+                                this.listOfJson.push(courseJSONString);
+                            } else {
+                                for (const i of object.result) {
+                                    if (!this.testJSONHasRequiredProperties(i)) {
+                                        return reject(new InsightError("Invalid JSON file formats"));
+                                    }
+                                    this.numRows += 1;
                                 }
-                            });
-                        } catch {
-                            return new InsightError("Invalid JSON file");
+                                allEmpty = false;
+                                this.listOfJson.push(courseJSONString);
+                                // this.numRows += Object.keys(object).length;
+                            }
+                        } catch (SyntaxError) {
+                            return reject(new InsightError(SyntaxError));
                         }
                     }
                 }
-                if (allEmpty) {
-                    fs.writeFileSync(__dirname + "../../data/" + id + ".json", this.listOfJson);
-                    const retDataset: InsightDataset = {
-                        id: id,
-                        kind: InsightDatasetKind.Courses,
-                        numRows: this.numRows
-                    };
-                    this.listOfDatasetIds.push(id);
-                    this.listOfDatasets.push(retDataset);
-                    return resolve(this.listOfDatasetIds);
-                }
+                if (allEmpty) { return reject(new InsightError("zip contains only empty jsons")); }
+
+                fs.writeFileSync(__dirname + "../../data/" + id + ".json", this.listOfJson);
+                const retDataset: InsightDataset = {
+                    id: id,
+                    kind: InsightDatasetKind.Courses,
+                    numRows: this.numRows
+                };
+                this.listOfDatasetIds.push(id);
+                this.listOfDatasets.push(retDataset);
+                return resolve(this.listOfDatasetIds);
+
             }).catch(() => {
-                return new InsightError("Invalid zip file");
+                return reject(new InsightError("Invalid zip file"));
             });
         });
     }
@@ -127,8 +145,6 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise<any[]> {
-
-
         let p = new PerformQuery();
         return p.performQuery(query);
     }

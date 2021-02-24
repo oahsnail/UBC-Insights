@@ -31,7 +31,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         coursesonevalidjson: "./test/data/coursesonevalidjson.zip",
         coursesnovalidjson: "./test/data/coursesnovalidjson.zip",
         onlyOne: "./test/data/onlyOne.zip",
-        coursesempty: "./test/data/coursesempty.zip"
+        coursesempty: "./test/data/coursesempty.zip",
+        coursessmallvalid: "./test/data/coursessmallvalid.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -76,7 +77,14 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     });
 
     // This is a unit test. You should create more like this!
-    it("Should add a valid dataset", function () {
+    it("Should add a valid dataset: small dataset", function () {
+        const id: string = "coursessmallvalid";
+        const expected: string[] = [id];
+        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        return expect(futureResult).to.eventually.deep.equal(expected);
+    });
+
+    it("Should add a valid dataset: large dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
@@ -139,7 +147,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should add a valid dataset for courses with whitespace in the middle", function () {
         const id: string = "courses copy";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected);
     });
 

@@ -9,6 +9,19 @@ export enum InsightDatasetKind {
     Rooms = "rooms",
 }
 
+export enum RequiredCourseProperties {
+    Subject = "Subject",
+    Course = "Course",
+    Avg = "Avg",
+    Professor = "Professor",
+    Title = "Title",
+    Pass = "Pass",
+    Fail = "Fail",
+    Audit = "Audit",
+    id = "id",
+    Year = "Year"
+}
+
 export interface InsightDataset {
     id: string;
     kind: InsightDatasetKind;
