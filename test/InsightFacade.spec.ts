@@ -265,8 +265,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             expected = [id, id1];
             futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
             return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
-                const removeFutureResult: Promise<string> = insightFacade.removeDataset(id);
-                return expect(removeFutureResult).to.eventually.deep.equal(id).then(() => {
+                const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
+                return expect(removeFutureResult).to.eventually.deep.equal(id1).then(() => {
                     futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
                     return expect(futureResult).to.eventually.deep.equal(expected);
                 });
@@ -284,12 +284,11 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             expected = [id, id1];
             futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
             return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
-                expected = [id1];
-                const removeFutureResult: Promise<string> = insightFacade.removeDataset(id);
-                return expect(removeFutureResult).to.eventually.deep.equal(expected)
+                const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
+                return expect(removeFutureResult).to.eventually.deep.equal(id1)
                     .then(() => {
                         const Idataset1: InsightDataset = {
-                            id: "courses3",
+                            id: "courses",
                             kind: InsightDatasetKind.Courses,
                             numRows: 64612
                         };
