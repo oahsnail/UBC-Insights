@@ -60,6 +60,25 @@ export interface InsightDataset {
     numRows: number;
 }
 
+export interface DetailedDataset {
+    id: string;
+    data: SectionObject[];
+    kind: InsightDatasetKind;
+}
+
+export interface SectionObject {
+    dept: string;
+    id: number;
+    avg: number;
+    instructor: string;
+    title: string;
+    pass: number;
+    fail: number;
+    audit: number;
+    uuid: number;
+    year: number;
+}
+
 export class InsightError extends Error {
     constructor(...args: any[]) {
         super(...args);

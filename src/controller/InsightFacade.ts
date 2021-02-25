@@ -1,7 +1,10 @@
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import Log from "../Util";
-import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredCourseProperties } from "./IInsightFacade";
+import {
+    DetailedDataset, IInsightFacade, InsightDataset,
+    InsightDatasetKind, RequiredCourseProperties, SectionObject
+} from "./IInsightFacade";
 import { InsightError, NotFoundError } from "./IInsightFacade";
 import PerformQuery from "./PerformQuery";
 
@@ -12,19 +15,19 @@ import PerformQuery from "./PerformQuery";
  */
 export default class InsightFacade implements IInsightFacade {
     public listOfDatasets: InsightDataset[];
-    public listOfJson: string[];
-    // public listOfSections: any[]; // use this instead of listOfJson maybe?
+    public listOfSections: SectionObject[]; // list of section objects
+
     public numRows: number;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
         this.listOfDatasets = [];
-        this.listOfJson = [];
+        this.listOfSections = [];
         this.numRows = 0;
     }
 
     // tests id and returns error message.
-    public idTestHelper(id: string, op: string, kind?: InsightDatasetKind) {
+    public idTestHelper(id: string, op: string, kind?: InsightDatasetKind): Error {
         let matchUnderscore: RegExp = /^[^_]+$/;
         let matchOnlySpaces: RegExp = /^\s+$/;
         let ListOfDatasetIds = this.getListOfDatasetIds();
@@ -57,7 +60,7 @@ export default class InsightFacade implements IInsightFacade {
 
     // tests to see if a json object has all the required properties
     // put this in own class
-    public testJSONHasRequiredProperties(jsonObj: object): boolean {
+    public testJSONHasRequiredProperties(jsonObj: any): boolean {
         let requiredValues = Object.values(RequiredCourseProperties);
         for (const v of requiredValues) {
             if (!jsonObj.hasOwnProperty(v)) {
@@ -67,6 +70,7 @@ export default class InsightFacade implements IInsightFacade {
         return true;
     }
 
+
     // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 
@@ -74,6 +78,7 @@ export default class InsightFacade implements IInsightFacade {
         let allEmpty: boolean = true;
         let coursePromisesArray: Array<Promise<string>> = [];
         this.numRows = 0;
+        this.listOfSections = [];
 
         let zip = new JSZip();
 
@@ -90,44 +95,62 @@ export default class InsightFacade implements IInsightFacade {
                     coursePromisesArray.push(file.async("text"));
                 });
                 return Promise.all(coursePromisesArray);
+                // eslint-disable-next-line @typescript-eslint/tslint/config
             }).then((resolvedCourses: string[]) => {
                 if (!resolvedCourses.length) {
                     return reject(new InsightError("empty"));
                 }
+                const detailedDataset: DetailedDataset = {
+                    id: id,
+                    data: [],
+                    kind: kind
+                };
                 for (const courseJSONString of resolvedCourses) {
                     if (courseJSONString) {
                         try {
                             let object = JSON.parse(courseJSONString);
-                            if (object.result.length === 0) {
-                                this.listOfJson.push(courseJSONString);
-                            } else {
+                            if (!object.hasOwnProperty("result")) {
+                                throw new InsightError("Results key does not exist within this json");
+                            }
+                            if (object.result.length !== 0) {
                                 for (const i of object.result) {
                                     if (!this.testJSONHasRequiredProperties(i)) {
                                         return reject(new InsightError("Invalid JSON file formats"));
                                     }
+                                    const section: SectionObject = {
+                                        dept: i.Subject,
+                                        id: i.Course,
+                                        avg: i.Avg,
+                                        instructor: i.Professor,
+                                        title: i.Title,
+                                        pass: i.Pass,
+                                        fail: i.Fail,
+                                        audit: i.Audit,
+                                        uuid: i.id,
+                                        year: i.Year
+                                    };
+                                    this.listOfSections.push(section);
+                                    // detailedDataset.data.push(section);
                                     this.numRows += 1;
                                 }
+                                detailedDataset.data = this.listOfSections;
                                 allEmpty = false;
-                                this.listOfJson.push(courseJSONString);
                             }
-                        } catch (SyntaxError) {
-                            return reject(new InsightError(SyntaxError));
+                        } catch (err) {
+                            Log.trace(err);
+                            return reject(new InsightError(err));
                         }
                     }
                 }
                 if (allEmpty) { return reject(new InsightError("zip contains only empty jsons")); }
-                fs.writeFileSync("data/" + id + ".json", JSON.stringify(this.listOfJson));
-                // todo:
-                // get rid of unimportant key/vals like tier_eighty etc
-                // get rid of empty sections
-                // listOfSection implementation
+                fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
 
                 const retDataset: InsightDataset = {
                     id: id,
                     kind: InsightDatasetKind.Courses,
                     numRows: this.numRows
                 };
-                // this.listOfDatasetIds.push(id);
+
                 this.listOfDatasets.push(retDataset);
                 return resolve(this.getListOfDatasetIds());
 
@@ -138,12 +161,6 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public removeDataset(id: string): Promise<string> {
-
-        // remove from disk
-        // remove from listOfJson
-        // remove from listOfDatasetIds
-        // remove from listOfDatasets
-
         return new Promise<string>((resolve, reject) => {
             let idTestRet = this.idTestHelper(id, "remove");
             if (idTestRet !== null) {
