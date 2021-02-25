@@ -5,17 +5,20 @@ import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredQueryKeys }
 import { InsightError, NotFoundError, ResultTooLargeError } from "./IInsightFacade";
 
 export default class PerformQuery {
-    public missingKeys(jsonObj: object): boolean {
+    public missingKeys(jsonObj: any): boolean {
         let requiredValues = Object.keys(RequiredQueryKeys);
         for (const v of requiredValues) {
             if (!jsonObj.hasOwnProperty(v)) {
                 return false;
             }
-            // if (v === "OPTIONS") {
-            //     if (!v.hasOwnProperty("COLUMNS")) {
-            //         return false;
-            //     }
-            // }
+            if (jsonObj.OPTIONS) {
+                if (!jsonObj.OPTIONS.hasOwnProperty("COLUMNS")) {
+                    return false;
+                }
+                if (jsonObj.OPTIONS.COLUMNS.key === null || jsonObj.OPTIONS.ORDER === null) {
+                    return false;
+                }
+            }
         }
         return true;
     }
@@ -23,7 +26,9 @@ export default class PerformQuery {
     public performQuery(query: any): Promise<any[]> {
         return new Promise<any[]>((resolve, reject) => {
             if (!this.missingKeys(query)) {
-                return reject(new InsightError("Missing where, columns or options"));
+                return reject(new InsightError("Missing where, columns or options, or options not an object"));
+            } else {
+                return reject(("Not implemented"));
             }
             // should resolve something here
         });

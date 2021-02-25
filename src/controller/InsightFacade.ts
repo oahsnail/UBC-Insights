@@ -167,9 +167,14 @@ export default class InsightFacade implements IInsightFacade {
         return Promise.reject("Not implemented.");
         let p = new PerformQuery();
         return p.performQuery(query);
+        // return Promise.reject("Not implemented.");
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
+<<<<<<< HEAD
+=======
+
+>>>>>>> f848da8fe6213e4643765398292f035cb142e666
         return new Promise<InsightDataset[]>((resolve, reject) => {
             try {
                 return resolve(this.listOfDatasets);
@@ -177,6 +182,5 @@ export default class InsightFacade implements IInsightFacade {
                 return reject(new InsightError(error));
             }
         });
-        // return Promise.reject("Not implemented.");
     }
 }

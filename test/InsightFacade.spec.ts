@@ -172,9 +172,9 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should not add a dataset with an underscore and can list datasets", function () {
         const id: string = "courses_2";
         const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-        return expect(futureResult).to.be.rejectedWith(InsightError).then((result: InsightDataset[]) => {
+        return expect(futureResult).to.be.rejectedWith(InsightError).then(() => {
             const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
-            return expect(listFutureResult).to.eventually.deep.equal(result);
+            return expect(listFutureResult).to.eventually.deep.equal([]);
         });
     });
 
@@ -287,9 +287,15 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
                 expected = [id1];
                 const removeFutureResult: Promise<string> = insightFacade.removeDataset(id);
                 return expect(removeFutureResult).to.eventually.deep.equal(expected)
-                    .then((result: InsightDataset[]) => {
+                    .then(() => {
+                        const Idataset1: InsightDataset = {
+                            id: "courses3",
+                            kind: InsightDatasetKind.Courses,
+                            numRows: 64612
+                        };
+                        const expectedDataset: InsightDataset[] = [Idataset1];
                         const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
-                        return expect(listFutureResult).to.eventually.deep.equal(result);
+                        return expect(listFutureResult).to.eventually.deep.equal(expectedDataset);
                     });
             });
         });
@@ -346,9 +352,15 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-        return expect(futureResult).to.eventually.deep.equal(expected).then((result: InsightDataset[]) => {
+        return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
+            const Idataset1: InsightDataset = {
+                id: "courses",
+                kind: InsightDatasetKind.Courses,
+                numRows: 64612
+            };
+            const expectedDataset: InsightDataset[] = [Idataset1];
             const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
-            return expect(listFutureResult).to.eventually.deep.equal(result);
+            return expect(listFutureResult).to.eventually.deep.equal(expectedDataset);
         });
     });
 
@@ -360,9 +372,20 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             const id1: string = "courses3";
             expected = [id, id1];
             futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
-            return expect(futureResult).to.eventually.deep.equal(expected).then((result: InsightDataset[]) => {
+            return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
+                const Idataset1: InsightDataset = {
+                    id: "courses",
+                    kind: InsightDatasetKind.Courses,
+                    numRows: 64612
+                };
+                const Idataset2: InsightDataset = {
+                    id: "courses3",
+                    kind: InsightDatasetKind.Courses,
+                    numRows: 64612
+                };
+                const expectedDataset: InsightDataset[] = [Idataset1, Idataset2];
                 const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
-                return expect(listFutureResult).to.eventually.deep.equal(result);
+                return expect(listFutureResult).to.eventually.deep.equal(expectedDataset);
             });
         });
     });
@@ -400,7 +423,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
                     datasets["onlyOne"],
                     InsightDatasetKind.Courses,
                 );
-                return expect(futureResult2).to.eventually.deep.include(expected2);
+                return expect(futureResult2).to.eventually.deep.equal(expected2);
             }).then(() => {
                 const Idataset1: InsightDataset = {
                     id: "courses",
@@ -415,7 +438,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
                 const listResult2: Promise<InsightDataset[]> = insightFacade.listDatasets();
                 const expectedList: InsightDataset[] = [Idataset1, Idataset2];
-                return expect(listResult2).to.eventually.deep.include(expectedList);
+                return expect(listResult2).to.eventually.deep.equal(expectedList);
             });
     });
 
