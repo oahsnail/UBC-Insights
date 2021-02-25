@@ -7,8 +7,8 @@ import { InsightError, NotFoundError, ResultTooLargeError } from "./IInsightFaca
 
 let mfieldArr: string[] = ["avg", "pass", "fail", "audit", "year"];
 let sfieldArr: string[] = ["dept", "id", "instructor", "title", "uuid"];
-let errorMsg: string = "Failed to parse query";
 let resultArr: string[] = [];
+let filters: string[] = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
 
 export default class PerformQuery {
     public handleM(mkey: string, numVal: number, data: any): boolean {
@@ -44,75 +44,75 @@ export default class PerformQuery {
         let data = JSON.parse(fs.readFileSync("data/" + idstring + ".json", "utf8"));
         mfieldArr = mfieldArr.map((x) => idstring.concat("_", x).join(""));
         sfieldArr = sfieldArr.map((x) => idstring.concat("_", x).join(""));
-        for (const filterVal in jsonObj.WHERE) {
-            // logic
-            if (filterVal === "AND" || filterVal === "OR") {
-                return this.parseQuery(jsonObj.WHERE.filterVal);
+        if (jsonObj.WHERE) {
+            return this.parseQuery(jsonObj.WHERE);
+        }
+        // logic
+        if (jsonObj.AND || jsonObj.OR) {
+            return this.parseQuery(jsonObj.WHERE.filterVal);
+        }
+        // mcomparator
+        if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
+            let dataMKey = jsonObj.WHERE.filterVal;
+            let numVal = jsonObj.WHERE.filterVal.value;
+            if (numVal !== "number") {
+                throw new InsightError("Invalid value type");
             }
-            // mcomparator
-            if (filterVal === "LT" || filterVal === "GT" || filterVal === "EQ") {
-                let dataMKey = jsonObj.WHERE.filterVal;
-                let numVal = jsonObj.WHERE.filterVal.value;
-                if (numVal!== "number") {
-                    errorMsg = "Invalid value type";
-                    return false;
+            if (mfieldArr.includes(dataMKey)) {
+                for (const i in data.data) {
+                    // !!!TODO jsonObj should instead be one of jsonObj.LT || jsonObj.GT || jsonObj.EQ
+                    return this.handleM(jsonObj, numVal, i);
                 }
-                if (mfieldArr.includes(dataMKey)) {
-                    for (const i in data.data) {
-                        return this.handleM(filterVal, numVal, i);
-                    }
-                } else {
-                    errorMsg = "Invalid mkey";
-                    return false;
-                }
-            }
-            // scomparator
-            if (filterVal === "IS") {
-                if (!sfieldArr.includes(jsonObj.WHERE.filterVal)) {
-                    errorMsg = "Invalid skey";
-                    return false;
-                }
-                if (typeof jsonObj.WHERE.filterVal.value !== "string" ||
-                  !matchInputStr.test(jsonObj.WHERE.filterVal.value)) {
-                    errorMsg = "Invalid value type";
-                    return false;
-                }
-            }
-            if (filterVal === "NOT") {
-                return this.parseQuery(jsonObj.WHERE.filterVal);
+            } else {
+                throw new InsightError("Invalid mkey");
             }
         }
-        return false;
+        // scomparators
+        if (jsonObj.IS) {
+            if (!sfieldArr.includes(jsonObj.IS)) {
+                throw new InsightError("Invalid skey");
+            }
+            if (typeof jsonObj.WHERE.filterVal.value !== "string" ||
+                !matchInputStr.test(jsonObj.WHERE.filterVal.value)) {
+                throw new InsightError("Invalid value type");
+            }
+        }
+        if (jsonObj.NOT) {
+            return this.parseQuery(jsonObj.NOT);
+        }
+        return true;
     }
 
     public missingKeys(jsonObj: any): boolean {
         let requiredValues = Object.keys(RequiredQueryKeys);
         for (const v of requiredValues) {
             if (!jsonObj.hasOwnProperty(v)) {
-                return false;
+                throw new InsightError("Missing where or options");
             }
-            if (jsonObj.OPTIONS) {
-                if (!jsonObj.OPTIONS.hasOwnProperty("COLUMNS")) {
-                    return false;
-                }
-                if (jsonObj.OPTIONS.COLUMNS.length === 0 || jsonObj.OPTIONS.ORDER === null) {
-                    return false;
-                }
+        }
+        if (!jsonObj.OPTIONS.hasOwnProperty("COLUMNS")) {
+            throw new InsightError("Missing columns")
+        }
+        if (jsonObj.OPTIONS.hasOwnProperty("ORDER")) {
+            if (jsonObj.OPTIONS.ORDER === null) {
+                throw new InsightError("Order is null");
             }
+        }
+        if (jsonObj.OPTIONS.COLUMNS.length === 0 || jsonObj.OPTIONS.COLUMNS.includes(null)) {
+            throw new InsightError("either columns is null or columns length is 0")
         }
         return true;
     }
 
     public performQuery(query: any): Promise<any[]> {
         return new Promise<any[]>((resolve, reject) => {
-            if (!this.missingKeys(query)) {
-                return reject(new InsightError("Missing where, columns or options, or options not an object"));
+            try {
+                this.missingKeys(query);
+                this.parseQuery(query)
+            } catch (error) {
+                return reject(new InsightError(error));
             }
-            if (!this.parseQuery(query)) {
-                return reject(new InsightError(errorMsg));
-            } else {
-                return resolve(resultArr);
-            }
+            return resolve(resultArr);
             // should resolve something here
         });
     }
