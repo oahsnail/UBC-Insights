@@ -10,16 +10,16 @@ export enum InsightDatasetKind {
 }
 
 export enum RequiredCourseProperties {
-    Subject = "Subject",
-    Course = "Course",
-    Avg = "Avg",
-    Professor = "Professor",
-    Title = "Title",
-    Pass = "Pass",
-    Fail = "Fail",
-    Audit = "Audit",
-    id = "id",
-    Year = "Year"
+    dept = "Subject",
+    id = "Course",
+    avg = "Avg",
+    instructor = "Professor",
+    title = "Title",
+    pass = "Pass",
+    fail = "Fail",
+    audit = "Audit",
+    uuid = "id",
+    year = "Year"
 }
 
 export enum RequiredQueryKeys {
