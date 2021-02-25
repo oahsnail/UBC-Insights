@@ -5,6 +5,10 @@ import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredQueryKeys }
 import { InsightError, NotFoundError, ResultTooLargeError } from "./IInsightFacade";
 
 export default class PerformQuery {
+    public parseQuery(jsonObj: any): boolean {
+        return false;
+    }
+
     public missingKeys(jsonObj: any): boolean {
         let requiredValues = Object.keys(RequiredQueryKeys);
         for (const v of requiredValues) {
@@ -15,7 +19,7 @@ export default class PerformQuery {
                 if (!jsonObj.OPTIONS.hasOwnProperty("COLUMNS")) {
                     return false;
                 }
-                if (jsonObj.OPTIONS.COLUMNS.key === null || jsonObj.OPTIONS.ORDER === null) {
+                if (jsonObj.OPTIONS.COLUMNS.length === 0 || jsonObj.OPTIONS.ORDER === null) {
                     return false;
                 }
             }

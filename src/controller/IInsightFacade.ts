@@ -27,6 +27,33 @@ export enum RequiredQueryKeys {
     OPTIONS = "OPTIONS"
 }
 
+export enum Logic {
+    AND = "AND",
+    OR = "OR"
+}
+
+export enum MComparator {
+    LT = "LT",
+    GT = "GT",
+    EQ = "EQ"
+}
+
+export enum Mfield {
+    avg = "avg",
+    pass = "pass",
+    fail = "fail",
+    audit = "audit",
+    year = "year"
+}
+
+export enum Sfield {
+    dept = "dept",
+    id = "id",
+    instructor = "instructor",
+    title = "title",
+    uuid = "uuid"
+}
+
 export interface InsightDataset {
     id: string;
     kind: InsightDatasetKind;
