@@ -9,10 +9,74 @@ export enum InsightDatasetKind {
     Rooms = "rooms",
 }
 
+export enum RequiredCourseProperties {
+    dept = "Subject",
+    id = "Course",
+    avg = "Avg",
+    instructor = "Professor",
+    title = "Title",
+    pass = "Pass",
+    fail = "Fail",
+    audit = "Audit",
+    uuid = "id",
+    year = "Year"
+}
+
+export enum RequiredQueryKeys {
+    WHERE = "WHERE",
+    OPTIONS = "OPTIONS"
+}
+
+export enum Logic {
+    AND = "AND",
+    OR = "OR"
+}
+
+export enum MComparator {
+    LT = "LT",
+    GT = "GT",
+    EQ = "EQ"
+}
+
+export enum Mfield {
+    avg = "avg",
+    pass = "pass",
+    fail = "fail",
+    audit = "audit",
+    year = "year"
+}
+
+export enum Sfield {
+    dept = "dept",
+    id = "id",
+    instructor = "instructor",
+    title = "title",
+    uuid = "uuid"
+}
+
 export interface InsightDataset {
     id: string;
     kind: InsightDatasetKind;
     numRows: number;
+}
+
+export interface DetailedDataset {
+    id: string;
+    data: SectionObject[];
+    kind: InsightDatasetKind;
+}
+
+export interface SectionObject {
+    dept: string;
+    id: number;
+    avg: number;
+    instructor: string;
+    title: string;
+    pass: number;
+    fail: number;
+    audit: number;
+    uuid: number;
+    year: number;
 }
 
 export class InsightError extends Error {
@@ -62,7 +126,11 @@ export interface IInsightFacade {
      * Ultimately, a dataset must be added or loaded from disk before queries can
      * be successfully answered.
      */
-    addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]>;
+    addDataset(
+        id: string,
+        content: string,
+        kind: InsightDatasetKind,
+    ): Promise<string[]>;
 
     /**
      * Remove a dataset from insightUBC.
