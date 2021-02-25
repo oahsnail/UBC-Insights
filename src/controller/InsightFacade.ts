@@ -66,6 +66,7 @@ export default class InsightFacade implements IInsightFacade {
         // every file is {"result": [{}]} if allEmpty = true
         let allEmpty: boolean = true;
         let coursePromisesArray: Array<Promise<string>> = [];
+        this.numRows = 0;
 
         let zip = new JSZip();
 
@@ -147,24 +148,14 @@ export default class InsightFacade implements IInsightFacade {
     public performQuery(query: any): Promise<any[]> {
         let p = new PerformQuery();
         return p.performQuery(query);
+        // return Promise.reject("Not implemented.");
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
-        // read from ./data/datasets.json
-        // parse the data and put it into a array
-        // example:
-        // const Idataset1: InsightDataset = {
-        //     id: "courses",
-        //     kind: InsightDatasetKind.Courses,
-        //     numRows: 64612
-        // };
-        // example output: Promise<[Idataset1, Idataset2]>;
-        // let existingDatasets: InsightDataset[] = [];
 
         return new Promise<InsightDataset[]>((resolve, reject) => {
             // let idExisiting = this.addDataInsightFacade.listOfDatasetIds.pop();
             resolve(this.listOfDatasets);
         });
-        // return Promise.reject("Not implemented.");
     }
 }
