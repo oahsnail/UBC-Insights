@@ -11,16 +11,13 @@ import PerformQuery from "./PerformQuery";
  *
  */
 export default class InsightFacade implements IInsightFacade {
-    public listOfDatasetIds: string[];
     public listOfDatasets: InsightDataset[];
-    public listOfJson: string[]; // dont need
-
-    public listOfSections: any[]; // use this instead
+    public listOfJson: string[];
+    // public listOfSections: any[]; // use this instead of listOfJson maybe?
     public numRows: number;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
-        this.listOfDatasetIds = [];
         this.listOfDatasets = [];
         this.listOfJson = [];
         this.numRows = 0;
@@ -30,6 +27,8 @@ export default class InsightFacade implements IInsightFacade {
     public idTestHelper(id: string, op: string, kind?: InsightDatasetKind) {
         let matchUnderscore: RegExp = /^[^_]+$/;
         let matchOnlySpaces: RegExp = /^\s+$/;
+        let ListOfDatasetIds = this.getListOfDatasetIds();
+
         if (!matchUnderscore.test(id)) {
             return new InsightError("Underscore in id");
         }
@@ -39,13 +38,21 @@ export default class InsightFacade implements IInsightFacade {
         if (kind === InsightDatasetKind.Rooms) {
             return new InsightError("Should not add dataset kind rooms");
         }
-        if (this.listOfDatasetIds.includes(id) && op === "add") {
+        if (ListOfDatasetIds.includes(id) && op === "add") {
             return new InsightError("Cannot add, ID already exists");
         }
-        if (!this.listOfDatasetIds.includes(id) && op === "remove") {
+        if (!ListOfDatasetIds.includes(id) && op === "remove") {
             return new NotFoundError("Cannot remove, ID does not exists");
         }
         return null;
+    }
+
+    public getListOfDatasetIds(): string[] {
+        let listOfDatasetIds: string[] = [];
+        for (const d of this.listOfDatasets) {
+            listOfDatasetIds.push(d.id);
+        }
+        return listOfDatasetIds;
     }
 
     // tests to see if a json object has all the required properties
@@ -66,6 +73,7 @@ export default class InsightFacade implements IInsightFacade {
         // every file is {"result": [{}]} if allEmpty = true
         let allEmpty: boolean = true;
         let coursePromisesArray: Array<Promise<string>> = [];
+        this.numRows = 0;
 
         let zip = new JSZip();
 
@@ -81,7 +89,6 @@ export default class InsightFacade implements IInsightFacade {
                     // put the json string into each element of coursePromisesArray
                     coursePromisesArray.push(file.async("text"));
                 });
-                // promises in coursePromisesArray not ever resolved so the next line never runs?
                 return Promise.all(coursePromisesArray);
             }).then((resolvedCourses: string[]) => {
                 if (!resolvedCourses.length) {
@@ -102,7 +109,6 @@ export default class InsightFacade implements IInsightFacade {
                                 }
                                 allEmpty = false;
                                 this.listOfJson.push(courseJSONString);
-                                // this.numRows += Object.keys(object).length;
                             }
                         } catch (SyntaxError) {
                             return reject(new InsightError(SyntaxError));
@@ -111,15 +117,19 @@ export default class InsightFacade implements IInsightFacade {
                 }
                 if (allEmpty) { return reject(new InsightError("zip contains only empty jsons")); }
                 fs.writeFileSync("data/" + id + ".json", JSON.stringify(this.listOfJson));
+                // todo:
+                // get rid of unimportant key/vals like tier_eighty etc
+                // get rid of empty sections
+                // listOfSection implementation
 
                 const retDataset: InsightDataset = {
                     id: id,
                     kind: InsightDatasetKind.Courses,
                     numRows: this.numRows
                 };
-                this.listOfDatasetIds.push(id);
+                // this.listOfDatasetIds.push(id);
                 this.listOfDatasets.push(retDataset);
-                return resolve(this.listOfDatasetIds);
+                return resolve(this.getListOfDatasetIds());
 
             }).catch((err) => {
                 return reject(new InsightError(err));
@@ -128,42 +138,44 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public removeDataset(id: string): Promise<string> {
+
+        // remove from disk
+        // remove from listOfJson
+        // remove from listOfDatasetIds
+        // remove from listOfDatasets
+
         return new Promise<string>((resolve, reject) => {
             let idTestRet = this.idTestHelper(id, "remove");
             if (idTestRet !== null) {
                 return reject(idTestRet);
             }
-            this.listOfDatasetIds = this.listOfDatasetIds.filter(
-                (value) => value !== id,
-            );
-            this.listOfDatasets = this.listOfDatasets.filter(
-                (value) => value.id !== id,
-            );
-            resolve(id);
+            try {
+                // removes from disk
+                fs.unlinkSync("data/" + id + ".json");
+                // removes from listOfDatasetIds
+                const removeIndex = this.getListOfDatasetIds().indexOf(id);
+                this.getListOfDatasetIds().splice(removeIndex, 1);
+                this.listOfDatasets.splice(removeIndex, 1);
+            } catch (error) {
+                return reject(new InsightError(error));
+            }
+            return resolve(id);
         });
-        // return Promise.reject("Not implemented.");
     }
 
     public performQuery(query: any): Promise<any[]> {
+        return Promise.reject("Not implemented.");
         let p = new PerformQuery();
         return p.performQuery(query);
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
-        // read from ./data/datasets.json
-        // parse the data and put it into a array
-        // example:
-        // const Idataset1: InsightDataset = {
-        //     id: "courses",
-        //     kind: InsightDatasetKind.Courses,
-        //     numRows: 64612
-        // };
-        // example output: Promise<[Idataset1, Idataset2]>;
-        // let existingDatasets: InsightDataset[] = [];
-
         return new Promise<InsightDataset[]>((resolve, reject) => {
-            // let idExisiting = this.addDataInsightFacade.listOfDatasetIds.pop();
-            resolve(this.listOfDatasets);
+            try {
+                return resolve(this.listOfDatasets);
+            } catch (error) {
+                return reject(new InsightError(error));
+            }
         });
         // return Promise.reject("Not implemented.");
     }
