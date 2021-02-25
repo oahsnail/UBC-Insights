@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/tslint/config */
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import Log from "../Util";
@@ -10,10 +11,37 @@ let errorMsg: string = "Failed to parse query";
 let resultArr: string[] = [];
 
 export default class PerformQuery {
+    public handleM(mkey: string, numVal: number, data: any): boolean {
+        switch (mkey) {
+            case "LT": {
+                if (data.data.mkey < numVal) {
+                    resultArr.push(data.data.filterKeyVal.value);
+                    return true;
+                }
+                break;
+            }
+            case "GT": {
+                if (data.data.mkey > numVal) {
+                    resultArr.push(data.data.filterKeyVal.value);
+                    return true;
+                }
+                break;
+            }
+            case "EQ": {
+                if (data.data.mkey === numVal) {
+                    resultArr.push(data.data.filterKeyVal.value);
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
+    }
     public parseQuery(jsonObj: any): boolean {
         let matchInputStr: RegExp = /[^*]*/;
         let wholeKey = jsonObj.OPTIONS.COLUMNS[1];
         let idstring = wholeKey.split("_", 1);
+        let data = JSON.parse(fs.readFileSync("data/" + idstring + ".json", "utf8"));
         mfieldArr = mfieldArr.map((x) => idstring.concat("_", x).join(""));
         sfieldArr = sfieldArr.map((x) => idstring.concat("_", x).join(""));
         for (const filterVal in jsonObj.WHERE) {
@@ -23,12 +51,18 @@ export default class PerformQuery {
             }
             // mcomparator
             if (filterVal === "LT" || filterVal === "GT" || filterVal === "EQ") {
-                if (!mfieldArr.includes(jsonObj.WHERE.filterVal)) {
-                    errorMsg = "Invalid mkey";
+                let dataMKey = jsonObj.WHERE.filterVal;
+                let numVal = jsonObj.WHERE.filterVal.value;
+                if (numVal!== "number") {
+                    errorMsg = "Invalid value type";
                     return false;
                 }
-                if (typeof jsonObj.WHERE.filterVal.value !== "number") {
-                    errorMsg = "Invalid value type";
+                if (mfieldArr.includes(dataMKey)) {
+                    for (const i in data.data) {
+                        return this.handleM(filterVal, numVal, i);
+                    }
+                } else {
+                    errorMsg = "Invalid mkey";
                     return false;
                 }
             }
@@ -77,7 +111,7 @@ export default class PerformQuery {
             if (!this.parseQuery(query)) {
                 return reject(new InsightError(errorMsg));
             } else {
-                return reject(("Not implemented"));
+                return resolve(resultArr);
             }
             // should resolve something here
         });
