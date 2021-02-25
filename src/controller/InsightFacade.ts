@@ -171,10 +171,6 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
-<<<<<<< HEAD
-=======
-
->>>>>>> f848da8fe6213e4643765398292f035cb142e666
         return new Promise<InsightDataset[]>((resolve, reject) => {
             try {
                 return resolve(this.listOfDatasets);
