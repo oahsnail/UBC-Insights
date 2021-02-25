@@ -100,7 +100,7 @@ export default class InsightFacade implements IInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // every file is {"result": [{}]} if allEmpty = true
-        let allValid: boolean = false;
+        let atLeastOneValid: boolean = false;
         let coursePromisesArray: Array<Promise<string>> = [];
         this.numRows = 0;
         this.listOfSections = [];
@@ -126,7 +126,7 @@ export default class InsightFacade implements IInsightFacade {
                     if (courseJSONString) {
                         try {
                             this.processJSONString(courseJSONString);
-                            allValid = true;
+                            atLeastOneValid = true;
                         } catch (err) {
                             // If an individual file is invalid for any reason, skip over it.
                             // return reject(new InsightError(err));
@@ -135,7 +135,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
                 detailedDataset.data = this.listOfSections;
-                if (!allValid) { return reject(new InsightError("zip contains only empty jsons")); }
+                if (!atLeastOneValid) { return reject(new InsightError("zip contains only empty jsons")); }
                 fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
 
                 const retDataset: InsightDataset = {
