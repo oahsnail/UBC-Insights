@@ -100,7 +100,7 @@ export default class InsightFacade implements IInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // every file is {"result": [{}]} if allEmpty = true
-        let allEmpty: boolean = true;
+        let allValid: boolean = false;
         let coursePromisesArray: Array<Promise<string>> = [];
         this.numRows = 0;
         this.listOfSections = [];
@@ -126,14 +126,16 @@ export default class InsightFacade implements IInsightFacade {
                     if (courseJSONString) {
                         try {
                             this.processJSONString(courseJSONString);
-                            allEmpty = false;
+                            allValid = true;
                         } catch (err) {
-                            return reject(new InsightError(err));
+                            // If an individual file is invalid for any reason, skip over it.
+                            // return reject(new InsightError(err));
+                            continue;
                         }
                     }
                 }
                 detailedDataset.data = this.listOfSections;
-                if (allEmpty) { return reject(new InsightError("zip contains only empty jsons")); }
+                if (!allValid) { return reject(new InsightError("zip contains only empty jsons")); }
                 fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
 
                 const retDataset: InsightDataset = {
@@ -170,7 +172,7 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise<any[]> {
-        return Promise.reject("Not implemented.");
+        // return Promise.reject("Not implemented.");
         let p = new PerformQuery();
         return p.performQuery(query);
     }
