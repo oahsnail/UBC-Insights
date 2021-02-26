@@ -23,6 +23,8 @@ export interface ITestQuery {
 
 // TODO:
 // test valid json but without results key
+// test section = overall then year = 1900
+// test uuid = string or number
 
 describe("InsightFacade Add/Remove/List Dataset", function () {
     // Reference any datasets you've added to test/data here and they will
@@ -491,13 +493,15 @@ describe("InsightFacade PerformQuery", () => {
                 insightFacade.addDataset(id, data, ds.kind),
             );
         }
-        return Promise.all(loadDatasetPromises).catch((err) => {
-            /* *IMPORTANT NOTE: This catch is to let this run even without the implemented addDataset,
-             * for the purposes of seeing all your tests run.
-             * TODO For C1, remove this catch block (but keep the Promise.all)
-             */
-            return Promise.resolve("HACK TO LET QUERIES RUN");
-        });
+        return Promise.all(loadDatasetPromises);
+
+        // .catch((err) => {
+        //     /* *IMPORTANT NOTE: This catch is to let this run even without the implemented addDataset,
+        //      * for the purposes of seeing all your tests run.
+        //      * TODO For C1, remove this catch block (but keep the Promise.all)
+        //      */
+        //     return Promise.resolve("HACK TO LET QUERIES RUN");
+        // });
     });
 
     beforeEach(function () {

@@ -3,13 +3,14 @@ import * as fs from "fs-extra";
 import Log from "../Util";
 import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredQueryKeys } from "./IInsightFacade";
 import { InsightError, NotFoundError, ResultTooLargeError } from "./IInsightFacade";
+import { filter } from "jszip";
 
 
 export default class PerformQuery {
     public mfieldArr: string[];
-    public sfieldArr: string[] = ["dept", "id", "instructor", "title", "uuid"];
+    public sfieldArr: string[];
     public resultArr: string[] = [];
-    public filters: string[] = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
+    public filters: string[];
     public jsonData: any;
 
     constructor() {
@@ -20,25 +21,28 @@ export default class PerformQuery {
     }
 
 
-    public handleM(mkey: string, numVal: number, jsonDataSingle: any): boolean {
-        switch (mkey) {
+    public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): boolean {
+        // mfield eg "avg" or "pass" or something
+        let mfield = mkey.split("_", 2)[1];
+        let x = jsonDataSingle[mfield];
+        switch (mCompOp) {
             case "LT": {
-                if (jsonDataSingle.mkey < numVal) {
-                    this.resultArr.push(jsonDataSingle.data);
+                if (x > mkeyVal) {
+                    this.resultArr.push(jsonDataSingle);
                     return true;
                 }
                 break;
             }
             case "GT": {
-                if (jsonDataSingle.mkey > numVal) {
-                    this.resultArr.push(jsonDataSingle.data);
+                if (x > mkeyVal) {
+                    this.resultArr.push(jsonDataSingle);
                     return true;
                 }
                 break;
             }
             case "EQ": {
-                if (jsonDataSingle.mkey === numVal) {
-                    this.resultArr.push(jsonDataSingle.data);
+                if (x > mkeyVal) {
+                    this.resultArr.push(jsonDataSingle);
                     return true;
                 }
                 break;
@@ -54,30 +58,42 @@ export default class PerformQuery {
         return false;
     }
 
-    // eslint-disable-next-line @typescript-eslint/tslint/config
     public mCompareHandler(jsonObj: any, jsonData: any): boolean {
-        let key: any;
+        let keyObj: any;
+        let mCompOp: string;
         if (jsonObj.hasOwnProperty("LT")) {
-            key = jsonObj.LT;
+            keyObj = jsonObj.LT;
+            mCompOp = "LT";
         } else if (jsonObj.hasOwnProperty("GT")) {
-            key = jsonObj.GT;
+            keyObj = jsonObj.GT;
+            mCompOp = "GT";
         } else if (jsonObj.hasOwnProperty("EQ")) {
-            key = jsonObj.EQ;
+            keyObj = jsonObj.EQ;
+            mCompOp = "EQ";
         }
 
-        if (this.filters.includes(jsonObj.LT)) {
-            return this.parseQuery(jsonObj.LT, false);
+        for (const f of this.filters) {
+            if (keyObj.hasOwnProperty(f)) {
+                throw new InsightError("Cannot have nested mComparators");
+            }
         }
-        if (typeof jsonObj.get("LT") !== "number") {
+        if (Object.keys(keyObj).length !== 1) {
+            throw new InsightError("Number of entries in mComparison must equal 1");
+        }
+        const mkeyVal = Object.values(keyObj)[0];
+        const mkey = Object.keys(keyObj)[0];
+        if (typeof mkeyVal !== "number") {
             throw new InsightError("Invalid value type");
         }
-        if (this.mfieldArr.includes(jsonObj.LT)) {
-            for (const i in jsonData.data) {
-                return this.handleM(jsonObj.LT, jsonObj.get("LT"), i);
+        if (this.mfieldArr.includes(mkey)) {
+            for (const singleCourse of jsonData.data) {
+                this.pushM(mCompOp, mkey, mkeyVal, singleCourse);
             }
         } else {
             throw new InsightError("Invalid mkey");
         }
+
+        return true;
 
     }
 
