@@ -51,7 +51,7 @@ export default class PerformQuery {
         }
         return false;
     }
-    public handleS(sfield: string, inputStr: any, data: any): boolean {
+    public pushS(sfield: string, inputStr: any, data: any): boolean {
         let pushed = false;
         for (const r of data) {
             let row = data[r];
@@ -161,7 +161,7 @@ export default class PerformQuery {
                 let sfieldConnected = Object.keys(jsonObj.IS)[0];
                 let sfield = sfieldConnected.split("_", 2);
                 let inputStr = Object.values(jsonObj.IS)[0];
-                return this.handleS(sfield[1], inputStr, this.jsonData.data);
+                return this.pushS(sfield[1], inputStr, this.jsonData.data);
             }
         }
         if (jsonObj.NOT) {
