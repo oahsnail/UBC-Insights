@@ -89,7 +89,6 @@ export default class PerformQuery {
             keyObj = jsonObj.EQ;
             mCompOp = "EQ";
         }
-
         for (const f of this.filters) {
             if (keyObj.hasOwnProperty(f)) {
                 throw new InsightError("Cannot have nested mComparators");
@@ -110,9 +109,7 @@ export default class PerformQuery {
         } else {
             throw new InsightError("Invalid mkey");
         }
-
         return true;
-
     }
 
 
@@ -198,7 +195,7 @@ export default class PerformQuery {
                 this.parseQuery(query, true);
                 this.handleOptions(query, this.resultArr);
             } catch (error) {
-                return reject(new InsightError(error));
+                return reject(error);
             }
             return resolve(this.resultArr);
             // should resolve something here
