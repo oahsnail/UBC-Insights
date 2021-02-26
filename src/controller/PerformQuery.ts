@@ -1,9 +1,6 @@
-import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import Log from "../Util";
-import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredQueryKeys } from "./IInsightFacade";
-import { InsightError, NotFoundError, ResultTooLargeError } from "./IInsightFacade";
-import { filter } from "jszip";
+import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
 
 export default class PerformQuery {
     public mfieldArr: string[];
@@ -112,8 +109,6 @@ export default class PerformQuery {
                 }
             });
         }
-
-
         return false;
     }
 
@@ -154,6 +149,7 @@ export default class PerformQuery {
     }
 
     public sCompareHandler(jsonObj: any): boolean {
+        let matchInputStr: RegExp = /[^*]*/;
         if (this.filters.includes(jsonObj.IS)) {
             this.parseQuery(jsonObj.IS, false);
             return true;
@@ -164,13 +160,31 @@ export default class PerformQuery {
         if (!this.sfieldArr.includes(Object.keys(jsonObj.IS)[0])) {
             throw new InsightError("Invalid skey");
         }
-        if (typeof Object.values(jsonObj.IS)[0] !== "string") {
-            throw new InsightError("Invalid value type");
-        } else {
+        if (typeof Object.values(jsonObj.IS)[0] === "string") {
+            let wholeInputStr = jsonObj.IS;
+            let strLen = wholeInputStr.length;
+            if (wholeInputStr.indexOf(0).contains("*") && wholeInputStr.indexOf(strLen - 1).contains("*")) {
+                let inputString = wholeInputStr.substr(1, wholeInputStr.length - 1);
+                if (!matchInputStr.test(inputString)) {
+                    throw new InsightError("Invalid input string");
+                }
+            } else if (wholeInputStr.indexOf(0).contains("*")) {
+                let inputString = wholeInputStr.substr(1);
+                if (!matchInputStr.test(inputString)) {
+                    throw new InsightError("Invalid input string");
+                }
+            } else if (wholeInputStr.indexOf(strLen - 1)) {
+                let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
+                if (!matchInputStr.test(inputString)) {
+                    throw new InsightError("Invalid input string");
+                }
+            }
             let sfieldConnected = Object.keys(jsonObj.IS)[0];
             let sfield = sfieldConnected.split("_", 2);
             let inputStr = Object.values(jsonObj.IS)[0];
             this.pushS(sfield[1], inputStr, this.jsonData.data);
+        } else {
+            throw new InsightError("Invalid value type");
         }
         return true;
     }
@@ -192,7 +206,6 @@ export default class PerformQuery {
         }
 
         if (jsonObj.AND) {
-            // return common elements from AND[0] and AND[1]
             let condRet = this.parseQuery(jsonObj.AND[0], false);
             for (let i = 1; i < Object.keys(jsonObj.AND).length; i++) {
                 this.resultArr = [];
