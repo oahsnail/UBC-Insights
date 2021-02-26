@@ -56,7 +56,6 @@ export default class PerformQuery {
 
     // eslint-disable-next-line @typescript-eslint/tslint/config
     public mCompareHandler(jsonObj: any, jsonData: any): boolean {
-        // mfieldArr = mfieldArr.map((x) => idstring.concat("_", x).join(""));
         let key: any;
         if (jsonObj.hasOwnProperty("LT")) {
             key = jsonObj.LT;
@@ -91,11 +90,16 @@ export default class PerformQuery {
             let wholeKey = jsonObj.OPTIONS.COLUMNS[1];
             let idstring = wholeKey.split("_", 1);
             this.jsonData = JSON.parse(fs.readFileSync("data/" + idstring + ".json", "utf8"));
+            this.sfieldArr = this.sfieldArr.map((x) => idstring.concat("_", x).join(""));
+            this.mfieldArr = this.mfieldArr.map((x) => idstring.concat("_", x).join(""));
             return this.parseQuery(jsonObj.WHERE, false);
         }
-        // logic
-        if (jsonObj.AND || jsonObj.OR) {
-            return this.parseQuery(jsonObj.WHERE.filterVal, false);
+        // TODO: LOGIC
+        if (jsonObj.AND) {
+            return this.parseQuery(jsonObj.AND, false);
+        }
+        if (jsonObj.OR) {
+            return this.parseQuery(jsonObj.OR, false);
         }
         // mcomparator
         if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {

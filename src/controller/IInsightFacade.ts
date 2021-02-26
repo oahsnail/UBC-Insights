@@ -48,7 +48,7 @@ export interface SectionObject {
     pass: number;
     fail: number;
     audit: number;
-    uuid: number;
+    uuid: string;
     year: number;
 }
 

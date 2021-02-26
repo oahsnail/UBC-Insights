@@ -80,6 +80,12 @@ export default class InsightFacade implements IInsightFacade {
                 if (!this.testJSONHasRequiredProperties(i)) {
                     throw new InsightError("Invalid JSON file formats");
                 }
+
+                let year = i.Year;
+                if (i.Section === "overall") {
+                    year = 1900;
+                }
+
                 const section: SectionObject = {
                     dept: i.Subject,
                     id: i.Course,
@@ -89,8 +95,8 @@ export default class InsightFacade implements IInsightFacade {
                     pass: i.Pass,
                     fail: i.Fail,
                     audit: i.Audit,
-                    uuid: i.id,
-                    year: i.Year
+                    uuid: i.id.toString(),
+                    year: year
                 };
                 this.listOfSections.push(section);
                 this.numRows += 1;
