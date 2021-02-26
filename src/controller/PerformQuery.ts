@@ -12,6 +12,7 @@ export default class PerformQuery {
     public resultArr: string[] = [];
     public filters: string[];
     public jsonData: any;
+    public idstring: any;
 
     constructor() {
         this.mfieldArr = ["avg", "pass", "fail", "audit", "year"];
@@ -50,9 +51,26 @@ export default class PerformQuery {
         }
         return false;
     }
-    public handleS(sfield: string, data: any): boolean {
-        if (data.data.IS === sfield) {
-            this.resultArr.push(data.data);
+    public handleS(sfield: string, inputStr: any, data: any): boolean {
+        let pushed = false;
+        for (const r of data) {
+            let row = data[r];
+            for (const rowVal of Object.values(r)) {
+                const val = inputStr;
+                if (Object.keys(r).includes(sfield) && rowVal === inputStr) {
+                    this.resultArr.push(r);
+                    pushed = true;
+                }
+            }
+        }
+        if (pushed) {
+            return true;
+        }
+        return false;
+    }
+
+    public handleOptions(jsonObj: any, resultArr: string[]): boolean {
+        if (jsonObj.OPTIONS) {
             return true;
         }
         return false;
@@ -104,10 +122,10 @@ export default class PerformQuery {
         // sfieldArr = sfieldArr.map((x) => idstring.concat("_", x).join(""));
         if (firstCall) {
             let wholeKey = jsonObj.OPTIONS.COLUMNS[1];
-            let idstring = wholeKey.split("_", 1);
-            this.jsonData = JSON.parse(fs.readFileSync("data/" + idstring + ".json", "utf8"));
-            this.sfieldArr = this.sfieldArr.map((x) => idstring.concat("_", x).join(""));
-            this.mfieldArr = this.mfieldArr.map((x) => idstring.concat("_", x).join(""));
+            this.idstring = wholeKey.split("_", 1);
+            this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
+            this.sfieldArr = this.sfieldArr.map((x) => this.idstring.concat("_", x).join(""));
+            this.mfieldArr = this.mfieldArr.map((x) => this.idstring.concat("_", x).join(""));
             return this.parseQuery(jsonObj.WHERE, false);
         }
         // TODO: LOGIC
@@ -131,15 +149,19 @@ export default class PerformQuery {
             if (this.filters.includes(jsonObj.IS)) {
                 return this.parseQuery(jsonObj.IS, false);
             }
-            if (!this.sfieldArr.includes(jsonObj.IS)) {
+            if (Object.keys(jsonObj.IS).length > 1) {
+                throw new InsightError("More than one key");
+            }
+            if (!this.sfieldArr.includes(Object.keys(jsonObj.IS)[0])) {
                 throw new InsightError("Invalid skey");
             }
-            if (typeof jsonObj.WHERE.GET("IS") !== "string") {
+            if (typeof Object.values(jsonObj.IS)[0] !== "string") {
                 throw new InsightError("Invalid value type");
             } else {
-                let sfieldConnected = jsonObj.IS;
+                let sfieldConnected = Object.keys(jsonObj.IS)[0];
                 let sfield = sfieldConnected.split("_", 2);
-                return this.handleS(sfield, this.jsonData.data);
+                let inputStr = Object.values(jsonObj.IS)[0];
+                return this.handleS(sfield[1], inputStr, this.jsonData.data);
             }
         }
         if (jsonObj.NOT) {
@@ -174,6 +196,7 @@ export default class PerformQuery {
             try {
                 this.missingKeys(query);
                 this.parseQuery(query, true);
+                this.handleOptions(query, this.resultArr);
             } catch (error) {
                 return reject(new InsightError(error));
             }
