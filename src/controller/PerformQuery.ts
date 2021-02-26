@@ -4,31 +4,41 @@ import Log from "../Util";
 import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredQueryKeys } from "./IInsightFacade";
 import { InsightError, NotFoundError, ResultTooLargeError } from "./IInsightFacade";
 
-let mfieldArr: string[] = ["avg", "pass", "fail", "audit", "year"];
-let sfieldArr: string[] = ["dept", "id", "instructor", "title", "uuid"];
-let resultArr: string[] = [];
-let filters: string[] = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
 
 export default class PerformQuery {
+    public mfieldArr: string[];
+    public sfieldArr: string[] = ["dept", "id", "instructor", "title", "uuid"];
+    public resultArr: string[] = [];
+    public filters: string[] = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
+    public jsonData: any;
+
+    constructor() {
+        this.mfieldArr = ["avg", "pass", "fail", "audit", "year"];
+        this.sfieldArr = ["dept", "id", "instructor", "title", "uuid"];
+        this.resultArr = [];
+        this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
+    }
+
+
     public handleM(mkey: string, numVal: number, jsonDataSingle: any): boolean {
         switch (mkey) {
             case "LT": {
                 if (jsonDataSingle.mkey < numVal) {
-                    resultArr.push(jsonDataSingle.data);
+                    this.resultArr.push(jsonDataSingle.data);
                     return true;
                 }
                 break;
             }
             case "GT": {
                 if (jsonDataSingle.mkey > numVal) {
-                    resultArr.push(jsonDataSingle.data);
+                    this.resultArr.push(jsonDataSingle.data);
                     return true;
                 }
                 break;
             }
             case "EQ": {
                 if (jsonDataSingle.mkey === numVal) {
-                    resultArr.push(jsonDataSingle.data);
+                    this.resultArr.push(jsonDataSingle.data);
                     return true;
                 }
                 break;
@@ -38,13 +48,13 @@ export default class PerformQuery {
     }
     public handleS(sfield: string, data: any): boolean {
         if (data.data.IS === sfield) {
-            resultArr.push(data.data);
+            this.resultArr.push(data.data);
             return true;
         }
         return false;
     }
 
-        // eslint-disable-next-line @typescript-eslint/tslint/config
+    // eslint-disable-next-line @typescript-eslint/tslint/config
     public mCompareHandler(jsonObj: any, jsonData: any): boolean {
         // mfieldArr = mfieldArr.map((x) => idstring.concat("_", x).join(""));
         let key: any;
@@ -56,13 +66,13 @@ export default class PerformQuery {
             key = jsonObj.EQ;
         }
 
-        if (filters.includes(jsonObj.LT)) {
-            return this.parseQuery(jsonObj.LT);
+        if (this.filters.includes(jsonObj.LT)) {
+            return this.parseQuery(jsonObj.LT, false);
         }
         if (typeof jsonObj.get("LT") !== "number") {
             throw new InsightError("Invalid value type");
         }
-        if (mfieldArr.includes(jsonObj.LT)) {
+        if (this.mfieldArr.includes(jsonObj.LT)) {
             for (const i in jsonData.data) {
                 return this.handleM(jsonObj.LT, jsonObj.get("LT"), i);
             }
@@ -74,23 +84,23 @@ export default class PerformQuery {
 
 
     // eslint-disable-next-line @typescript-eslint/tslint/config
-    public parseQuery(jsonObj: any): boolean {
+    public parseQuery(jsonObj: any, firstCall: boolean): boolean {
         // let matchInputStr: RegExp = /[^*]*/;
-        let wholeKey = jsonObj.OPTIONS.COLUMNS[1];
-        let idstring = wholeKey.split("_", 1);
-        let jsonData = JSON.parse(fs.readFileSync("data/" + idstring + ".json", "utf8"));
         // sfieldArr = sfieldArr.map((x) => idstring.concat("_", x).join(""));
-        if (jsonObj.WHERE) {
-            return this.parseQuery(jsonObj.WHERE);
+        if (firstCall) {
+            let wholeKey = jsonObj.OPTIONS.COLUMNS[1];
+            let idstring = wholeKey.split("_", 1);
+            this.jsonData = JSON.parse(fs.readFileSync("data/" + idstring + ".json", "utf8"));
+            return this.parseQuery(jsonObj.WHERE, false);
         }
         // logic
         if (jsonObj.AND || jsonObj.OR) {
-            return this.parseQuery(jsonObj.WHERE.filterVal);
+            return this.parseQuery(jsonObj.WHERE.filterVal, false);
         }
         // mcomparator
         if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
             try {
-                this.mCompareHandler(jsonObj, jsonData);
+                this.mCompareHandler(jsonObj, this.jsonData);
             } catch (error) {
                 throw new InsightError(error);
             }
@@ -98,10 +108,10 @@ export default class PerformQuery {
         // scomparators
         if (jsonObj.IS) {
             // eslint-disable-next-line @typescript-eslint/tslint/config
-            if (filters.includes(jsonObj.IS)){
-                return this.parseQuery(jsonObj.IS);
+            if (this.filters.includes(jsonObj.IS)) {
+                return this.parseQuery(jsonObj.IS, false);
             }
-            if (!sfieldArr.includes(jsonObj.IS)) {
+            if (!this.sfieldArr.includes(jsonObj.IS)) {
                 throw new InsightError("Invalid skey");
             }
             if (typeof jsonObj.WHERE.GET("IS") !== "string") {
@@ -109,11 +119,11 @@ export default class PerformQuery {
             } else {
                 let sfieldConnected = jsonObj.IS;
                 let sfield = sfieldConnected.split("_", 2);
-                return this.handleS(sfield, jsonData.data);
+                return this.handleS(sfield, this.jsonData.data);
             }
         }
         if (jsonObj.NOT) {
-            return this.parseQuery(jsonObj.NOT);
+            return this.parseQuery(jsonObj.NOT, false);
         }
         return true;
     }
@@ -143,11 +153,11 @@ export default class PerformQuery {
         return new Promise<any[]>((resolve, reject) => {
             try {
                 this.missingKeys(query);
-                this.parseQuery(query);
+                this.parseQuery(query, true);
             } catch (error) {
                 return reject(new InsightError(error));
             }
-            return resolve(resultArr);
+            return resolve(this.resultArr);
             // should resolve something here
         });
     }
