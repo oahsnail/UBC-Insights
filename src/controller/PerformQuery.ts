@@ -54,13 +54,10 @@ export default class PerformQuery {
     public pushS(sfield: string, inputStr: any, data: any): boolean {
         let pushed = false;
         for (const r of data) {
-            let row = data[r];
-            for (const rowVal of Object.values(r)) {
-                const val = inputStr;
-                if (Object.keys(r).includes(sfield) && rowVal === inputStr) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
+            let x = r[sfield];
+            if (x === inputStr) {
+                this.resultArr.push(r);
+                pushed = true;
             }
         }
         if (pushed) {
