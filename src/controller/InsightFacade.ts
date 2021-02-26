@@ -3,9 +3,8 @@ import * as fs from "fs-extra";
 import Log from "../Util";
 import {
     DetailedDataset, IInsightFacade, InsightDataset,
-    InsightDatasetKind, RequiredCourseProperties, SectionObject
+    InsightDatasetKind, InsightError, NotFoundError, RequiredCourseProperties, SectionObject
 } from "./IInsightFacade";
-import { InsightError, NotFoundError } from "./IInsightFacade";
 import PerformQuery from "./PerformQuery";
 
 /**
@@ -80,6 +79,12 @@ export default class InsightFacade implements IInsightFacade {
                 if (!this.testJSONHasRequiredProperties(i)) {
                     throw new InsightError("Invalid JSON file formats");
                 }
+
+                let year = i.Year;
+                if (i.Section === "overall") {
+                    year = 1900;
+                }
+
                 const section: SectionObject = {
                     dept: i.Subject,
                     id: i.Course,
@@ -89,8 +94,8 @@ export default class InsightFacade implements IInsightFacade {
                     pass: i.Pass,
                     fail: i.Fail,
                     audit: i.Audit,
-                    uuid: i.id,
-                    year: i.Year
+                    uuid: i.id.toString(),
+                    year: year
                 };
                 this.listOfSections.push(section);
                 this.numRows += 1;
@@ -100,7 +105,7 @@ export default class InsightFacade implements IInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // every file is {"result": [{}]} if allEmpty = true
-        let allEmpty: boolean = true;
+        let atLeastOneValid: boolean = false;
         let coursePromisesArray: Array<Promise<string>> = [];
         this.numRows = 0;
         this.listOfSections = [];
@@ -126,14 +131,16 @@ export default class InsightFacade implements IInsightFacade {
                     if (courseJSONString) {
                         try {
                             this.processJSONString(courseJSONString);
-                            allEmpty = false;
+                            atLeastOneValid = true;
                         } catch (err) {
-                            return reject(new InsightError(err));
+                            // If an individual file is invalid for any reason, skip over it.
+                            // return reject(new InsightError(err));
+                            continue;
                         }
                     }
                 }
                 detailedDataset.data = this.listOfSections;
-                if (allEmpty) { return reject(new InsightError("zip contains only empty jsons")); }
+                if (!atLeastOneValid) { return reject(new InsightError("zip contains only empty jsons")); }
                 fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
 
                 const retDataset: InsightDataset = {
@@ -170,7 +177,7 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise<any[]> {
-        return Promise.reject("Not implemented.");
+        // return Promise.reject("Not implemented.");
         let p = new PerformQuery();
         return p.performQuery(query);
     }

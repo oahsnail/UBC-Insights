@@ -1,0 +1,218 @@
+{
+    "title": "and or complex query",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "OR": [
+                        {
+                            "GT": {
+                                "courses_avg": 95
+                            }
+                        },
+                        {
+                            "NOT": {
+                                "GT": {
+                                    "courses_avg": 95
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "OR": [
+                        {
+                            "LT": {
+                                "courses_pass": 80
+                            }
+                        },
+                        {
+                            "NOT": {
+                                "LT": {
+                                    "courses_pass": 80
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "OR": [
+                        {
+                            "EQ": {
+                                "courses_year": 2019
+                            }
+                        },
+                        {
+                            "NOT": {
+                                "EQ": {
+                                    "courses_year": 2019
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "OR": [
+                        {
+                            "LT": {
+                                "courses_audit": 20
+                            }
+                        },
+                        {
+                            "NOT": {
+                                "LT": {
+                                    "courses_audit": 20
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "OR": [
+                        {
+                            "GT": {
+                                "courses_fail": 95
+                            }
+                        },
+                        {
+                            "NOT": {
+                                "GT": {
+                                    "courses_fail": 95
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "NOT": {
+                        "NOT": {
+                            "IS": {
+                                "courses_instructor": "gregor*"
+                            }
+                        }
+                    }
+                },
+                {
+                    "NOT": {
+                        "OR": [
+                            {
+                                "IS": {
+                                    "courses_instructor": "connor*"
+                                }
+                            },
+                            {
+                                "NOT": {
+                                    "IS": {
+                                        "courses_instructor": "gregor*"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_instructor",
+                "courses_avg",
+                "courses_pass"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 66.19,
+            "courses_pass": 60
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 66.68,
+            "courses_pass": 57
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 67.66,
+            "courses_pass": 55
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 68.18,
+            "courses_pass": 60
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 69.11,
+            "courses_pass": 58
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 69.11,
+            "courses_pass": 58
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 69.72,
+            "courses_pass": 61
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 69.98,
+            "courses_pass": 63
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 70.52,
+            "courses_pass": 65
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 71.79,
+            "courses_pass": 67
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 72.05,
+            "courses_pass": 54
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 72.11,
+            "courses_pass": 68
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 72.53,
+            "courses_pass": 61
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 72.54,
+            "courses_pass": 54
+        },
+        {
+            "courses_dept": "geog",
+            "courses_instructor": "gregory, derek john",
+            "courses_avg": 72.72,
+            "courses_pass": 50
+        }
+    ]
+}

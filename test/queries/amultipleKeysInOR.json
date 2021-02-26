@@ -1,0 +1,102 @@
+{
+    "title": "multiple objects in OR",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "AND": [
+                        {
+                            "GT": {
+                                "courses_avg": 90
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_dept": "adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ": {
+                        "courses_avg": 95
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_avg": 10
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_avg"]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_avg": 93.33 },
+        { "courses_avg": 90.02 },
+        { "courses_avg": 96.11 },
+        { "courses_avg": 92.54 },
+        { "courses_avg": 90.82 },
+        { "courses_avg": 91.29 },
+        { "courses_avg": 91.48 },
+        { "courses_avg": 90.85 },
+        { "courses_avg": 90.17 },
+        { "courses_avg": 90.5 },
+        { "courses_avg": 91.33 },
+        { "courses_avg": 91.33 },
+        { "courses_avg": 90.72 },
+        { "courses_avg": 90.16 },
+        { "courses_avg": 90.18 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 4 },
+        { "courses_avg": 4 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 4.5 },
+        { "courses_avg": 0 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 0 },
+        { "courses_avg": 0 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 95 },
+        { "courses_avg": 1 }
+    ]
+}
