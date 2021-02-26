@@ -28,7 +28,7 @@ export default class PerformQuery {
         let x = jsonDataSingle[mfield];
         switch (mCompOp) {
             case "LT": {
-                if (x > mkeyVal) {
+                if (x < mkeyVal) {
                     this.resultArr.push(jsonDataSingle);
                     return true;
                 }
@@ -42,7 +42,7 @@ export default class PerformQuery {
                 break;
             }
             case "EQ": {
-                if (x > mkeyVal) {
+                if (x === mkeyVal) {
                     this.resultArr.push(jsonDataSingle);
                     return true;
                 }
