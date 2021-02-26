@@ -1,5 +1,5 @@
 {
-    "title": "Invalid for AND, should have 1 key, but has 2",
+    "title": "Invalid for OR, should have 1 key, but has 2",
     "query": {
         "WHERE": {
             "NOT": {
