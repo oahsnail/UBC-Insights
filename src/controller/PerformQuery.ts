@@ -5,11 +5,10 @@ import { IInsightFacade, InsightDataset, InsightDatasetKind, RequiredQueryKeys }
 import { InsightError, NotFoundError, ResultTooLargeError } from "./IInsightFacade";
 import { filter } from "jszip";
 
-
 export default class PerformQuery {
     public mfieldArr: string[];
     public sfieldArr: string[];
-    public resultArr: string[] = [];
+    public resultArr: any[] = [];
     public filters: string[];
     public jsonData: any;
     public idstring: any;
@@ -20,7 +19,6 @@ export default class PerformQuery {
         this.resultArr = [];
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
     }
-
 
     public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): boolean {
         // mfield eg "avg" or "pass" or something
@@ -66,10 +64,46 @@ export default class PerformQuery {
         return false;
     }
 
-    public handleOptions(jsonObj: any, resultArr: string[]): boolean {
-        if (jsonObj.OPTIONS) {
-            return true;
+    public handleOptions(query: any): boolean {
+        // "COLUMNS": ["courses_dept", "courses_avg"],
+        let colArray: string[] = Object.values(query.OPTIONS.COLUMNS);
+        let orderBy: any = null;
+        if (query.OPTIONS.ORDER) {
+            let order: string = query.OPTIONS.ORDER;
+            orderBy = order;
+            if (!colArray.includes(order)) {
+                throw new InsightError("Type in order is not contains in columns");
+            }
         }
+        colArray = colArray.map((x) => x.split("_", 2)[1]);
+
+        for (const sectionObj of this.resultArr) {
+            let sectionFields = Object.keys(sectionObj);
+            for (const field of sectionFields) {
+                if (!colArray.includes(field)) {
+                    delete sectionObj[field];
+                } else {
+                    let newKey = this.idstring + "_" + field;
+                    // From: https://stackoverflow.com/questions/4647817/javascript-object-rename-key
+                    if (field !== newKey) {
+                        Object.defineProperty(sectionObj, newKey,
+                            Object.getOwnPropertyDescriptor(sectionObj, field));
+                        delete sectionObj[field];
+                    }
+                }
+            }
+        }
+        // sort
+        if (orderBy) {
+            this.resultArr.sort((a, b) => {
+                if (a[orderBy] > b[orderBy]) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            });
+        }
+
         return false;
     }
 
@@ -109,13 +143,32 @@ export default class PerformQuery {
         return true;
     }
 
+    public sCompareHandler(jsonObj: any): boolean {
+        if (this.filters.includes(jsonObj.IS)) {
+            return this.parseQuery(jsonObj.IS, false);
+        }
+        if (Object.keys(jsonObj.IS).length > 1) {
+            throw new InsightError("More than one key");
+        }
+        if (!this.sfieldArr.includes(Object.keys(jsonObj.IS)[0])) {
+            throw new InsightError("Invalid skey");
+        }
+        if (typeof Object.values(jsonObj.IS)[0] !== "string") {
+            throw new InsightError("Invalid value type");
+        } else {
+            let sfieldConnected = Object.keys(jsonObj.IS)[0];
+            let sfield = sfieldConnected.split("_", 2);
+            let inputStr = Object.values(jsonObj.IS)[0];
+            this.pushS(sfield[1], inputStr, this.jsonData.data);
+        }
+        return true;
+    }
 
-    // eslint-disable-next-line @typescript-eslint/tslint/config
     public parseQuery(jsonObj: any, firstCall: boolean): boolean {
         // let matchInputStr: RegExp = /[^*]*/;
         // sfieldArr = sfieldArr.map((x) => idstring.concat("_", x).join(""));
         if (firstCall) {
-            let wholeKey = jsonObj.OPTIONS.COLUMNS[1];
+            let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
             this.idstring = wholeKey.split("_", 1);
             this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
             this.sfieldArr = this.sfieldArr.map((x) => this.idstring.concat("_", x).join(""));
@@ -123,6 +176,8 @@ export default class PerformQuery {
             return this.parseQuery(jsonObj.WHERE, false);
         }
         // TODO: LOGIC
+        // have one resultArr, put the result of the first condtion in there, and when we run cond2,
+        // we run it on resultArr and just take off what doesn't fit cond2
         if (jsonObj.AND) {
             return this.parseQuery(jsonObj.AND, false);
         }
@@ -139,23 +194,10 @@ export default class PerformQuery {
         }
         // scomparators
         if (jsonObj.IS) {
-            // eslint-disable-next-line @typescript-eslint/tslint/config
-            if (this.filters.includes(jsonObj.IS)) {
-                return this.parseQuery(jsonObj.IS, false);
-            }
-            if (Object.keys(jsonObj.IS).length > 1) {
-                throw new InsightError("More than one key");
-            }
-            if (!this.sfieldArr.includes(Object.keys(jsonObj.IS)[0])) {
-                throw new InsightError("Invalid skey");
-            }
-            if (typeof Object.values(jsonObj.IS)[0] !== "string") {
-                throw new InsightError("Invalid value type");
-            } else {
-                let sfieldConnected = Object.keys(jsonObj.IS)[0];
-                let sfield = sfieldConnected.split("_", 2);
-                let inputStr = Object.values(jsonObj.IS)[0];
-                return this.pushS(sfield[1], inputStr, this.jsonData.data);
+            try {
+                this.sCompareHandler(jsonObj);
+            } catch (error) {
+                throw new InsightError(error);
             }
         }
         if (jsonObj.NOT) {
@@ -190,7 +232,7 @@ export default class PerformQuery {
             try {
                 this.missingKeys(query);
                 this.parseQuery(query, true);
-                this.handleOptions(query, this.resultArr);
+                this.handleOptions(query);
             } catch (error) {
                 return reject(error);
             }

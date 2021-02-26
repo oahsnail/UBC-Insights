@@ -3,9 +3,8 @@ import * as fs from "fs-extra";
 import Log from "../Util";
 import {
     DetailedDataset, IInsightFacade, InsightDataset,
-    InsightDatasetKind, RequiredCourseProperties, SectionObject
+    InsightDatasetKind, InsightError, NotFoundError, RequiredCourseProperties, SectionObject
 } from "./IInsightFacade";
-import { InsightError, NotFoundError } from "./IInsightFacade";
 import PerformQuery from "./PerformQuery";
 
 /**
