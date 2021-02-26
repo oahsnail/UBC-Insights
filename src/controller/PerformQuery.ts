@@ -12,12 +12,14 @@ export default class PerformQuery {
     public filters: string[];
     public jsonData: any;
     public idstring: any;
+    public maxResultSize: number;
 
     constructor() {
         this.mfieldArr = ["avg", "pass", "fail", "audit", "year"];
         this.sfieldArr = ["dept", "id", "instructor", "title", "uuid"];
         this.resultArr = [];
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
+        this.maxResultSize = 5000;
     }
 
     public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): boolean {
@@ -77,6 +79,10 @@ export default class PerformQuery {
         }
         colArray = colArray.map((x) => x.split("_", 2)[1]);
 
+        if (this.resultArr === [] && colArray !== []) {
+            this.resultArr = this.jsonData.data;
+        }
+
         for (const sectionObj of this.resultArr) {
             let sectionFields = Object.keys(sectionObj);
             for (const field of sectionFields) {
@@ -93,6 +99,9 @@ export default class PerformQuery {
                 }
             }
         }
+        if (this.resultArr.length > this.maxResultSize) {
+            throw new ResultTooLargeError();
+        }
         // sort
         if (orderBy) {
             this.resultArr.sort((a, b) => {
@@ -103,6 +112,7 @@ export default class PerformQuery {
                 }
             });
         }
+
 
         return false;
     }
@@ -145,10 +155,11 @@ export default class PerformQuery {
 
     public sCompareHandler(jsonObj: any): boolean {
         if (this.filters.includes(jsonObj.IS)) {
-            return this.parseQuery(jsonObj.IS, false);
+            this.parseQuery(jsonObj.IS, false);
+            return true;
         }
-        if (Object.keys(jsonObj.IS).length > 1) {
-            throw new InsightError("More than one key");
+        if (Object.keys(jsonObj.IS).length !== 1) {
+            throw new InsightError("Number of entries in mComparison must equal 1");
         }
         if (!this.sfieldArr.includes(Object.keys(jsonObj.IS)[0])) {
             throw new InsightError("Invalid skey");
@@ -164,25 +175,42 @@ export default class PerformQuery {
         return true;
     }
 
-    public parseQuery(jsonObj: any, firstCall: boolean): boolean {
-        // let matchInputStr: RegExp = /[^*]*/;
-        // sfieldArr = sfieldArr.map((x) => idstring.concat("_", x).join(""));
+    private initializeParse(jsonObj: any) {
+        let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
+        this.idstring = wholeKey.split("_", 1);
+        this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
+        this.sfieldArr = this.sfieldArr.map((x) => this.idstring.concat("_", x).join(""));
+        this.mfieldArr = this.mfieldArr.map((x) => this.idstring.concat("_", x).join(""));
+    }
+
+    public parseQuery(jsonObj: any, firstCall: boolean): any[] {
         if (firstCall) {
-            let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
-            this.idstring = wholeKey.split("_", 1);
-            this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
-            this.sfieldArr = this.sfieldArr.map((x) => this.idstring.concat("_", x).join(""));
-            this.mfieldArr = this.mfieldArr.map((x) => this.idstring.concat("_", x).join(""));
+            this.initializeParse(jsonObj);
             return this.parseQuery(jsonObj.WHERE, false);
+        } else if (Object.keys(jsonObj).length > 1) {
+            throw new InsightError("Can't have more than one filter in a object");
         }
-        // TODO: LOGIC
-        // have one resultArr, put the result of the first condtion in there, and when we run cond2,
-        // we run it on resultArr and just take off what doesn't fit cond2
+
         if (jsonObj.AND) {
-            return this.parseQuery(jsonObj.AND, false);
+            // return common elements from AND[0] and AND[1]
+            let condRet = this.parseQuery(jsonObj.AND[0], false);
+            for (let i = 1; i < Object.keys(jsonObj.AND).length; i++) {
+                this.resultArr = [];
+                let condTemp = this.parseQuery(jsonObj.AND[i], false);
+                condRet = condRet.filter((x) => condTemp.includes(x));
+            }
+            this.resultArr = condRet;
+            return this.resultArr;
         }
         if (jsonObj.OR) {
-            return this.parseQuery(jsonObj.OR, false);
+            let condRet = this.parseQuery(jsonObj.OR[0], false);
+            for (let i = 1; i < Object.keys(jsonObj.OR).length; i++) {
+                this.resultArr = [];
+                let condTemp = this.parseQuery(jsonObj.OR[i], false);
+                condRet = condRet.concat(condTemp);
+            }
+            this.resultArr = condRet;
+            return this.resultArr;
         }
         // mcomparator
         if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
@@ -201,9 +229,22 @@ export default class PerformQuery {
             }
         }
         if (jsonObj.NOT) {
-            return this.parseQuery(jsonObj.NOT, false);
+            // if (this.sfieldArr.includes(Object.keys(jsonObj.NOT)[0])) {
+            //     if (typeof Object.values(jsonObj.NOT)[0] !== "string") {
+            //         throw new InsightError("Invalid value type");
+            //     }
+            // }
+            // if (this.mfieldArr.includes(Object.keys(jsonObj.NOT)[0])) {
+            //     if (typeof Object.values(jsonObj.NOT)[0] !== "number") {
+            //         throw new InsightError("Invalid value type");
+            //     }
+            // }
+            let cond1 = this.parseQuery(jsonObj.NOT, false);
+            this.resultArr = this.jsonData.data;
+            this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
+            return this.resultArr;
         }
-        return true;
+        return this.resultArr;
     }
 
     public missingKeys(jsonObj: any): boolean {
@@ -228,6 +269,7 @@ export default class PerformQuery {
     }
 
     public performQuery(query: any): Promise<any[]> {
+        this.resultArr = [];
         return new Promise<any[]>((resolve, reject) => {
             try {
                 this.missingKeys(query);
@@ -237,7 +279,6 @@ export default class PerformQuery {
                 return reject(error);
             }
             return resolve(this.resultArr);
-            // should resolve something here
         });
     }
 }

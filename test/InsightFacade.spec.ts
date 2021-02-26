@@ -85,52 +85,60 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should add a valid dataset: small dataset", function () {
         const id: string = "coursessmallvalid";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected);
     });
 
     it("Should add a valid dataset: large dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected);
     });
 
     it("Should reject a empty dataset", function () {
         const id: string = "coursesempty";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should not add a dataset with an underscore", function () {
         const id: string = "courses_2";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should add dataset for rooms and reject it", function () {
         const id: string = "courses";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should not add a dataset with a txt file", function () {
         const id: string = "coursesonevalidjson";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should not add an invalid dataset with an invalid json in zip", function () {
         const id: string = "coursesnovalidjson";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should add a Rooms dataset and reject it and add a valid dataset with courses", function () {
         const id: string = "courses";
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
         return expect(futureResult).to.be.rejectedWith(InsightError).then(() => {
             const id1: string = "courses3";
             const expected = [id1];
@@ -141,7 +149,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     it("Should accept a second dataset after it rejects rooms and add courses from same id", function () {
         const id: string = "courses";
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
         return expect(futureResult).to.be.rejectedWith(InsightError).then(() => {
             const expected: string[] = [id];
             futureResult = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
@@ -152,14 +161,16 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should add a valid dataset for courses with whitespace in the middle", function () {
         const id: string = "courses copy";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected);
     });
 
     it("Should add a second dataset", function () {
         const id: string = "courses";
         let expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses3";
             expected = [id, id1];
@@ -170,13 +181,15 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     it("Should not add an invalid dataset zip file with no valid files", function () {
         const id: string = "coursesnovalid";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should not add a dataset with an underscore and can list datasets", function () {
         const id: string = "courses_2";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError).then(() => {
             const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
             return expect(listFutureResult).to.eventually.deep.equal([]);
@@ -185,13 +198,15 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     it("Should not add a dataset with only whitespaces", function () {
         const id: string = " ";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
     it("Should not add a dataset with only whitespaces", function () {
         let id: string = " ";
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError).then(() => {
             const removeFutureResult: Promise<string> = insightFacade.removeDataset(id);
             return expect(removeFutureResult).to.be.rejectedWith(InsightError);
@@ -201,7 +216,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should not add id of an already added dataset", function () {
         const id: string = "courses";
         let expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses";
             futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
@@ -212,7 +228,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should not remove an invalid dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses_2";
             const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
@@ -223,7 +240,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should not remove an invalid dataset but can remove dataset after", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             let id1: string = "courses_2";
             let removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
@@ -238,7 +256,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should not remove an invalid dataset with whitespace id", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = " ";
             const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
@@ -249,7 +268,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should remove a valid dataset", function () {
         const id: string = "courses";
         let expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses3";
             expected = [id, id1];
@@ -264,7 +284,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should remove a valid dataset and add a dataset", function () {
         const id: string = "courses";
         let expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses3";
             expected = [id, id1];
@@ -283,7 +304,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should remove a valid dataset and list it", function () {
         const id: string = "courses";
         let expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses3";
             expected = [id, id1];
@@ -307,7 +329,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should not remove an unexisting dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        const futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses3";
             const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
@@ -318,7 +341,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should not remove an unexisting dataset but can add dataset after", function () {
         const id: string = "courses";
         let expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses3";
             const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
@@ -355,7 +379,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should list all datasets", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const Idataset1: InsightDataset = {
                 id: "courses",
@@ -371,7 +396,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     it("Should add a second dataset and list all datasets", function () {
         const id: string = "courses";
         let expected: string[] = [id];
-        let futureResult: Promise<string[]> = insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
             const id1: string = "courses3";
             expected = [id, id1];
