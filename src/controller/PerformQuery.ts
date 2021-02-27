@@ -161,19 +161,19 @@ export default class PerformQuery {
             throw new InsightError("Invalid skey");
         }
         if (typeof Object.values(jsonObj.IS)[0] === "string") {
-            let wholeInputStr = jsonObj.IS;
+            let wholeInputStr = Object.values(jsonObj.IS)[0] as string;
             let strLen = wholeInputStr.length;
-            if (wholeInputStr.indexOf(0).contains("*") && wholeInputStr.indexOf(strLen - 1).contains("*")) {
+            if (wholeInputStr.charAt(0) === "*" && wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(1, wholeInputStr.length - 1);
                 if (!matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-            } else if (wholeInputStr.indexOf(0).contains("*")) {
+            } else if (wholeInputStr.charAt(0) === "*") {
                 let inputString = wholeInputStr.substr(1);
                 if (!matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-            } else if (wholeInputStr.indexOf(strLen - 1)) {
+            } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
                 if (!matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
