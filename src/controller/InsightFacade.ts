@@ -80,7 +80,10 @@ export default class InsightFacade implements IInsightFacade {
                     throw new InsightError("Invalid JSON file formats");
                 }
 
-                let year = i.Year;
+                let year = parseInt(i.Year, 10);
+                if (typeof year !== "number") {
+                    throw new InsightError("Year must be a number");
+                }
                 if (i.Section === "overall") {
                     year = 1900;
                 }
