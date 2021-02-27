@@ -31,10 +31,13 @@ export default class InsightFacade implements IInsightFacade {
         let matchOnlySpaces: RegExp = /^\s+$/;
         let ListOfDatasetIds = this.getListOfDatasetIds();
 
+        if (id === null) {
+            return new InsightError("Null ID");
+        }
         if (!matchUnderscore.test(id)) {
             return new InsightError("Underscore in id");
         }
-        if (matchOnlySpaces.test(id)) {
+        if (matchOnlySpaces.test(id) || id === "") {
             return new InsightError("Only whitespaces");
         }
         if (kind === InsightDatasetKind.Rooms) {

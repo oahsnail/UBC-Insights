@@ -5,6 +5,7 @@ import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsight
 export default class PerformQuery {
     public mfieldArr: string[];
     public sfieldArr: string[];
+    public allFields: string[];
     public resultArr: any[] = [];
     public filters: string[];
     public jsonData: any;
@@ -14,6 +15,9 @@ export default class PerformQuery {
     constructor() {
         this.mfieldArr = ["avg", "pass", "fail", "audit", "year"];
         this.sfieldArr = ["dept", "id", "instructor", "title", "uuid"];
+        this.allFields = ["courses_dept", "courses_id",
+            "courses_instructor", "courses_title", "courses_uuid",
+            "courses_avg", "courses_pass", "courses_fail", "courses_audit", "courses_year"];
         this.resultArr = [];
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
         this.maxResultSize = 5000;
@@ -225,27 +229,26 @@ export default class PerformQuery {
             this.resultArr = condRet;
             return this.resultArr;
         }
-        // mcomparator
-        if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
-            try {
+        try {
+            // mcomparator
+            if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
                 this.mCompareHandler(jsonObj, this.jsonData);
-            } catch (error) {
-                throw new InsightError(error);
             }
-        }
-        // scomparators
-        if (jsonObj.IS) {
-            try {
+            // scomparators
+            if (jsonObj.IS) {
                 this.sCompareHandler(jsonObj);
-            } catch (error) {
-                throw new InsightError(error);
             }
+        } catch (error) {
+            throw new InsightError(error);
         }
         if (jsonObj.NOT) {
             let cond1 = this.parseQuery(jsonObj.NOT, false);
             this.resultArr = this.jsonData.data;
             this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
             return this.resultArr;
+        }
+        if (!this.allFields.includes(Object.keys(jsonObj)[0]) && !this.filters.includes(Object.keys(jsonObj)[0])) {
+            throw new InsightError("invalid filter key");
         }
         return this.resultArr;
     }
