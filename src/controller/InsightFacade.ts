@@ -109,6 +109,7 @@ export default class InsightFacade implements IInsightFacade {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // every file is {"result": [{}]} if allEmpty = true
         let atLeastOneValid: boolean = false;
@@ -120,7 +121,9 @@ export default class InsightFacade implements IInsightFacade {
 
         return new Promise<string[]>((resolve, reject) => {
             let idTestRet = this.idTestHelper(id, "add", kind);
-            if (idTestRet !== null) { return reject(idTestRet); }
+            if (idTestRet !== null) {
+                return reject(idTestRet);
+            }
             // z = unzipped jszip object
             return Promise.all([zip.loadAsync(content, { base64: true })]).then((z: JSZip[]) => {
                 z[0].folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
@@ -129,7 +132,9 @@ export default class InsightFacade implements IInsightFacade {
                 });
                 return Promise.all(coursePromisesArray);
             }).then((resolvedCourses: string[]) => {
-                if (!resolvedCourses.length) { return reject(new InsightError("empty")); }
+                if (!resolvedCourses.length) {
+                    return reject(new InsightError("empty"));
+                }
                 const detailedDataset: DetailedDataset = {
                     id: id, data: [], kind: kind
                 };
@@ -146,7 +151,9 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
                 detailedDataset.data = this.listOfSections;
-                if (!atLeastOneValid) { return reject(new InsightError("zip contains only empty jsons")); }
+                if (!atLeastOneValid) {
+                    return reject(new InsightError("zip contains only empty jsons"));
+                }
                 fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
 
                 const retDataset: InsightDataset = {
