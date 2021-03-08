@@ -25,7 +25,7 @@ export default class InsightFacade implements IInsightFacade {
         this.numRows = 0;
     }
 
-    // tests id and returns error message.
+    // tests id and returns error message if invalid, null if valid.
     public idTestHelper(id: string, op: string, kind?: InsightDatasetKind): Error {
         let matchUnderscore: RegExp = /^[^_]+$/;
         let matchOnlySpaces: RegExp = /^\s+$/;
@@ -109,9 +109,23 @@ export default class InsightFacade implements IInsightFacade {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/tslint/config
+
+    // returns true if the string is a valid course json
+    private handleCourseJSONString(courseJSONString: string): boolean {
+        let valid = false;
+        if (courseJSONString) {
+            try {
+                this.processJSONString(courseJSONString);
+                valid = true;
+            } catch (err) {
+                // If an individual file is invalid for any reason, skip over it.
+                return valid;
+            }
+        }
+        return valid;
+    }
+
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        // every file is {"result": [{}]} if allEmpty = true
         let atLeastOneValid: boolean = false;
         let coursePromisesArray: Array<Promise<string>> = [];
         this.numRows = 0;
@@ -135,21 +149,14 @@ export default class InsightFacade implements IInsightFacade {
                 if (!resolvedCourses.length) {
                     return reject(new InsightError("empty"));
                 }
+                for (const courseJSONString of resolvedCourses) {
+                    if (this.handleCourseJSONString(courseJSONString)) {
+                        atLeastOneValid = true;
+                    }
+                }
                 const detailedDataset: DetailedDataset = {
                     id: id, data: [], kind: kind
                 };
-                for (const courseJSONString of resolvedCourses) {
-                    if (courseJSONString) {
-                        try {
-                            this.processJSONString(courseJSONString);
-                            atLeastOneValid = true;
-                        } catch (err) {
-                            // If an individual file is invalid for any reason, skip over it.
-                            // return reject(new InsightError(err));
-                            continue;
-                        }
-                    }
-                }
                 detailedDataset.data = this.listOfSections;
                 if (!atLeastOneValid) {
                     return reject(new InsightError("zip contains only empty jsons"));
