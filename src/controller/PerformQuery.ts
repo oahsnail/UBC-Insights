@@ -23,36 +23,24 @@ export default class PerformQuery {
     public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): boolean {
         let mfield = mkey.split("_", 2)[1];
         let x = jsonDataSingle[mfield];
-        switch (mCompOp) {
-            case "LT": {
-                if (x < mkeyVal) {
-                    this.resultArr.push(jsonDataSingle);
-                    return true;
-                }
-                break;
-            }
-            case "GT": {
-                if (x > mkeyVal) {
-                    this.resultArr.push(jsonDataSingle);
-                    return true;
-                }
-                break;
-            }
-            case "EQ": {
-                if (x === mkeyVal) {
-                    this.resultArr.push(jsonDataSingle);
-                    return true;
-                }
-                break;
-            }
+        if (mCompOp === "LT" && x < mkeyVal) {
+            this.resultArr.push(jsonDataSingle);
+            return true;
+        }
+        if (mCompOp === "GT" && x > mkeyVal) {
+            this.resultArr.push(jsonDataSingle);
+            return true;
+        }
+        if (mCompOp === "EQ" && x === mkeyVal) {
+            this.resultArr.push(jsonDataSingle);
+            return true;
         }
         return false;
     }
 
-    public pushS(sfield: string, inputStr: any, data: any): boolean {
-        let matchInputStr: RegExp = /[*]/;
+    public pushS(sfield: string, inputStr: any, data: any, type: string): boolean {
         let pushed = false;
-        if (matchInputStr.test(inputStr)) {
+        if (type === "end") {
             for (const r of data) {
                 let x = r[sfield];
                 if (x.startsWith(inputStr.substr(0, inputStr.length - 1))) {
@@ -60,7 +48,17 @@ export default class PerformQuery {
                     pushed = true;
                 }
             }
-        } else {
+        }
+        if (type === "beg") {
+            for (const r of data) {
+                let x = r[sfield];
+                if (x.endsWith(inputStr.substr(1))) {
+                    this.resultArr.push(r);
+                    pushed = true;
+                }
+            }
+        }
+        if (type === "none") {
             for (const r of data) {
                 let x = r[sfield];
                 if (x === inputStr) {
@@ -175,30 +173,29 @@ export default class PerformQuery {
         } else {
             let wholeInputStr = Object.values(jsonObj.IS)[0] as string;
             let strLen = wholeInputStr.length;
+            let sfieldConnected = Object.keys(jsonObj.IS)[0];
+            let sfield = sfieldConnected.split("_", 2);
+            let inputStr = Object.values(jsonObj.IS)[0];
             if (wholeInputStr.charAt(0) === "*" && wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(1, wholeInputStr.length - 2);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "btwn");
             } else if (wholeInputStr.charAt(0) === "*") {
                 let inputString = wholeInputStr.substr(1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
             } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                let sfieldConnected = Object.keys(jsonObj.IS)[0];
-                let sfield = sfieldConnected.split("_", 2);
-                let inputStr = Object.values(jsonObj.IS)[0];
-                this.pushS(sfield[1], inputStr, this.jsonData.data);
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "end");
             } else {
-                let sfieldConnected = Object.keys(jsonObj.IS)[0];
-                let sfield = sfieldConnected.split("_", 2);
-                let inputStr = Object.values(jsonObj.IS)[0];
-                this.pushS(sfield[1], inputStr, this.jsonData.data);
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "none");
             }
         }
         return true;
