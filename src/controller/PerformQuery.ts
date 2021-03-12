@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import * as fs from "fs-extra";
 import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
 
@@ -40,6 +41,15 @@ export default class PerformQuery {
 
     public pushS(sfield: string, inputStr: any, data: any, type: string): boolean {
         let pushed = false;
+        if (type === "btwn") {
+            for (const r of data) {
+                let x = r[sfield];
+                if (x.includes(inputStr.substr(1, inputStr.length - 2))) {
+                    this.resultArr.push(r);
+                    pushed = true;
+                }
+            }
+        }
         if (type === "end") {
             for (const r of data) {
                 let x = r[sfield];
@@ -288,7 +298,7 @@ export default class PerformQuery {
                 this.parseQuery(query, true);
                 this.handleOptions(query);
             } catch (error) {
-                return reject(error);
+                return reject(new InsightError(error));
             }
             return resolve(this.resultArr);
         });

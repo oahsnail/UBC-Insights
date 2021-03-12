@@ -20,11 +20,81 @@
     "isQueryValid": true,
     "result": [
         {
-            "courses_dept": "math",
-            "courses_instructor": "",
-            "courses_title": "df calc ap ph sc",
-            "courses_id": "100",
-            "courses_uuid": "89960"
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "27554"
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "62719"
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "62722"
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "75621"
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "79469"
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "79472"
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "85069"
+        },
+        {
+            "courses_dept": "adhe",
+            "courses_instructor": "walker, judith",
+            "courses_title": "teach adult",
+            "courses_id": "327",
+            "courses_uuid": "91925"
+        },
+        {
+            "courses_dept": "edst",
+            "courses_instructor": "walker, judith",
+            "courses_title": "fnds ad lrng ed",
+            "courses_id": "503",
+            "courses_uuid": "15937"
+        },
+        {
+            "courses_dept": "edst",
+            "courses_instructor": "walker, judith",
+            "courses_title": "comp&intl ad ed",
+            "courses_id": "535",
+            "courses_uuid": "76424"
+        },
+        {
+            "courses_dept": "edst",
+            "courses_instructor": "walker, judith",
+            "courses_title": "work & learning",
+            "courses_id": "575",
+            "courses_uuid": "76444"
         }
     ]
 }
