@@ -1,5 +1,4 @@
 import * as fs from "fs-extra";
-import Log from "../Util";
 import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
 
 export default class PerformQuery {
@@ -11,12 +10,10 @@ export default class PerformQuery {
     public jsonData: any;
     public idstring: any;
     public maxResultSize: number;
-
     constructor() {
         this.mfieldArr = ["avg", "pass", "fail", "audit", "year"];
         this.sfieldArr = ["dept", "id", "instructor", "title", "uuid"];
-        this.allFields = ["courses_dept", "courses_id",
-            "courses_instructor", "courses_title", "courses_uuid",
+        this.allFields = ["courses_dept", "courses_id", "courses_instructor", "courses_title", "courses_uuid",
             "courses_avg", "courses_pass", "courses_fail", "courses_audit", "courses_year"];
         this.resultArr = [];
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
@@ -24,41 +21,50 @@ export default class PerformQuery {
     }
 
     public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): boolean {
-        // mfield eg "avg" or "pass" or something
         let mfield = mkey.split("_", 2)[1];
         let x = jsonDataSingle[mfield];
-        switch (mCompOp) {
-            case "LT": {
-                if (x < mkeyVal) {
-                    this.resultArr.push(jsonDataSingle);
-                    return true;
-                }
-                break;
-            }
-            case "GT": {
-                if (x > mkeyVal) {
-                    this.resultArr.push(jsonDataSingle);
-                    return true;
-                }
-                break;
-            }
-            case "EQ": {
-                if (x === mkeyVal) {
-                    this.resultArr.push(jsonDataSingle);
-                    return true;
-                }
-                break;
-            }
+        if (mCompOp === "LT" && x < mkeyVal) {
+            this.resultArr.push(jsonDataSingle);
+            return true;
+        }
+        if (mCompOp === "GT" && x > mkeyVal) {
+            this.resultArr.push(jsonDataSingle);
+            return true;
+        }
+        if (mCompOp === "EQ" && x === mkeyVal) {
+            this.resultArr.push(jsonDataSingle);
+            return true;
         }
         return false;
     }
-    public pushS(sfield: string, inputStr: any, data: any): boolean {
+
+    public pushS(sfield: string, inputStr: any, data: any, type: string): boolean {
         let pushed = false;
-        for (const r of data) {
-            let x = r[sfield];
-            if (x === inputStr) {
-                this.resultArr.push(r);
-                pushed = true;
+        if (type === "end") {
+            for (const r of data) {
+                let x = r[sfield];
+                if (x.startsWith(inputStr.substr(0, inputStr.length - 1))) {
+                    this.resultArr.push(r);
+                    pushed = true;
+                }
+            }
+        }
+        if (type === "beg") {
+            for (const r of data) {
+                let x = r[sfield];
+                if (x.endsWith(inputStr.substr(1))) {
+                    this.resultArr.push(r);
+                    pushed = true;
+                }
+            }
+        }
+        if (type === "none") {
+            for (const r of data) {
+                let x = r[sfield];
+                if (x === inputStr) {
+                    this.resultArr.push(r);
+                    pushed = true;
+                }
             }
         }
         if (pushed) {
@@ -68,7 +74,6 @@ export default class PerformQuery {
     }
 
     public handleOptions(query: any): boolean {
-        // "COLUMNS": ["courses_dept", "courses_avg"],
         let colArray: string[] = Object.values(query.OPTIONS.COLUMNS);
         let orderBy: any = null;
         if (query.OPTIONS.ORDER) {
@@ -103,7 +108,6 @@ export default class PerformQuery {
         if (this.resultArr.length > this.maxResultSize) {
             throw new ResultTooLargeError();
         }
-        // sort
         if (orderBy) {
             this.resultArr.sort((a, b) => {
                 if (a[orderBy] > b[orderBy]) {
@@ -169,26 +173,30 @@ export default class PerformQuery {
         } else {
             let wholeInputStr = Object.values(jsonObj.IS)[0] as string;
             let strLen = wholeInputStr.length;
+            let sfieldConnected = Object.keys(jsonObj.IS)[0];
+            let sfield = sfieldConnected.split("_", 2);
+            let inputStr = Object.values(jsonObj.IS)[0];
             if (wholeInputStr.charAt(0) === "*" && wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(1, wholeInputStr.length - 2);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "btwn");
             } else if (wholeInputStr.charAt(0) === "*") {
                 let inputString = wholeInputStr.substr(1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
             } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "end");
+            } else {
+                this.pushS(sfield[1], inputStr, this.jsonData.data, "none");
             }
-            let sfieldConnected = Object.keys(jsonObj.IS)[0];
-            let sfield = sfieldConnected.split("_", 2);
-            let inputStr = Object.values(jsonObj.IS)[0];
-            this.pushS(sfield[1], inputStr, this.jsonData.data);
         }
         return true;
     }
@@ -230,11 +238,9 @@ export default class PerformQuery {
             return this.resultArr;
         }
         try {
-            // mcomparator
             if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
                 this.mCompareHandler(jsonObj, this.jsonData);
             }
-            // scomparators
             if (jsonObj.IS) {
                 this.sCompareHandler(jsonObj);
             }
