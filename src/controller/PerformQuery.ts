@@ -1,6 +1,6 @@
-/* eslint-disable max-lines */
 import * as fs from "fs-extra";
 import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
+import PerformQueryCourseFunc from "./PerformQueryCourseFunc";
 
 export default class PerformQuery {
     public mfieldArr: string[];
@@ -12,75 +12,13 @@ export default class PerformQuery {
     public idstring: any;
     public maxResultSize: number;
     constructor() {
-        this.mfieldArr = ["avg", "pass", "fail", "audit", "year"];
+        this.mfieldArr = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
         this.sfieldArr = ["dept", "id", "instructor", "title", "uuid"];
         this.allFields = ["courses_dept", "courses_id", "courses_instructor", "courses_title", "courses_uuid",
             "courses_avg", "courses_pass", "courses_fail", "courses_audit", "courses_year"];
         this.resultArr = [];
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
         this.maxResultSize = 5000;
-    }
-
-    public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): boolean {
-        let mfield = mkey.split("_", 2)[1];
-        let x = jsonDataSingle[mfield];
-        if (mCompOp === "LT" && x < mkeyVal) {
-            this.resultArr.push(jsonDataSingle);
-            return true;
-        }
-        if (mCompOp === "GT" && x > mkeyVal) {
-            this.resultArr.push(jsonDataSingle);
-            return true;
-        }
-        if (mCompOp === "EQ" && x === mkeyVal) {
-            this.resultArr.push(jsonDataSingle);
-            return true;
-        }
-        return false;
-    }
-
-    public pushS(sfield: string, inputStr: any, data: any, type: string): boolean {
-        let pushed = false;
-        if (type === "btwn") {
-            for (const r of data) {
-                let x = r[sfield];
-                if (x.includes(inputStr.substr(1, inputStr.length - 2))) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
-            }
-        }
-        if (type === "end") {
-            for (const r of data) {
-                let x = r[sfield];
-                if (x.startsWith(inputStr.substr(0, inputStr.length - 1))) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
-            }
-        }
-        if (type === "beg") {
-            for (const r of data) {
-                let x = r[sfield];
-                if (x.endsWith(inputStr.substr(1))) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
-            }
-        }
-        if (type === "none") {
-            for (const r of data) {
-                let x = r[sfield];
-                if (x === inputStr) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
-            }
-        }
-        if (pushed) {
-            return true;
-        }
-        return false;
     }
 
     public handleOptions(query: any): boolean {
@@ -131,6 +69,7 @@ export default class PerformQuery {
     }
 
     public mCompareHandler(jsonObj: any, jsonData: any): boolean {
+        let p = new PerformQueryCourseFunc();
         let keyObj: any;
         let mCompOp: string;
         if (jsonObj.hasOwnProperty("LT")) {
@@ -158,7 +97,8 @@ export default class PerformQuery {
         }
         if (this.mfieldArr.includes(mkey)) {
             for (const singleCourse of jsonData.data) {
-                this.pushM(mCompOp, mkey, mkeyVal, singleCourse);
+                let valuePushM = p.pushM(mCompOp, mkey, mkeyVal, singleCourse);
+                this.pushToResultArr(valuePushM[0], valuePushM[1]);
             }
         } else {
             throw new InsightError("Invalid mkey");
@@ -167,6 +107,7 @@ export default class PerformQuery {
     }
 
     public sCompareHandler(jsonObj: any): boolean {
+        let p = new PerformQueryCourseFunc();
         let matchInputStr: RegExp = /[*]/;
         if (this.filters.includes(jsonObj.IS)) {
             this.parseQuery(jsonObj.IS, false);
@@ -191,27 +132,37 @@ export default class PerformQuery {
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "btwn");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "btwn");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(0) === "*") {
                 let inputString = wholeInputStr.substr(1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
+                let valuePushS =  p.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "end");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "end");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else {
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "none");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "none");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             }
         }
         return true;
     }
 
-    private initializeParse(jsonObj: any) {
+    public pushToResultArr(valueOfPush: boolean, dataPush: any[]) {
+        if (valueOfPush === true) {
+            this.resultArr.push(...dataPush);
+        }
+    }
+
+    public initializeParse(jsonObj: any) {
         let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
         this.idstring = wholeKey.split("_", 1);
         this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
@@ -269,32 +220,12 @@ export default class PerformQuery {
         return this.resultArr;
     }
 
-    public missingKeys(jsonObj: any): boolean {
-        let requiredValues = Object.keys(RequiredQueryKeys);
-        for (const v of requiredValues) {
-            if (!jsonObj.hasOwnProperty(v)) {
-                throw new InsightError("Missing where or options");
-            }
-        }
-        if (!jsonObj.OPTIONS.hasOwnProperty("COLUMNS")) {
-            throw new InsightError("Missing columns");
-        }
-        if (jsonObj.OPTIONS.hasOwnProperty("ORDER")) {
-            if (jsonObj.OPTIONS.ORDER === null) {
-                throw new InsightError("Order is null");
-            }
-        }
-        if (jsonObj.OPTIONS.COLUMNS.length === 0 || jsonObj.OPTIONS.COLUMNS.includes(null)) {
-            throw new InsightError("either columns is null or columns length is 0");
-        }
-        return true;
-    }
-
     public performQuery(query: any): Promise<any[]> {
+        let p = new PerformQueryCourseFunc();
         this.resultArr = [];
         return new Promise<any[]>((resolve, reject) => {
             try {
-                this.missingKeys(query);
+                p.missingKeys(query);
                 this.parseQuery(query, true);
                 this.handleOptions(query);
             } catch (error) {
