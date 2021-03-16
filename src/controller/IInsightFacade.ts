@@ -52,6 +52,12 @@ export interface SectionObject {
     year: number;
 }
 
+export interface InsightData {
+    listOfDatasets: InsightDataset[];
+    listOfSections: SectionObject[];
+    numRows: number;
+}
+
 export class InsightError extends Error {
     constructor(...args: any[]) {
         super(...args);
