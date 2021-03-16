@@ -1,4 +1,6 @@
+/* eslint-disable no-console */
 import JSZip = require("jszip");
+import http = require("http");
 import * as fs from "fs-extra";
 import {
     DetailedDataset,
@@ -8,6 +10,7 @@ import {
     RequiredCourseProperties, SectionObject
 } from "./IInsightFacade";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
+import { rejects } from "assert";
 
 export default abstract class AddDataset {
     public insightData: InsightData;
@@ -137,6 +140,32 @@ export class AddCourseDataset extends AddDataset {
 
 export class AddRoomDataset extends AddDataset {
     public addDataset(id: string, content: string): Promise<string[]> {
-        throw new Error("Method not implemented.");
+        return new Promise<string[]>((resolve, reject) => {
+            reject(new InsightError("Not implemented"));
+        });
+    }
+
+    public getGeoLocation(encodedAddr: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let url = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team195/" + encodedAddr;
+            try {
+                http.get(url, (res) => {
+                    res.setEncoding("utf8");
+                    let rawData: string = "";
+                    res.on("data", (chunk) => {
+                        rawData += chunk;
+                    });
+                    res.on("end", () => {
+                        let jsonObj = JSON.parse(rawData);
+                        if (jsonObj.hasOwnProperty("error")) {
+                            return reject(new NotFoundError(jsonObj.error));
+                        }
+                        return resolve(JSON.parse(rawData));
+                    });
+                });
+            } catch (error) {
+                return reject(new InsightError(error));
+            }
+        });
     }
 }

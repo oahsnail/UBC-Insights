@@ -6,6 +6,7 @@ import { InsightDataset, InsightDatasetKind, InsightError, NotFoundError } from 
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
+import { AddRoomDataset } from "../src/controller/AddDataset";
 
 // This extends chai with assertions that natively support Promises
 chai.use(chaiAsPromised);
@@ -82,6 +83,19 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         } catch (err) {
             Log.error(err);
         }
+    });
+
+    it("getGeoLocation should return object with lat and long", function () {
+        const addRoom = new AddRoomDataset(insightFacade.insightData);
+        const expected: any = { lat: 49.26125, lon: -123.24807 };
+        const futureResult: Promise<string> = addRoom.getGeoLocation("6245%20Agronomy%20Road%20V6T%201Z4");
+        return expect(futureResult).to.eventually.deep.equal(expected);
+    });
+
+    it("getGeoLocation should return error: address not found", function () {
+        const addRoom = new AddRoomDataset(insightFacade.insightData);
+        const futureResult: Promise<string> = addRoom.getGeoLocation("da_trap_house");
+        return expect(futureResult).to.be.rejectedWith(NotFoundError);
     });
 
     // This is a unit test. You should create more like this!
