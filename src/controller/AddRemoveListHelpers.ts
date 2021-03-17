@@ -1,34 +1,41 @@
-import { InsightData, InsightError, NotFoundError } from "./IInsightFacade";
+import { InsightError, NotFoundError } from "./IInsightFacade";
 
 export class AddRemoveListHelpers {
-    public static getListOfDatasetIds(insightData: InsightData): string[] {
+    public static getListOfDatasetIds(insightData: any): string[] {
         let listOfDatasetIds: string[] = [];
+        if (!insightData.hasOwnProperty("listOfDatasets")) {
+            throw new InsightError("Invalid type of insightData passed into letListOfDatasetIds");
+        }
         for (const d of insightData.listOfDatasets) {
             listOfDatasetIds.push(d.id);
         }
         return listOfDatasetIds;
     }
 
-    public static idTestHelper(id: string, op: string, insData: InsightData): Error {
+    public static idTestHelper(id: string, op: string, insData: any): Error {
         let matchUnderscore: RegExp = /^[^_]+$/;
         let matchOnlySpaces: RegExp = /^\s+$/;
-        let ListOfDatasetIds = this.getListOfDatasetIds(insData);
+        try {
+            let ListOfDatasetIds = this.getListOfDatasetIds(insData);
+            if (id === null) {
+                throw new InsightError("Null ID");
+            }
+            if (!matchUnderscore.test(id)) {
+                throw new InsightError("Underscore in id");
+            }
+            if (matchOnlySpaces.test(id) || id === "") {
+                throw new InsightError("Only whitespaces");
+            }
+            if (ListOfDatasetIds.includes(id) && op === "add") {
+                throw new InsightError("Cannot add, ID already exists");
+            }
+            if (!ListOfDatasetIds.includes(id) && op === "remove") {
+                throw new NotFoundError("Cannot remove, ID does not exists");
+            }
+        } catch (error) {
+            return error;
+        }
 
-        if (id === null) {
-            return new InsightError("Null ID");
-        }
-        if (!matchUnderscore.test(id)) {
-            return new InsightError("Underscore in id");
-        }
-        if (matchOnlySpaces.test(id) || id === "") {
-            return new InsightError("Only whitespaces");
-        }
-        if (ListOfDatasetIds.includes(id) && op === "add") {
-            return new InsightError("Cannot add, ID already exists");
-        }
-        if (!ListOfDatasetIds.includes(id) && op === "remove") {
-            return new NotFoundError("Cannot remove, ID does not exists");
-        }
         return null;
     }
 }

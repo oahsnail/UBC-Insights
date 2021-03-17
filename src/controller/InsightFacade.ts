@@ -1,13 +1,13 @@
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import Log from "../Util";
+import { AddCourseDataset, AddRoomDataset } from "./AddDataset";
+import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
 import {
-    DetailedDataset, IInsightFacade, InsightData, InsightDataset,
-    InsightDatasetKind, InsightError, NotFoundError, RequiredCourseProperties, SectionObject
+    IInsightFacade, InsightData as InsightData, InsightDataset,
+    InsightDatasetKind, InsightError
 } from "./IInsightFacade";
 import PerformQuery from "./PerformQuery";
-import AddDataset, { AddCourseDataset, AddRoomDataset } from "./AddDataset";
-import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -21,12 +21,19 @@ export default class InsightFacade implements IInsightFacade {
         Log.trace("InsightFacadeImpl::init()");
         this.insightData = {
             listOfDatasets: [],
-            listOfSections: [],
+            listOfCourseSections: [],
+            listOfRooms: [],
             numRows: 0
         };
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+
+        let idTestRet = AddRemoveListHelpers.idTestHelper(id, "add", this.insightData);
+        if (idTestRet !== null) {
+            return Promise.reject(idTestRet);
+        }
+
         if (kind === InsightDatasetKind.Courses) {
             let addCourse = new AddCourseDataset(this.insightData);
             return addCourse.addDataset(id, content);
@@ -34,7 +41,6 @@ export default class InsightFacade implements IInsightFacade {
             let addRoom = new AddRoomDataset(this.insightData);
             return addRoom.addDataset(id, content);
         }
-
     }
 
     public removeDataset(id: string): Promise<string> {

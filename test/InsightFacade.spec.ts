@@ -168,7 +168,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return expect(futureResult).to.be.rejectedWith(InsightError);
     });
 
-    it("Should add a Rooms dataset and accept it and add a valid dataset with courses", function () {
+    it("Should add a Rooms dataset and accept it and then add a valid dataset with courses", function () {
         const id: string = "rooms";
         const expectedRooms: string[] = [id];
         let futureResult: Promise<string[]> =
@@ -181,7 +181,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    it("Should add a courses dataset and accept it and add a valid dataset with courses", function () {
+    it("Should add a courses dataset and accept it and add a valid dataset with rooms", function () {
         const id: string = "courses";
         const expectedRooms: string[] = [id];
         let futureResult: Promise<string[]> =
@@ -194,7 +194,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    it("Should add a courses dataset and accept it and add a valid dataset with courses", function () {
+    it("Should add a rooms and courses dataset with switched id names", function () {
         const id: string = "rooms";
         const expectedRooms: string[] = [id];
         let futureResult: Promise<string[]> =
@@ -207,7 +207,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    it("Should add a Rooms dataset and accept it and add a valid dataset with courses", function () {
+    it("Should reject a Rooms with underscore in id then add a valid dataset with courses", function () {
         const id: string = "rooms_2";
         let futureResult: Promise<string[]> =
             insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);

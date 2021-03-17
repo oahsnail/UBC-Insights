@@ -1,22 +1,18 @@
-/* eslint-disable no-console */
 import JSZip = require("jszip");
 import http = require("http");
+import parse5 = require("parse5");
 import * as fs from "fs-extra";
+import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
 import {
-    DetailedDataset,
+    DetailedCourseDataset,
     InsightData,
     InsightDataset,
     InsightDatasetKind, InsightError, NotFoundError,
-    RequiredCourseProperties, SectionObject
+    RequiredCourseProperties, SectionData
 } from "./IInsightFacade";
-import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
-import { rejects } from "assert";
 
 export default abstract class AddDataset {
-    public insightData: InsightData;
-    constructor(insData: InsightData) {
-        this.insightData = insData;
-    }
+
 
     // tests to see if a json object has all the required properties
     // put this in own class
@@ -30,7 +26,18 @@ export default abstract class AddDataset {
         return true;
     }
 
-    public processJSONString(courseJSONString: string) {
+    abstract addDataset(id: string, content: string): Promise<string[]>;
+
+}
+
+export class AddCourseDataset extends AddDataset {
+    public insightCourseData: InsightData;
+    constructor(insCourseData: InsightData) {
+        super();
+        this.insightCourseData = insCourseData;
+    }
+
+    public processCourseJSONString(courseJSONString: string) {
         let object = JSON.parse(courseJSONString);
         if (!object.hasOwnProperty("result")) {
             throw new InsightError("Results key does not exist within this json");
@@ -49,7 +56,7 @@ export default abstract class AddDataset {
                     year = 1900;
                 }
 
-                const section: SectionObject = {
+                const section: SectionData = {
                     dept: i.Subject,
                     id: i.Course,
                     avg: i.Avg,
@@ -61,8 +68,8 @@ export default abstract class AddDataset {
                     uuid: i.id.toString(),
                     year: year
                 };
-                this.insightData.listOfSections.push(section);
-                this.insightData.numRows += 1;
+                this.insightCourseData.listOfCourseSections.push(section);
+                this.insightCourseData.numRows += 1;
             }
         }
     }
@@ -73,7 +80,7 @@ export default abstract class AddDataset {
         let valid = false;
         if (courseJSONString) {
             try {
-                this.processJSONString(courseJSONString);
+                this.processCourseJSONString(courseJSONString);
                 valid = true;
             } catch (err) {
                 // If an individual file is invalid for any reason, skip over it.
@@ -83,21 +90,16 @@ export default abstract class AddDataset {
         return valid;
     }
 
-    abstract addDataset(id: string, content: string): Promise<string[]>;
-
-}
-
-export class AddCourseDataset extends AddDataset {
     public addDataset(id: string, content: string): Promise<string[]> {
         let atLeastOneValid: boolean = false;
         let coursePromisesArray: Array<Promise<string>> = [];
-        this.insightData.numRows = 0;
-        this.insightData.listOfSections = [];
+        this.insightCourseData.numRows = 0;
+        this.insightCourseData.listOfCourseSections = [];
 
         let zip = new JSZip();
 
         return new Promise<string[]>((resolve, reject) => {
-            let idTestRet = AddRemoveListHelpers.idTestHelper(id, "add", this.insightData);
+            let idTestRet = AddRemoveListHelpers.idTestHelper(id, "add", this.insightCourseData);
             if (idTestRet !== null) {
                 return reject(idTestRet);
             }
@@ -117,19 +119,19 @@ export class AddCourseDataset extends AddDataset {
                         atLeastOneValid = true;
                     }
                 }
-                const detailedDataset: DetailedDataset = {
+                const detailedDataset: DetailedCourseDataset = {
                     id: id, data: [], kind: InsightDatasetKind.Courses
                 };
-                detailedDataset.data = this.insightData.listOfSections;
+                detailedDataset.data = this.insightCourseData.listOfCourseSections;
                 if (!atLeastOneValid) {
                     return reject(new InsightError("zip contains only empty jsons"));
                 }
                 fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
                 const retDataset: InsightDataset = {
-                    id: id, kind: InsightDatasetKind.Courses, numRows: this.insightData.numRows
+                    id: id, kind: InsightDatasetKind.Courses, numRows: this.insightCourseData.numRows
                 };
-                this.insightData.listOfDatasets.push(retDataset);
-                return resolve(AddRemoveListHelpers.getListOfDatasetIds(this.insightData));
+                this.insightCourseData.listOfDatasets.push(retDataset);
+                return resolve(AddRemoveListHelpers.getListOfDatasetIds(this.insightCourseData));
 
             }).catch((err) => {
                 return reject(new InsightError(err));
@@ -139,10 +141,10 @@ export class AddCourseDataset extends AddDataset {
 }
 
 export class AddRoomDataset extends AddDataset {
-    public addDataset(id: string, content: string): Promise<string[]> {
-        return new Promise<string[]>((resolve, reject) => {
-            reject(new InsightError("Not implemented"));
-        });
+    public insightRoomData: InsightData;
+    constructor(insRoomData: InsightData) {
+        super();
+        this.insightRoomData = insRoomData;
     }
 
     public getGeoLocation(encodedAddr: string): Promise<any> {
@@ -168,4 +170,57 @@ export class AddRoomDataset extends AddDataset {
             }
         });
     }
+
+    public parseHTML(html: string): Promise<parse5.Document> {
+        return Promise.resolve(parse5.parse(html));
+    }
+
+    public addDataset(id: string, content: string): Promise<string[]> {
+        let atLeastOneValid: boolean = false;
+        let roomsPromisesArray: Array<Promise<string>> = [];
+        let indexHtmlPromise: Promise<string>;
+        this.insightRoomData.numRows = 0;
+        this.insightRoomData.listOfRooms = [];
+
+        let zip = new JSZip();
+
+        return new Promise<string[]>((resolve, reject) => {
+
+            return Promise.all([zip.loadAsync(content, { base64: true })]).then((z: JSZip[]) => {
+                // indexHtmlPromise = z[0].file("rooms/index.htm").async;
+
+                z[0].folder("rooms").forEach(function (relativePath: string, file: JSZip.JSZipObject) {
+                    // put the json string into each element of coursePromisesArray
+                    roomsPromisesArray.push(file.async("text"));
+                });
+                return Promise.all(roomsPromisesArray);
+            }).then((resolvedCourses: string[]) => {
+                if (!resolvedCourses.length) {
+                    return reject(new InsightError("empty"));
+                }
+                // for (const courseJSONString of resolvedCourses) {
+                //     if (this.handleCourseJSONString(courseJSONString)) {
+                //         atLeastOneValid = true;
+                //     }
+                // }
+                // const detailedDataset: DetailedCourseDataset = {
+                //     id: id, data: [], kind: InsightDatasetKind.Courses
+                // };
+                // detailedDataset.data = this.insightCourseData.listOfCourseSections;
+                // if (!atLeastOneValid) {
+                //     return reject(new InsightError("zip contains only empty jsons"));
+                // }
+                // fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
+                // const retDataset: InsightDataset = {
+                //     id: id, kind: InsightDatasetKind.Courses, numRows: this.insightCourseData.numRows
+                // };
+                // this.insightCourseData.listOfDatasets.push(retDataset);
+                // return resolve(AddRemoveListHelpers.getListOfDatasetIds(this.insightCourseData));
+
+            }).catch((err) => {
+                return reject(new InsightError(err));
+            });
+        });
+    }
+
 }

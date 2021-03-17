@@ -33,13 +33,19 @@ export interface InsightDataset {
     numRows: number;
 }
 
-export interface DetailedDataset {
+export interface DetailedCourseDataset {
     id: string;
-    data: SectionObject[];
+    data: SectionData[];
     kind: InsightDatasetKind;
 }
 
-export interface SectionObject {
+export interface DetailedRoomDataset {
+    id: string;
+    data: RoomData[];
+    kind: InsightDatasetKind;
+}
+
+export interface SectionData {
     dept: string;
     id: number;
     avg: number;
@@ -52,9 +58,24 @@ export interface SectionObject {
     year: number;
 }
 
+export interface RoomData {
+    fullname: string;
+    shortname: string;
+    number: string; // yes, it's a string. i know.
+    name: string;
+    address: string;
+    lat: number;
+    lon: number;
+    seats: number;
+    type: string;
+    furniture: string;
+    href: string;
+}
+
 export interface InsightData {
     listOfDatasets: InsightDataset[];
-    listOfSections: SectionObject[];
+    listOfCourseSections: SectionData[];
+    listOfRooms: RoomData[];
     numRows: number;
 }
 

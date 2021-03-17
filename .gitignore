@@ -15,6 +15,7 @@ src/**/*.map
 test/*.js
 test/*.map
 ./data/
+/data/
 
 .DS_Store
 .env
