@@ -6,7 +6,7 @@ import { InsightDataset, InsightDatasetKind, InsightError, NotFoundError } from 
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
-import { AddRoomDataset } from "../src/controller/AddDataset";
+import AddRoomDataset from "../src/controller/AddRoomDataset";
 
 // This extends chai with assertions that natively support Promises
 chai.use(chaiAsPromised);
@@ -85,6 +85,14 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         }
     });
 
+    it("Should add dataset for rooms and accept it", function () {
+        const id: string = "rooms";
+        const expected: string[] = [id];
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        return expect(futureResult).to.eventually.deep.equal(expected);
+    });
+
     it("getGeoLocation should return object with lat and long", function () {
         const addRoom = new AddRoomDataset(insightFacade.insightData);
         const expected: any = { lat: 49.26125, lon: -123.24807 };
@@ -96,6 +104,32 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         const addRoom = new AddRoomDataset(insightFacade.insightData);
         const futureResult: Promise<string> = addRoom.getGeoLocation("da_trap_house");
         return expect(futureResult).to.be.rejectedWith(NotFoundError);
+    });
+
+    it("Should remove a valid dataset and list it", function () {
+        const id: string = "courses";
+        let expected: string[] = [id];
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
+            const id1: string = "courses3";
+            expected = [id, id1];
+            futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
+            return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
+                const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
+                return expect(removeFutureResult).to.eventually.deep.equal(id1)
+                    .then(() => {
+                        const Idataset1: InsightDataset = {
+                            id: "courses",
+                            kind: InsightDatasetKind.Courses,
+                            numRows: 64612
+                        };
+                        const expectedDataset: InsightDataset[] = [Idataset1];
+                        const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
+                        return expect(listFutureResult).to.eventually.deep.equal(expectedDataset);
+                    });
+            });
+        });
     });
 
     // This is a unit test. You should create more like this!
@@ -433,31 +467,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    it("Should remove a valid dataset and list it", function () {
-        const id: string = "courses";
-        let expected: string[] = [id];
-        let futureResult: Promise<string[]> =
-            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-        return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
-            const id1: string = "courses3";
-            expected = [id, id1];
-            futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Courses);
-            return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
-                const removeFutureResult: Promise<string> = insightFacade.removeDataset(id1);
-                return expect(removeFutureResult).to.eventually.deep.equal(id1)
-                    .then(() => {
-                        const Idataset1: InsightDataset = {
-                            id: "courses",
-                            kind: InsightDatasetKind.Courses,
-                            numRows: 64612
-                        };
-                        const expectedDataset: InsightDataset[] = [Idataset1];
-                        const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
-                        return expect(listFutureResult).to.eventually.deep.equal(expectedDataset);
-                    });
-            });
-        });
-    });
 
     it("Should not remove an unexisting dataset", function () {
         const id: string = "courses";

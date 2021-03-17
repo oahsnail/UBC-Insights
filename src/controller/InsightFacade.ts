@@ -1,8 +1,8 @@
-import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import Log from "../Util";
-import { AddCourseDataset, AddRoomDataset } from "./AddDataset";
+import AddCourseDataset from "./AddCourseDataset";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
+import AddRoomDataset from "./AddRoomDataset";
 import {
     IInsightFacade, InsightData as InsightData, InsightDataset,
     InsightDatasetKind, InsightError
