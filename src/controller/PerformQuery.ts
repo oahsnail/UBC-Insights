@@ -1,6 +1,8 @@
 import * as fs from "fs-extra";
 import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
 import PerformQueryCourseFunc from "./PerformQueryCourseFunc";
+import PerformQueryRoomsFunc from "./PerformQueryRoomsFunc";
+import Log from "../Util";
 
 export default class PerformQuery {
     public mfieldArr: string[];
@@ -13,22 +15,26 @@ export default class PerformQuery {
     public maxResultSize: number;
     constructor() {
         this.mfieldArr = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
-        this.sfieldArr = ["dept", "id", "instructor", "title", "uuid"];
-        this.allFields = ["courses_dept", "courses_id", "courses_instructor", "courses_title", "courses_uuid",
-            "courses_avg", "courses_pass", "courses_fail", "courses_audit", "courses_year"];
+        this.sfieldArr = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
+            "address", "type", "furniture", "href"];
         this.resultArr = [];
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
         this.maxResultSize = 5000;
     }
 
     public handleOptions(query: any): boolean {
+        let p = new PerformQueryRoomsFunc();
         let colArray: string[] = Object.values(query.OPTIONS.COLUMNS);
         let orderBy: any = null;
+        let sortExpansion = false;
         if (query.OPTIONS.ORDER) {
             let order: string = query.OPTIONS.ORDER;
             orderBy = order;
-            if (!colArray.includes(order)) {
-                throw new InsightError("Type in order is not contains in columns");
+            if (query.OPTIONS.ORDER.keys || query.OPTIONS.ORDER.dir) {
+                sortExpansion = true;
+            }
+            if (!colArray.includes(order) && sortExpansion === false) {
+                throw new InsightError("Type in order is not contained in columns");
             }
         }
         colArray = colArray.map((x) => x.split("_", 2)[1]);
@@ -54,16 +60,10 @@ export default class PerformQuery {
             }
         }
         if (this.resultArr.length > this.maxResultSize) {
-            throw new ResultTooLargeError();
+            throw new ResultTooLargeError("Greater than max result size");
         }
         if (orderBy) {
-            this.resultArr.sort((a, b) => {
-                if (a[orderBy] > b[orderBy]) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            });
+            p.sortArray(this.resultArr, query.OPTIONS.ORDER, orderBy, sortExpansion);
         }
         return false;
     }
@@ -170,14 +170,20 @@ export default class PerformQuery {
         this.mfieldArr = this.mfieldArr.map((x) => this.idstring.concat("_", x).join(""));
     }
 
+    // eslint-disable-next-line @typescript-eslint/tslint/config
     public parseQuery(jsonObj: any, firstCall: boolean): any[] {
+        let p = new PerformQueryCourseFunc();
+        try {
+            p.typeChecker(jsonObj);
+        } catch (error) {
+            throw new InsightError(error);
+        }
         if (firstCall) {
             this.initializeParse(jsonObj);
             return this.parseQuery(jsonObj.WHERE, false);
         } else if (Object.keys(jsonObj).length > 1) {
             throw new InsightError("Can't have more than one filter in a object");
         }
-
         if (jsonObj.AND) {
             let condRet = this.parseQuery(jsonObj.AND[0], false);
             for (let i = 1; i < Object.keys(jsonObj.AND).length; i++) {
@@ -198,15 +204,11 @@ export default class PerformQuery {
             this.resultArr = condRet;
             return this.resultArr;
         }
-        try {
-            if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
-                this.mCompareHandler(jsonObj, this.jsonData);
-            }
-            if (jsonObj.IS) {
-                this.sCompareHandler(jsonObj);
-            }
-        } catch (error) {
-            throw new InsightError(error);
+        if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
+            this.mCompareHandler(jsonObj, this.jsonData);
+        }
+        if (jsonObj.IS) {
+            this.sCompareHandler(jsonObj);
         }
         if (jsonObj.NOT) {
             let cond1 = this.parseQuery(jsonObj.NOT, false);
@@ -214,7 +216,8 @@ export default class PerformQuery {
             this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
             return this.resultArr;
         }
-        if (!this.allFields.includes(Object.keys(jsonObj)[0]) && !this.filters.includes(Object.keys(jsonObj)[0])) {
+        if (!this.mfieldArr.includes(Object.keys(jsonObj)[0]) && !this.filters.includes(Object.keys(jsonObj)[0])
+            && !this.sfieldArr.includes(Object.keys(jsonObj)[0])) {
             throw new InsightError("invalid filter key");
         }
         return this.resultArr;
@@ -229,7 +232,11 @@ export default class PerformQuery {
                 this.parseQuery(query, true);
                 this.handleOptions(query);
             } catch (error) {
+                if (error.message === "Greater than max result size") {
+                    return reject (new ResultTooLargeError(error));
+                }
                 return reject(new InsightError(error));
+
             }
             return resolve(this.resultArr);
         });

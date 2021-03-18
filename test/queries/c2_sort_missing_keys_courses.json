@@ -1,0 +1,21 @@
+{
+    "title": "Invalid SORT, missing keys column",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 97
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": {
+                "dir": "DOWN"
+            }
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
