@@ -33,6 +33,7 @@ export interface InsightDataset {
     numRows: number;
 }
 
+// the detailed datasets are what we push to the json file that persists on disk.
 export interface DetailedCourseDataset {
     id: string;
     data: SectionData[];

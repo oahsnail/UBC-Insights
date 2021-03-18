@@ -132,7 +132,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    // This is a unit test. You should create more like this!
+    // // This is a unit test. You should create more like this!
     it("Should add a valid dataset: small dataset", function () {
         const id: string = "coursessmallvalid";
         const expected: string[] = [id];
@@ -162,14 +162,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         const futureResult: Promise<string[]> =
             insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
         return expect(futureResult).to.be.rejectedWith(InsightError);
-    });
-
-    it("Should add dataset for rooms and accept it", function () {
-        const id: string = "rooms";
-        const expected: string[] = [id];
-        const futureResult: Promise<string[]> =
-            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
-        return expect(futureResult).to.eventually.deep.equal(expected);
     });
 
     it("Should add dataset for rooms and accept it", function () {

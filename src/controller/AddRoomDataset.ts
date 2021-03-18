@@ -3,13 +3,14 @@ import http = require("http");
 import parse5 = require("parse5");
 import AddDataset from "./AddDataset";
 import { InsightData, InsightError, NotFoundError } from "./IInsightFacade";
+import Log from "../Util";
 
 export default class AddRoomDataset extends AddDataset {
-    private shortnameArrayFromIndexHTML: string[];
+    private filePathsFromHtmArray: string[];
     public insightData: InsightData;
     constructor(insData: InsightData) {
         super();
-        this.shortnameArrayFromIndexHTML = [];
+        this.filePathsFromHtmArray = [];
         this.insightData = insData;
     }
 
@@ -41,72 +42,61 @@ export default class AddRoomDataset extends AddDataset {
         return Promise.resolve(parse5.parse(html));
     }
 
-    // TODO
-    public fillShortnameArrayFromIndexHTML(htmlJSON: any): boolean {
+    public loadFilePathsFromHtm(htmlJSON: any) {
         // From: Noa's c2 video posted on piazza
-        if (htmlJSON.nodeName === "td" &&
-            htmlJSON.attrs[0].value === "views-field views-field-field-building-code") {
-            this.shortnameArrayFromIndexHTML.push(htmlJSON.childNodes[0].value.trim());
+        if (htmlJSON.nodeName === "a" && htmlJSON.attrs.length >= 2 &&
+            htmlJSON.attrs[1].value === "Building Details and Map") {
+            if (!this.filePathsFromHtmArray.includes(htmlJSON.attrs[0].value)) {
+                let path = "rooms" + htmlJSON.attrs[0].value.replace(".", "");
+                this.filePathsFromHtmArray.push(path);
+            }
         }
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
             for (let child of htmlJSON.childNodes) {
-                let ret = this.fillShortnameArrayFromIndexHTML(child);
-                if (ret !== false) {
-                    return ret;
-                }
+                this.loadFilePathsFromHtm(child);
             }
         }
-        return false;
     }
 
+    // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string): Promise<string[]> {
         let roomsPromisesArray: Array<Promise<string>> = [];
-        let indexHtmlString: string;
-        this.shortnameArrayFromIndexHTML = [];
+        this.filePathsFromHtmArray = [];
         this.insightData.numRows = 0;
         this.insightData.listOfRooms = [];
 
         let zip = new JSZip();
 
+        // TODO: we currently have a list of all the raw HTMLs form all the buildings
+        // we now need to
+        // 1. parse through each one to find the necessary attributes like shortname, address, etc and
+        //    store that in a RoomData object
+        // 2. push that RoomData object to this.insightData.listOfRooms: RoomData[]
+        // 3. put all the necessary information into a DetailedRoomDataset object, and write that to a json
+        //    file on disk in the ./data folder, and call it id.json, where id is the id of the room.
+
         return new Promise<string[]>((resolve, reject) => {
 
-            return Promise.all([zip.loadAsync(content, { base64: true })]).then((z: JSZip[]) => {
-                // read index.htm into a variable
-                z[0].file("rooms/index.htm").async("text").then((htmlstring: string) => {
-                    indexHtmlString = htmlstring;
+            return (Promise.all([zip.loadAsync(content, { base64: true })])).then((z: JSZip[]) => {
+                return z[0].file("rooms/index.htm").async("text").then((htmlstring: string) => {
+                    return this.parseHTML(htmlstring);
+                }).then((htmlJSON: any) => {
+                    this.loadFilePathsFromHtm(htmlJSON);
+                    // eslint-disable-next-line no-console
+                    console.log(this.filePathsFromHtmArray);
+                    return z;
+                }).then((jsz: JSZip[]) => {
+                    for (const path of this.filePathsFromHtmArray) {
+                        roomsPromisesArray.push(jsz[0].file(path).async("text"));
+                    }
+                    return Promise.all(roomsPromisesArray);
                 }).then(() => {
-                    return this.parseHTML(indexHtmlString);
-                }).then((htmlJSON: parse5.Document) => {
-                    // Error: TypeError: Cannot read property 'fillShortnameArrayFromIndexHTML' of undefined
-                    this.fillShortnameArrayFromIndexHTML(htmlJSON);
+                    return;
                 });
-                // read all the buildings into a promise string array
-                z[0].folder("rooms").folder("campus").folder("discover").folder("buildings-and-classrooms")
-                    .forEach(function (relativePath: string, file: JSZip.JSZipObject) {
-                        // put the json string into each element of coursePromisesArray
-                        if (this.fillShortnameArrayFromIndexHTML.includes(file.name)) {
-                            roomsPromisesArray.push(file.async("text"));
-                        }
-
-                    });
-                return Promise.all(roomsPromisesArray);
-            }).then((resolvedRoomHtmls: string[]) => {
-                if (!resolvedRoomHtmls.length) {
-                    return reject(new InsightError("Empty or non-existant buildings-and-classrooms folder"));
-                }
-
-
-                // TODO Filter all the files in the buildings-and-classrooms by whats in index.htm
-
-                // TODO parse room html for all the room info
-                for (const htmlString of resolvedRoomHtmls) {
-                    let doc = this.parseHTML(htmlString);
-                }
-
-                return reject(new InsightError("not implemented"));
-
+            }).then(() => {
+                resolve(["not implemented"]);
             }).catch((err) => {
-                return reject(new InsightError(err));
+                reject(err);
             });
         });
     }
