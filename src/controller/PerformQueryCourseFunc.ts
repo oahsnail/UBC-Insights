@@ -4,11 +4,17 @@ import PerformQuery from "./PerformQuery";
 
 export default class PerformQueryCourseFunc {
     public filters: string[];
+    public mfieldArr: string[];
+    public sfieldArr: string[];
     constructor() {
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
+        this.mfieldArr = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+        this.sfieldArr = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
+            "address", "type", "furniture", "href"];
     }
 
     public missingKeys(jsonObj: any): boolean {
+        let dirOpt: string[] = ["UP", "DOWN"];
         let requiredValues = Object.keys(RequiredQueryKeys);
         for (const v of requiredValues) {
             if (!jsonObj.hasOwnProperty(v)) {
@@ -22,9 +28,28 @@ export default class PerformQueryCourseFunc {
             if (jsonObj.OPTIONS.ORDER === null) {
                 throw new InsightError("Order is null");
             }
+            if (jsonObj.OPTIONS.ORDER.keys || jsonObj.OPTIONS.ORDER.dir) {
+                if (!jsonObj.OPTIONS.ORDER.hasOwnProperty("keys") && jsonObj.OPTIONS.ORDER.hasOwnProperty("dir")) {
+                    throw new InsightError("Missing either keys or dir");
+                }
+                if (!dirOpt.includes(jsonObj.OPTIONS.ORDER.dir)) {
+                    throw new InsightError("Invalid keys in dir column");
+                }
+                let orderKeys: string[] = Object.values(jsonObj.OPTIONS.ORDER.keys);
+                let colArray: string[] = Object.values(jsonObj.OPTIONS.COLUMNS);
+                let arrayKeys = orderKeys.every((i) => colArray.includes(i));
+                if (arrayKeys === false) {
+                    throw new InsightError("Type in keys is not contained in columns");
+                }
+            }
         }
         if (jsonObj.OPTIONS.COLUMNS.length === 0 || jsonObj.OPTIONS.COLUMNS.includes(null)) {
             throw new InsightError("either columns is null or columns length is 0");
+        }
+        if (jsonObj.hasOwnProperty("TRANSFORMATIONS")) {
+            if (!jsonObj.TRANSFORMATIONS.hasOwnProperty("GROUP") || !jsonObj.TRANSFORMATIONS.hasOwnProperty("APPLY")) {
+                throw new InsightError("Transformations is missing group or apply columns");
+            }
         }
         return true;
     }
@@ -92,6 +117,22 @@ export default class PerformQueryCourseFunc {
             return [true, resultArray];
         }
         return [false, resultArray];
+    }
+
+    public typeChecker (jsonObj: any): boolean {
+        if (this.mfieldArr.includes(Object.keys(jsonObj)[0])) {
+            const mkeyVal = Object.keys(jsonObj)[0];
+            if (typeof mkeyVal !== "number") {
+                throw new InsightError("The value is supposed to be a number");
+            }
+        }
+        if (this.sfieldArr.includes(Object.keys(jsonObj)[0])) {
+            const skeyVal = Object.keys(jsonObj)[0];
+            if (typeof skeyVal !== "string") {
+                throw new InsightError("The value is supposed to be a string");
+            }
+        }
+        return true;
     }
 
 }
