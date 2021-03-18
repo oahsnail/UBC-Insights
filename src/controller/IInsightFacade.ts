@@ -73,6 +73,19 @@ export interface RoomData {
     href: string;
 }
 
+export interface RoomInfo {
+    number: string;
+    seats: number;
+    type: string;
+    furniture: string;
+    href: string;
+}
+
+export interface BuildingInfo {
+    fullname: string;
+    address: string;
+}
+
 export interface InsightData {
     listOfDatasets: InsightDataset[];
     listOfCourseSections: SectionData[];
