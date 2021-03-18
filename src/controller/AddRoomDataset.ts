@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-console */
 import JSZip = require("jszip");
 import http = require("http");
@@ -6,6 +7,7 @@ import AddDataset from "./AddDataset";
 import { BuildingInfo, InsightData, InsightError, NotFoundError, RoomData } from "./IInsightFacade";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
 import Log from "../Util";
+import { createJsonClient } from "restify";
 
 export default class AddRoomDataset extends AddDataset {
     private filePathsFromHtmArray: string[];
@@ -223,6 +225,28 @@ export default class AddRoomDataset extends AddDataset {
             }
         }
         return "";
+    }
+
+    public getShortName(htmlJSON: any): string {
+        if (htmlJSON.nodeName === "link" && htmlJSON.attrs[0].value === "shortlink" &&
+            htmlJSON.attrs[1].name === "href" && htmlJSON.attrs.length === 2) {
+            return htmlJSON.attrs[1].value;
+        }
+        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
+            for (let child of htmlJSON.childNodes) {
+                let rType = this.getRoomType(child);
+                if (rType !== "") {
+                    return rType;
+                }
+            }
+        }
+        return "";
+    }
+
+    public getRoomsName(htmlJSON: any): string {
+        let shortName = this.getShortName(htmlJSON);
+        let roomNum = this.getRoomNumber(htmlJSON);
+        return shortName.concat("_").concat(roomNum);
     }
 
     public hasRooms(htmlJSON: any): boolean {
