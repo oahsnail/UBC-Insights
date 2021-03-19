@@ -1,13 +1,17 @@
 /* eslint-disable max-lines */
 /* eslint-disable no-console */
 import JSZip = require("jszip");
+import * as fs from "fs-extra";
 import http = require("http");
 import parse5 = require("parse5");
 import AddDataset from "./AddDataset";
-import { BuildingInfo, InsightData, InsightError, NotFoundError, RoomData } from "./IInsightFacade";
+import {
+    BuildingInfo, DetailedRoomDataset, InsightData,
+    InsightDataset,
+    InsightDatasetKind, InsightError, NotFoundError, RoomInfo, RoomRowData
+} from "./IInsightFacade";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
 import Log from "../Util";
-import { createJsonClient } from "restify";
 
 export default class AddRoomDataset extends AddDataset {
     private filePathsFromHtmArray: string[];
@@ -61,30 +65,48 @@ export default class AddRoomDataset extends AddDataset {
         }
     }
 
+    public encodeAddress(address: string): string {
+        return address.replace(" ", "%20");
+    }
+
     public getRoomData(htmlJSON: any) {
         // check base case(no rooms in building file)
-        if (!this.hasRooms(htmlJSON)) {
-            let buildingInfo = this.getBuildingSpecificInfo(htmlJSON);
+        let buildingInfo: BuildingInfo;
+        let roomInfo: RoomInfo;
+        let geoInfo: any;
+        if (this.hasRooms(htmlJSON)) {
+            buildingInfo = this.getBuildingSpecificInfo(htmlJSON);
             console.log(buildingInfo);
-            let roomInfo = this.getRoomSpecificInfo(htmlJSON);
+            roomInfo = this.getRoomSpecificInfo(htmlJSON);
             console.log(roomInfo);
-            const roomData: RoomData = {
-                fullname: buildingInfo.fullname,
-                shortname: "",
-                number: "string", // yes, it's a string. i know.
-                name: "string",
-                address: buildingInfo.address,
-                lat: 0,
-                lon: 0,
-                seats: 0,
-                type: "string",
-                furniture: "string",
-                href: "string"
-            };
-            // append to this.InsightData();
 
+            this.getGeoLocation(this.encodeAddress(buildingInfo.address))
+                .then((geoObj) => {
+                    if (geoInfo.error) {
+                        geoInfo = { lat: 0, lon: 0 };
+                    } else {
+                        geoInfo = geoObj;
+                        console.log(geoInfo);
+                    }
+                    const roomData: RoomRowData = {
+                        fullname: buildingInfo.fullname,
+                        shortname: this.getShortName(htmlJSON),
+                        number: roomInfo.number, // yes, it's a string. i know.
+                        name: this.getRoomName(htmlJSON),
+                        address: buildingInfo.address,
+                        lat: geoInfo.lat,
+                        lon: geoInfo.lon,
+                        seats: roomInfo.seats,
+                        type: roomInfo.type,
+                        furniture: roomInfo.furniture,
+                        href: roomInfo.href
+                    };
+                    this.insightData.listOfRooms.push(roomData);
+                    this.insightData.numRows++;
+                });
         }
     }
+
 
     public getBuildingSpecificInfo(htmlJSON: any): BuildingInfo | any {
         if (htmlJSON.nodeName === "div" && htmlJSON.attrs[0].value === "building-info") {
@@ -125,30 +147,40 @@ export default class AddRoomDataset extends AddDataset {
         }
     }
 
-    public getRoomSpecificInfo(htmlJSON: any) {
-        let href: string = "";
-        let roomNumber: string = "";
-        let numSeats: number = 0;
-        let roomFurniture: string = "";
-        let roomType: string = "";
+    public getRoomSpecificInfo(htmlJSON: any): RoomInfo | null {
         // get table with all the rooms
         if (htmlJSON.nodeName === "tbody") {
             // loops through every room in the building
             for (const child of htmlJSON.childNodes) {
                 if (child.nodeName === "tr") {
-                    href = this.getRoomHref(child);
-                    roomNumber = this.getRoomNumber(child);
-                    numSeats = this.getRoomSeats(child);
-                    roomFurniture = this.getRoomFurniture(child);
-                    roomType = this.getRoomType(child);
+                    const roomRet: RoomInfo = {
+                        number: this.getRoomNumber(child),
+                        seats: this.getRoomSeats(child),
+                        type: this.getRoomType(child),
+                        furniture: this.getRoomFurniture(child),
+                        href: this.getRoomHref(child)
+                    };
+                    return roomRet;
                 }
             }
         }
+
+        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
+            for (let child of htmlJSON.childNodes) {
+                let ret = this.getRoomSpecificInfo(child);
+                if (ret !== null) {
+                    return ret;
+                }
+            }
+        }
+
+        return null;
+
     }
 
     public getRoomHref(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "a" && htmlJSON.attrs[0].name === "href" &&
-            htmlJSON.attrs[1].value === "Room Details" && htmlJSON.attrs === 2) {
+        if (htmlJSON.nodeName === "a" && htmlJSON.attrs[0].name === "href" && htmlJSON.attrs.length === 2
+            && htmlJSON.attrs[1].value === "Room Details") {
             return htmlJSON.attrs[0].value;
         }
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
@@ -170,17 +202,18 @@ export default class AddRoomDataset extends AddDataset {
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
             for (let child of htmlJSON.childNodes) {
                 let cap = this.getRoomSeats(child);
-                if (cap !== -1) {
+                if (cap !== 0) {
                     return cap;
                 }
             }
         }
-        return -1;
+        return 0;
     }
 
     public getRoomNumber(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "a" && htmlJSON.attrs[0].name === "href" &&
-            htmlJSON.attrs[1].value === "Room Details" && htmlJSON.attrs === 2) {
+        if (htmlJSON.nodeName === "a" && htmlJSON.attrs[0].name === "href"
+            && htmlJSON.attrs.length === 2
+            && htmlJSON.attrs[1].value === "Room Details") {
             return htmlJSON.childNodes[0].value;
         }
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
@@ -243,7 +276,7 @@ export default class AddRoomDataset extends AddDataset {
         return "";
     }
 
-    public getRoomsName(htmlJSON: any): string {
+    public getRoomName(htmlJSON: any): string {
         let shortName = this.getShortName(htmlJSON);
         let roomNum = this.getRoomNumber(htmlJSON);
         return shortName.concat("_").concat(roomNum);
@@ -257,7 +290,10 @@ export default class AddRoomDataset extends AddDataset {
         }
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
             for (let child of htmlJSON.childNodes) {
-                this.hasRooms(child);
+                let ret = this.hasRooms(child);
+                if (ret !== false) {
+                    return ret;
+                }
             }
         }
         return false;
@@ -292,7 +328,6 @@ export default class AddRoomDataset extends AddDataset {
                     return Promise.all(roomsPromisesArray);
                 }).then((resolvedRoomsHTMLArr: any[]) => {
                     let resolvedRoomJSONPromisesArr: any = [];
-                    Log.test(this.filePathsFromHtmArray);
                     for (const resolvedRoomHtml of resolvedRoomsHTMLArr) {
                         resolvedRoomJSONPromisesArr.push(this.parseHTML(resolvedRoomHtml));
                     }
@@ -304,6 +339,15 @@ export default class AddRoomDataset extends AddDataset {
                     return this.insightData;
                 });
             }).then((insData) => {
+                const detailedDataset: DetailedRoomDataset = {
+                    id: id, data: insData.listOfRooms, kind: InsightDatasetKind.Rooms
+                };
+                fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
+                insData.listOfDatasets.push();
+                const retDataset: InsightDataset = {
+                    id: id, kind: InsightDatasetKind.Rooms, numRows: insData.numRows
+                };
+                insData.listOfDatasets.push(retDataset);
                 resolve(AddRemoveListHelpers.getListOfDatasetIds(insData));
             }).catch((err) => {
                 reject(err);

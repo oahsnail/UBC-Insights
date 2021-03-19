@@ -42,7 +42,7 @@ export interface DetailedCourseDataset {
 
 export interface DetailedRoomDataset {
     id: string;
-    data: RoomData[];
+    data: RoomRowData[];
     kind: InsightDatasetKind;
 }
 
@@ -59,7 +59,7 @@ export interface SectionData {
     year: number;
 }
 
-export interface RoomData {
+export interface RoomRowData {
     fullname: string;
     shortname: string;
     number: string; // yes, it's a string. i know.
@@ -89,7 +89,7 @@ export interface BuildingInfo {
 export interface InsightData {
     listOfDatasets: InsightDataset[];
     listOfCourseSections: SectionData[];
-    listOfRooms: RoomData[];
+    listOfRooms: RoomRowData[];
     numRows: number;
 }
 

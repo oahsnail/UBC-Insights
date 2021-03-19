@@ -46,7 +46,7 @@ export default class AddCourseDataset extends AddDataset {
                     year: year
                 };
                 this.insightData.listOfCourseSections.push(section);
-                this.insightData.numRows += 1;
+                this.insightData.numRows++;
             }
         }
     }
@@ -97,9 +97,8 @@ export default class AddCourseDataset extends AddDataset {
                     }
                 }
                 const detailedDataset: DetailedCourseDataset = {
-                    id: id, data: [], kind: InsightDatasetKind.Courses
+                    id: id, data: this.insightData.listOfCourseSections, kind: InsightDatasetKind.Courses
                 };
-                detailedDataset.data = this.insightData.listOfCourseSections;
                 if (!atLeastOneValid) {
                     return reject(new InsightError("zip contains only empty jsons"));
                 }
