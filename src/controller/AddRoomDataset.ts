@@ -10,13 +10,16 @@ import {
     InsightDatasetKind, InsightError, NotFoundError, RoomInfo, RoomRowData
 } from "./IInsightFacade";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
+import GetBuildingRoomHelpers from "./GetBuildingRoomHelpers";
 
 export default class AddRoomDataset extends AddDataset {
     private filePathsFromHtmArray: string[];
+    private helper: GetBuildingRoomHelpers;
     public insightData: InsightData;
     constructor(insData: InsightData) {
         super();
         this.filePathsFromHtmArray = [];
+        this.helper = new GetBuildingRoomHelpers();
         this.insightData = insData;
     }
 
@@ -67,30 +70,13 @@ export default class AddRoomDataset extends AddDataset {
         return address.replace(" ", "%20");
     }
 
-    public hasRooms(htmlJSON: any): boolean {
-        // From: Noa's c2 video posted on piazza
-        if (htmlJSON.nodeName === "th" &&
-            htmlJSON.attrs[0].value === "views-field views-field-field-room-number") {
-            return true;
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let ret = this.hasRooms(child);
-                if (ret !== false) {
-                    return ret;
-                }
-            }
-        }
-        return false;
-    }
-
     public getRoomData(htmlJSON: any) {
         // check base case(no rooms in building file)
         let buildingInfo: BuildingInfo;
         let roomInfo: RoomInfo;
         let geoInfo: any;
-        if (this.hasRooms(htmlJSON)) {
-            let shortname = this.getShortName(htmlJSON);
+        if (this.helper.hasRooms(htmlJSON)) {
+            let shortname = this.helper.getShortName(htmlJSON);
             buildingInfo = this.getBuildingSpecificInfo(htmlJSON, shortname);
             roomInfo = this.getRoomSpecificInfo(htmlJSON, shortname);
 
@@ -128,8 +114,8 @@ export default class AddRoomDataset extends AddDataset {
 
     public getBuildingSpecificInfo(htmlJSON: any, shortname: string): BuildingInfo | any {
         if (htmlJSON.nodeName === "div" && htmlJSON.attrs[0].value === "building-info") {
-            let fullName = this.getBuildingFullName(htmlJSON.childNodes[1]);
-            let address = this.getBuildingAddress(htmlJSON.childNodes[3]);
+            let fullName = this.helper.getBuildingFullName(htmlJSON.childNodes[1]);
+            let address = this.helper.getBuildingAddress(htmlJSON.childNodes[3]);
 
             const buildingInfo: BuildingInfo = {
                 shortname: shortname,
@@ -150,22 +136,6 @@ export default class AddRoomDataset extends AddDataset {
         return false;
     }
 
-    public getBuildingFullName(htmlJSON: any): string {
-        if (htmlJSON.childNodes[0].nodeName === "span" && htmlJSON.childNodes[0].attrs[0].value === "field-content") {
-            return htmlJSON.childNodes[0].childNodes[0].value;
-        }
-        return null;
-    }
-
-    // TODO might wanna change this depending on expected behavior for missing addresses
-    public getBuildingAddress(htmlJSON: any): string {
-        try {
-            return htmlJSON.childNodes[0].childNodes[0].value;
-        } catch (err) {
-            throw new InsightError("Unexpected html formatting encountered in getBuildingAddress");
-        }
-    }
-
     public getRoomSpecificInfo(htmlJSON: any, shortname: string): RoomInfo | null {
         // get table with all the rooms
         if (htmlJSON.nodeName === "tbody") {
@@ -173,12 +143,12 @@ export default class AddRoomDataset extends AddDataset {
             for (const child of htmlJSON.childNodes) {
                 if (child.nodeName === "tr") {
                     const roomRet: RoomInfo = {
-                        number: this.getRoomNumber(child),
-                        name: shortname + "_" + this.getRoomNumber(child),
-                        seats: this.getRoomSeats(child),
-                        type: this.getRoomType(child),
-                        furniture: this.getRoomFurniture(child),
-                        href: this.getRoomHref(child)
+                        number: this.helper.getRoomNumber(child),
+                        name: shortname + "_" + this.helper.getRoomNumber(child),
+                        seats: this.helper.getRoomSeats(child),
+                        type: this.helper.getRoomType(child),
+                        furniture: this.helper.getRoomFurniture(child),
+                        href: this.helper.getRoomHref(child)
                     };
                     return roomRet;
                 }
@@ -194,104 +164,6 @@ export default class AddRoomDataset extends AddDataset {
             }
         }
         return null;
-    }
-
-    public getRoomHref(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "a" && htmlJSON.attrs[0].name === "href" && htmlJSON.attrs.length === 2
-            && htmlJSON.attrs[1].value === "Room Details") {
-            return htmlJSON.attrs[0].value;
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let href = this.getRoomHref(child);
-                if (href !== "") {
-                    return href;
-                }
-            }
-        }
-        return "";
-    }
-
-    public getRoomSeats(htmlJSON: any): number {
-        if (htmlJSON.nodeName === "td" &&
-            htmlJSON.attrs[0].value === "views-field views-field-field-room-capacity") {
-            return htmlJSON.childNodes[0].value.trim();
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let cap = this.getRoomSeats(child);
-                if (cap !== 0) {
-                    return cap;
-                }
-            }
-        }
-        return 0;
-    }
-
-    public getRoomNumber(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "a" && htmlJSON.attrs[0].name === "href"
-            && htmlJSON.attrs.length === 2
-            && htmlJSON.attrs[1].value === "Room Details") {
-            return htmlJSON.childNodes[0].value;
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let roomNum = this.getRoomNumber(child);
-                if (roomNum !== "") {
-                    return roomNum;
-                }
-            }
-        }
-        return "";
-    }
-
-
-    public getRoomFurniture(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "td" &&
-            htmlJSON.attrs[0].value === "views-field views-field-field-room-furniture") {
-            return htmlJSON.childNodes[0].value.trim();
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let furni = this.getRoomFurniture(child);
-                if (furni !== "") {
-                    return furni;
-                }
-            }
-        }
-        return "";
-    }
-
-    public getRoomType(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "td" &&
-            htmlJSON.attrs[0].value === "views-field views-field-field-room-type") {
-            return htmlJSON.childNodes[0].value.trim();
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let rType = this.getRoomType(child);
-                if (rType !== "") {
-                    return rType;
-                }
-            }
-        }
-        return "";
-    }
-
-    public getShortName(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "link" && htmlJSON.attrs[0].value === "shortlink" &&
-            htmlJSON.attrs[1].name === "href" && htmlJSON.attrs.length === 2) {
-            return htmlJSON.attrs[1].value;
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let rType = this.getRoomType(child);
-                if (rType !== "") {
-                    return rType;
-                }
-            }
-        }
-        return "";
     }
 
     public addDataset(id: string, content: string): Promise<string[]> {
@@ -322,6 +194,7 @@ export default class AddRoomDataset extends AddDataset {
                     return Promise.all(resolvedRoomJSONPromisesArr);
                 }).then((resolvedRoomsJSONArr) => {
                     for (const resolvedRoomJSON of resolvedRoomsJSONArr) {
+                        // this is being skipped over
                         this.getRoomData(resolvedRoomJSON);
                     }
                     return this.insightData;
