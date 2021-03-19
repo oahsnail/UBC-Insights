@@ -117,15 +117,16 @@ export default class GetBuildingRoomHelpers {
     }
 
     public getShortName(htmlJSON: any): string {
-        if (htmlJSON.nodeName === "link" && htmlJSON.attrs[0].value === "shortlink" &&
-            htmlJSON.attrs[1].name === "href" && htmlJSON.attrs.length === 2) {
+        if (htmlJSON.nodeName === "link" && htmlJSON.attrs[0].value === "shortlink"
+            && htmlJSON.attrs.length === 2
+            && htmlJSON.attrs[1].name === "href") {
             return htmlJSON.attrs[1].value;
         }
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
             for (let child of htmlJSON.childNodes) {
-                let rType = this.getRoomType(child);
-                if (rType !== "") {
-                    return rType;
+                let srtNameRet = this.getShortName(child);
+                if (srtNameRet !== "") {
+                    return srtNameRet;
                 }
             }
         }

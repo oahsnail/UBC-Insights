@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import http = require("http");
@@ -21,6 +20,29 @@ export default class AddRoomDataset extends AddDataset {
         this.filePathsFromHtmArray = [];
         this.helper = new GetBuildingRoomHelpers();
         this.insightData = insData;
+    }
+
+    public parseHTML(html: string): Promise<parse5.Document> {
+        return Promise.resolve(parse5.parse(html));
+    }
+
+    public loadFilePathsFromHtm(htmlJSON: any) {
+        if (htmlJSON.nodeName === "a" && htmlJSON.attrs.length >= 2 &&
+            htmlJSON.attrs[1].value === "Building Details and Map") {
+            let path = "rooms" + htmlJSON.attrs[0].value.replace(".", "");
+            if (!this.filePathsFromHtmArray.includes(path)) {
+                this.filePathsFromHtmArray.push(path);
+            }
+        }
+        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
+            for (let child of htmlJSON.childNodes) {
+                this.loadFilePathsFromHtm(child);
+            }
+        }
+    }
+
+    public encodeAddress(address: string): string {
+        return address.replace(" ", "%20");
     }
 
     public getGeoLocation(encodedAddr: string): Promise<any> {
@@ -47,31 +69,7 @@ export default class AddRoomDataset extends AddDataset {
         });
     }
 
-    public parseHTML(html: string): Promise<parse5.Document> {
-        return Promise.resolve(parse5.parse(html));
-    }
-
-    public loadFilePathsFromHtm(htmlJSON: any) {
-        if (htmlJSON.nodeName === "a" && htmlJSON.attrs.length >= 2 &&
-            htmlJSON.attrs[1].value === "Building Details and Map") {
-            let path = "rooms" + htmlJSON.attrs[0].value.replace(".", "");
-            if (!this.filePathsFromHtmArray.includes(path)) {
-                this.filePathsFromHtmArray.push(path);
-            }
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                this.loadFilePathsFromHtm(child);
-            }
-        }
-    }
-
-    public encodeAddress(address: string): string {
-        return address.replace(" ", "%20");
-    }
-
     public getRoomData(htmlJSON: any) {
-        // check base case(no rooms in building file)
         let buildingInfo: BuildingInfo;
         let roomInfo: RoomInfo;
         let geoInfo: any;
@@ -81,9 +79,6 @@ export default class AddRoomDataset extends AddDataset {
             roomInfo = this.getRoomSpecificInfo(htmlJSON, shortname);
 
             return this.getGeoLocation(this.encodeAddress(buildingInfo.address)).then((geoObj) => {
-                // TODO: this stuff is supposed to go here vvv
-                // but we're putting it about for now to test other stuff while we
-                // fix geolocation
                 const roomData: RoomRowData = {
                     fullname: buildingInfo.fullname,
                     shortname: shortname,
@@ -103,7 +98,6 @@ export default class AddRoomDataset extends AddDataset {
                 }
                 this.insightData.listOfRooms.push(roomData);
                 this.insightData.numRows++;
-                // console.log(this.insightData.listOfRooms);
                 return Promise.resolve(roomData);
             }).catch((err) => {
                 return err;
@@ -194,7 +188,7 @@ export default class AddRoomDataset extends AddDataset {
                     return Promise.all(resolvedRoomJSONPromisesArr);
                 }).then((resolvedRoomsJSONArr) => {
                     for (const resolvedRoomJSON of resolvedRoomsJSONArr) {
-                        // this is being skipped over
+                        // this is being skipped over, need to make a promise?
                         this.getRoomData(resolvedRoomJSON);
                     }
                     return this.insightData;
