@@ -170,14 +170,7 @@ export default class PerformQuery {
         this.mfieldArr = this.mfieldArr.map((x) => this.idstring.concat("_", x).join(""));
     }
 
-    // eslint-disable-next-line @typescript-eslint/tslint/config
     public parseQuery(jsonObj: any, firstCall: boolean): any[] {
-        let p = new PerformQueryCourseFunc();
-        try {
-            p.typeChecker(jsonObj);
-        } catch (error) {
-            throw new InsightError(error);
-        }
         if (firstCall) {
             this.initializeParse(jsonObj);
             return this.parseQuery(jsonObj.WHERE, false);
@@ -216,8 +209,7 @@ export default class PerformQuery {
             this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
             return this.resultArr;
         }
-        if (!this.mfieldArr.includes(Object.keys(jsonObj)[0]) && !this.filters.includes(Object.keys(jsonObj)[0])
-            && !this.sfieldArr.includes(Object.keys(jsonObj)[0])) {
+        if (!this.filters.includes(Object.keys(jsonObj)[0]) && firstCall === false) {
             throw new InsightError("invalid filter key");
         }
         return this.resultArr;

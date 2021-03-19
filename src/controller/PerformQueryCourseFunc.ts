@@ -119,22 +119,6 @@ export default class PerformQueryCourseFunc {
         return [false, resultArray];
     }
 
-    public typeChecker (jsonObj: any): boolean {
-        if (this.mfieldArr.includes(Object.keys(jsonObj)[0])) {
-            const mkeyVal = Object.keys(jsonObj)[0];
-            if (typeof mkeyVal !== "number") {
-                throw new InsightError("The value is supposed to be a number");
-            }
-        }
-        if (this.sfieldArr.includes(Object.keys(jsonObj)[0])) {
-            const skeyVal = Object.keys(jsonObj)[0];
-            if (typeof skeyVal !== "string") {
-                throw new InsightError("The value is supposed to be a string");
-            }
-        }
-        return true;
-    }
-
 }
 
 

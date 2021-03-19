@@ -69,6 +69,23 @@ export default class AddRoomDataset extends AddDataset {
         return address.replace(" ", "%20");
     }
 
+    public hasRooms(htmlJSON: any): boolean {
+        // From: Noa's c2 video posted on piazza
+        if (htmlJSON.nodeName === "th" &&
+            htmlJSON.attrs[0].value === "views-field views-field-field-room-number") {
+            return true;
+        }
+        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
+            for (let child of htmlJSON.childNodes) {
+                let ret = this.hasRooms(child);
+                if (ret !== false) {
+                    return ret;
+                }
+            }
+        }
+        return false;
+    }
+
     public getRoomData(htmlJSON: any) {
         // check base case(no rooms in building file)
         let buildingInfo: BuildingInfo;
@@ -77,8 +94,25 @@ export default class AddRoomDataset extends AddDataset {
         if (this.hasRooms(htmlJSON)) {
             buildingInfo = this.getBuildingSpecificInfo(htmlJSON);
             console.log(buildingInfo);
-            roomInfo = this.getRoomSpecificInfo(htmlJSON);
+            roomInfo = this.getRoomSpecificInfo(htmlJSON, this.getShortName(htmlJSON));
             console.log(roomInfo);
+
+            geoInfo = { lat: 0, lon: 0 }; // TODO temporary while we figure out how to fix the geolocation promise sbug.
+            const roomData: RoomRowData = {
+                fullname: buildingInfo.fullname,
+                shortname: this.getShortName(htmlJSON),
+                number: roomInfo.number,
+                name: roomInfo.name,
+                address: buildingInfo.address,
+                lat: geoInfo.lat,
+                lon: geoInfo.lon,
+                seats: roomInfo.seats,
+                type: roomInfo.type,
+                furniture: roomInfo.furniture,
+                href: roomInfo.href
+            };
+            this.insightData.listOfRooms.push(roomData);
+            this.insightData.numRows++;
 
             this.getGeoLocation(this.encodeAddress(buildingInfo.address))
                 .then((geoObj) => {
@@ -88,21 +122,24 @@ export default class AddRoomDataset extends AddDataset {
                         geoInfo = geoObj;
                         console.log(geoInfo);
                     }
-                    const roomData: RoomRowData = {
-                        fullname: buildingInfo.fullname,
-                        shortname: this.getShortName(htmlJSON),
-                        number: roomInfo.number, // yes, it's a string. i know.
-                        name: this.getRoomName(htmlJSON),
-                        address: buildingInfo.address,
-                        lat: geoInfo.lat,
-                        lon: geoInfo.lon,
-                        seats: roomInfo.seats,
-                        type: roomInfo.type,
-                        furniture: roomInfo.furniture,
-                        href: roomInfo.href
-                    };
-                    this.insightData.listOfRooms.push(roomData);
-                    this.insightData.numRows++;
+                    // TODO: this stuff is supposed to go here vvv
+                    // but we're putting it about for now to test other stuff while we
+                    // fix geolocation
+                    // const roomData: RoomRowData = {
+                    //     fullname: buildingInfo.fullname,
+                    //     shortname: this.getShortName(htmlJSON),
+                    //     number: roomInfo.number, // yes, it's a string. i know.
+                    //     name: this.getRoomName(htmlJSON),
+                    //     address: buildingInfo.address,
+                    //     lat: geoInfo.lat,
+                    //     lon: geoInfo.lon,
+                    //     seats: roomInfo.seats,
+                    //     type: roomInfo.type,
+                    //     furniture: roomInfo.furniture,
+                    //     href: roomInfo.href
+                    // };
+                    // this.insightData.listOfRooms.push(roomData);
+                    // this.insightData.numRows++;
                 });
         }
     }
@@ -147,7 +184,7 @@ export default class AddRoomDataset extends AddDataset {
         }
     }
 
-    public getRoomSpecificInfo(htmlJSON: any): RoomInfo | null {
+    public getRoomSpecificInfo(htmlJSON: any, shortname: string): RoomInfo | null {
         // get table with all the rooms
         if (htmlJSON.nodeName === "tbody") {
             // loops through every room in the building
@@ -155,6 +192,7 @@ export default class AddRoomDataset extends AddDataset {
                 if (child.nodeName === "tr") {
                     const roomRet: RoomInfo = {
                         number: this.getRoomNumber(child),
+                        name: shortname + "_" + this.getRoomNumber(child),
                         seats: this.getRoomSeats(child),
                         type: this.getRoomType(child),
                         furniture: this.getRoomFurniture(child),
@@ -167,15 +205,13 @@ export default class AddRoomDataset extends AddDataset {
 
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
             for (let child of htmlJSON.childNodes) {
-                let ret = this.getRoomSpecificInfo(child);
+                let ret = this.getRoomSpecificInfo(child, shortname);
                 if (ret !== null) {
                     return ret;
                 }
             }
         }
-
         return null;
-
     }
 
     public getRoomHref(htmlJSON: any): string {
@@ -274,29 +310,6 @@ export default class AddRoomDataset extends AddDataset {
             }
         }
         return "";
-    }
-
-    public getRoomName(htmlJSON: any): string {
-        let shortName = this.getShortName(htmlJSON);
-        let roomNum = this.getRoomNumber(htmlJSON);
-        return shortName.concat("_").concat(roomNum);
-    }
-
-    public hasRooms(htmlJSON: any): boolean {
-        // From: Noa's c2 video posted on piazza
-        if (htmlJSON.nodeName === "th" &&
-            htmlJSON.attrs[0].value === "views-field views-field-field-room-number") {
-            return true;
-        }
-        if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
-            for (let child of htmlJSON.childNodes) {
-                let ret = this.hasRooms(child);
-                if (ret !== false) {
-                    return ret;
-                }
-            }
-        }
-        return false;
     }
 
     public addDataset(id: string, content: string): Promise<string[]> {

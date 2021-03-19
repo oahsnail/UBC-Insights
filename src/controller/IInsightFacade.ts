@@ -75,6 +75,7 @@ export interface RoomRowData {
 
 export interface RoomInfo {
     number: string;
+    name: string;
     seats: number;
     type: string;
     furniture: string;
