@@ -93,6 +93,19 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return expect(futureResult).to.eventually.deep.equal(expected);
     });
 
+    it("Should add a second dataset", function () {
+        const id: string = "rooms";
+        let expected: string[] = [id];
+        let futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
+            const id1: string = "rooms3";
+            expected = [id, id1];
+            futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Rooms);
+            return expect(futureResult).to.eventually.deep.equal(expected);
+        });
+    });
+
     it("getGeoLocation should return object with lat and long", function () {
         const addRoom = new AddRoomDataset(insightFacade.insightData);
         const expected: any = { lat: 49.26125, lon: -123.24807 };
@@ -274,18 +287,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    it("Should add a second dataset", function () {
-        const id: string = "rooms";
-        let expected: string[] = [id];
-        let futureResult: Promise<string[]> =
-            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
-        return expect(futureResult).to.eventually.deep.equal(expected).then(() => {
-            const id1: string = "rooms3";
-            expected = [id, id1];
-            futureResult = insightFacade.addDataset(id1, datasets[id1], InsightDatasetKind.Rooms);
-            return expect(futureResult).to.eventually.deep.equal(expected);
-        });
-    });
 
     it("Should not add an invalid dataset zip file with no valid files", function () {
         const id: string = "coursesnovalid";
@@ -571,7 +572,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    // TODO: Fix numRows for rooms
     it("Should add a second dataset and list all datasets for rooms", function () {
         const id: string = "rooms";
         let expected: string[] = [id];
@@ -585,12 +585,12 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
                 const Idataset1: InsightDataset = {
                     id: "rooms",
                     kind: InsightDatasetKind.Rooms,
-                    numRows: 64612
+                    numRows: 364
                 };
                 const Idataset2: InsightDataset = {
                     id: "rooms3",
                     kind: InsightDatasetKind.Rooms,
-                    numRows: 64612
+                    numRows: 364
                 };
                 const expectedDataset: InsightDataset[] = [Idataset1, Idataset2];
                 const listFutureResult: Promise<InsightDataset[]> = insightFacade.listDatasets();
@@ -612,7 +612,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
                 const Idataset1: InsightDataset = {
                     id: "rooms",
                     kind: InsightDatasetKind.Rooms,
-                    numRows: 64612
+                    numRows: 364
                 };
                 const Idataset2: InsightDataset = {
                     id: "courses3",

@@ -83,6 +83,7 @@ export interface RoomInfo {
 }
 
 export interface BuildingInfo {
+    shortname: string;
     fullname: string;
     address: string;
 }

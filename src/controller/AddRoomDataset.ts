@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-/* eslint-disable no-console */
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import http = require("http");
@@ -11,7 +10,6 @@ import {
     InsightDatasetKind, InsightError, NotFoundError, RoomInfo, RoomRowData
 } from "./IInsightFacade";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
-import Log from "../Util";
 
 export default class AddRoomDataset extends AddDataset {
     private filePathsFromHtmArray: string[];
@@ -92,65 +90,49 @@ export default class AddRoomDataset extends AddDataset {
         let roomInfo: RoomInfo;
         let geoInfo: any;
         if (this.hasRooms(htmlJSON)) {
-            buildingInfo = this.getBuildingSpecificInfo(htmlJSON);
-            console.log(buildingInfo);
-            roomInfo = this.getRoomSpecificInfo(htmlJSON, this.getShortName(htmlJSON));
-            console.log(roomInfo);
+            let shortname = this.getShortName(htmlJSON);
+            buildingInfo = this.getBuildingSpecificInfo(htmlJSON, shortname);
+            roomInfo = this.getRoomSpecificInfo(htmlJSON, shortname);
 
-            geoInfo = { lat: 0, lon: 0 }; // TODO temporary while we figure out how to fix the geolocation promise sbug.
-            const roomData: RoomRowData = {
-                fullname: buildingInfo.fullname,
-                shortname: this.getShortName(htmlJSON),
-                number: roomInfo.number,
-                name: roomInfo.name,
-                address: buildingInfo.address,
-                lat: geoInfo.lat,
-                lon: geoInfo.lon,
-                seats: roomInfo.seats,
-                type: roomInfo.type,
-                furniture: roomInfo.furniture,
-                href: roomInfo.href
-            };
-            this.insightData.listOfRooms.push(roomData);
-            this.insightData.numRows++;
-
-            this.getGeoLocation(this.encodeAddress(buildingInfo.address))
-                .then((geoObj) => {
-                    if (geoInfo.error) {
-                        geoInfo = { lat: 0, lon: 0 };
-                    } else {
-                        geoInfo = geoObj;
-                        console.log(geoInfo);
-                    }
-                    // TODO: this stuff is supposed to go here vvv
-                    // but we're putting it about for now to test other stuff while we
-                    // fix geolocation
-                    // const roomData: RoomRowData = {
-                    //     fullname: buildingInfo.fullname,
-                    //     shortname: this.getShortName(htmlJSON),
-                    //     number: roomInfo.number, // yes, it's a string. i know.
-                    //     name: this.getRoomName(htmlJSON),
-                    //     address: buildingInfo.address,
-                    //     lat: geoInfo.lat,
-                    //     lon: geoInfo.lon,
-                    //     seats: roomInfo.seats,
-                    //     type: roomInfo.type,
-                    //     furniture: roomInfo.furniture,
-                    //     href: roomInfo.href
-                    // };
-                    // this.insightData.listOfRooms.push(roomData);
-                    // this.insightData.numRows++;
-                });
+            return this.getGeoLocation(this.encodeAddress(buildingInfo.address)).then((geoObj) => {
+                // TODO: this stuff is supposed to go here vvv
+                // but we're putting it about for now to test other stuff while we
+                // fix geolocation
+                const roomData: RoomRowData = {
+                    fullname: buildingInfo.fullname,
+                    shortname: shortname,
+                    number: roomInfo.number,
+                    name: roomInfo.name,
+                    address: buildingInfo.address,
+                    lat: 0,
+                    lon: 0,
+                    seats: roomInfo.seats,
+                    type: roomInfo.type,
+                    furniture: roomInfo.furniture,
+                    href: roomInfo.href
+                };
+                if (!geoObj.error) {
+                    roomData.lat = geoObj.lat;
+                    roomData.lon = geoObj.lon;
+                }
+                this.insightData.listOfRooms.push(roomData);
+                this.insightData.numRows++;
+                // console.log(this.insightData.listOfRooms);
+                return Promise.resolve(roomData);
+            }).catch((err) => {
+                return err;
+            });
         }
     }
 
 
-    public getBuildingSpecificInfo(htmlJSON: any): BuildingInfo | any {
+    public getBuildingSpecificInfo(htmlJSON: any, shortname: string): BuildingInfo | any {
         if (htmlJSON.nodeName === "div" && htmlJSON.attrs[0].value === "building-info") {
             let fullName = this.getBuildingFullName(htmlJSON.childNodes[1]);
             let address = this.getBuildingAddress(htmlJSON.childNodes[3]);
 
             const buildingInfo: BuildingInfo = {
+                shortname: shortname,
                 fullname: fullName,
                 address: address
             };
@@ -159,7 +141,7 @@ export default class AddRoomDataset extends AddDataset {
 
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
             for (let child of htmlJSON.childNodes) {
-                let buildingInfo = this.getBuildingSpecificInfo(child);
+                let buildingInfo = this.getBuildingSpecificInfo(child, shortname);
                 if (buildingInfo !== false) {
                     return buildingInfo;
                 }
@@ -319,13 +301,6 @@ export default class AddRoomDataset extends AddDataset {
         this.insightData.listOfRooms = [];
 
         let zip = new JSZip();
-        // TODO: we currently have a list of all the raw HTMLs form all the buildings
-        // we now need to
-        // 1. parse through each one to find the necessary attributes like shortname, address, etc and
-        //    store that in a RoomData object
-        // 2. push that RoomData object to this.insightData.listOfRooms: RoomData[]
-        // 3. put all the necessary information into a DetailedRoomDataset object, and write that to a json
-        //    file on disk in the ./data folder, and call it id.json, where id is the id of the room.
 
         return new Promise<string[]>((resolve, reject) => {
             return (Promise.all([zip.loadAsync(content, { base64: true })])).then((z: JSZip[]) => {
