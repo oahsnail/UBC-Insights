@@ -33,13 +33,20 @@ export interface InsightDataset {
     numRows: number;
 }
 
-export interface DetailedDataset {
+// the detailed datasets are what we push to the json file that persists on disk.
+export interface DetailedCourseDataset {
     id: string;
-    data: SectionObject[];
+    data: SectionData[];
     kind: InsightDatasetKind;
 }
 
-export interface SectionObject {
+export interface DetailedRoomDataset {
+    id: string;
+    data: RoomRowData[];
+    kind: InsightDatasetKind;
+}
+
+export interface SectionData {
     dept: string;
     id: number;
     avg: number;
@@ -50,6 +57,42 @@ export interface SectionObject {
     audit: number;
     uuid: string;
     year: number;
+}
+
+export interface RoomRowData {
+    fullname: string;
+    shortname: string;
+    number: string; // yes, it's a string. i know.
+    name: string;
+    address: string;
+    lat: number;
+    lon: number;
+    seats: number;
+    type: string;
+    furniture: string;
+    href: string;
+}
+
+export interface RoomInfo {
+    number: string;
+    name: string;
+    seats: number;
+    type: string;
+    furniture: string;
+    href: string;
+}
+
+export interface BuildingInfo {
+    shortname: string;
+    fullname: string;
+    address: string;
+}
+
+export interface InsightData {
+    listOfDatasets: InsightDataset[];
+    listOfCourseSections: SectionData[];
+    listOfRooms: RoomRowData[];
+    numRows: number;
 }
 
 export class InsightError extends Error {

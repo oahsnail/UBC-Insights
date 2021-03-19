@@ -1,5 +1,8 @@
 import * as fs from "fs-extra";
 import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
+import PerformQueryCourseFunc from "./PerformQueryCourseFunc";
+import PerformQueryRoomsFunc from "./PerformQueryRoomsFunc";
+import Log from "../Util";
 
 export default class PerformQuery {
     public mfieldArr: string[];
@@ -11,76 +14,27 @@ export default class PerformQuery {
     public idstring: any;
     public maxResultSize: number;
     constructor() {
-        this.mfieldArr = ["avg", "pass", "fail", "audit", "year"];
-        this.sfieldArr = ["dept", "id", "instructor", "title", "uuid"];
-        this.allFields = ["courses_dept", "courses_id", "courses_instructor", "courses_title", "courses_uuid",
-            "courses_avg", "courses_pass", "courses_fail", "courses_audit", "courses_year"];
+        this.mfieldArr = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+        this.sfieldArr = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
+            "address", "type", "furniture", "href"];
         this.resultArr = [];
         this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
         this.maxResultSize = 5000;
     }
 
-    public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): boolean {
-        let mfield = mkey.split("_", 2)[1];
-        let x = jsonDataSingle[mfield];
-        if (mCompOp === "LT" && x < mkeyVal) {
-            this.resultArr.push(jsonDataSingle);
-            return true;
-        }
-        if (mCompOp === "GT" && x > mkeyVal) {
-            this.resultArr.push(jsonDataSingle);
-            return true;
-        }
-        if (mCompOp === "EQ" && x === mkeyVal) {
-            this.resultArr.push(jsonDataSingle);
-            return true;
-        }
-        return false;
-    }
-
-    public pushS(sfield: string, inputStr: any, data: any, type: string): boolean {
-        let pushed = false;
-        if (type === "end") {
-            for (const r of data) {
-                let x = r[sfield];
-                if (x.startsWith(inputStr.substr(0, inputStr.length - 1))) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
-            }
-        }
-        if (type === "beg") {
-            for (const r of data) {
-                let x = r[sfield];
-                if (x.endsWith(inputStr.substr(1))) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
-            }
-        }
-        if (type === "none") {
-            for (const r of data) {
-                let x = r[sfield];
-                if (x === inputStr) {
-                    this.resultArr.push(r);
-                    pushed = true;
-                }
-            }
-        }
-        if (pushed) {
-            return true;
-        }
-        return false;
-    }
-
     public handleOptions(query: any): boolean {
+        let p = new PerformQueryRoomsFunc();
         let colArray: string[] = Object.values(query.OPTIONS.COLUMNS);
         let orderBy: any = null;
+        let sortExpansion = false;
         if (query.OPTIONS.ORDER) {
             let order: string = query.OPTIONS.ORDER;
             orderBy = order;
-            if (!colArray.includes(order)) {
-                throw new InsightError("Type in order is not contains in columns");
+            if (query.OPTIONS.ORDER.keys || query.OPTIONS.ORDER.dir) {
+                sortExpansion = true;
+            }
+            if (!colArray.includes(order) && sortExpansion === false) {
+                throw new InsightError("Type in order is not contained in columns");
             }
         }
         colArray = colArray.map((x) => x.split("_", 2)[1]);
@@ -106,21 +60,16 @@ export default class PerformQuery {
             }
         }
         if (this.resultArr.length > this.maxResultSize) {
-            throw new ResultTooLargeError();
+            throw new ResultTooLargeError("Greater than max result size");
         }
         if (orderBy) {
-            this.resultArr.sort((a, b) => {
-                if (a[orderBy] > b[orderBy]) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            });
+            p.sortArray(this.resultArr, query.OPTIONS.ORDER, orderBy, sortExpansion);
         }
         return false;
     }
 
     public mCompareHandler(jsonObj: any, jsonData: any): boolean {
+        let p = new PerformQueryCourseFunc();
         let keyObj: any;
         let mCompOp: string;
         if (jsonObj.hasOwnProperty("LT")) {
@@ -148,7 +97,8 @@ export default class PerformQuery {
         }
         if (this.mfieldArr.includes(mkey)) {
             for (const singleCourse of jsonData.data) {
-                this.pushM(mCompOp, mkey, mkeyVal, singleCourse);
+                let valuePushM = p.pushM(mCompOp, mkey, mkeyVal, singleCourse);
+                this.pushToResultArr(valuePushM[0], valuePushM[1]);
             }
         } else {
             throw new InsightError("Invalid mkey");
@@ -157,6 +107,7 @@ export default class PerformQuery {
     }
 
     public sCompareHandler(jsonObj: any): boolean {
+        let p = new PerformQueryCourseFunc();
         let matchInputStr: RegExp = /[*]/;
         if (this.filters.includes(jsonObj.IS)) {
             this.parseQuery(jsonObj.IS, false);
@@ -181,27 +132,37 @@ export default class PerformQuery {
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "btwn");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "btwn");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(0) === "*") {
                 let inputString = wholeInputStr.substr(1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
+                let valuePushS =  p.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "end");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "end");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else {
-                this.pushS(sfield[1], inputStr, this.jsonData.data, "none");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "none");
+                this.pushToResultArr(valuePushS[0], valuePushS[1]);
             }
         }
         return true;
     }
 
-    private initializeParse(jsonObj: any) {
+    public pushToResultArr(valueOfPush: boolean, dataPush: any[]) {
+        if (valueOfPush === true) {
+            this.resultArr.push(...dataPush);
+        }
+    }
+
+    public initializeParse(jsonObj: any) {
         let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
         this.idstring = wholeKey.split("_", 1);
         this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
@@ -216,7 +177,6 @@ export default class PerformQuery {
         } else if (Object.keys(jsonObj).length > 1) {
             throw new InsightError("Can't have more than one filter in a object");
         }
-
         if (jsonObj.AND) {
             let condRet = this.parseQuery(jsonObj.AND[0], false);
             for (let i = 1; i < Object.keys(jsonObj.AND).length; i++) {
@@ -237,15 +197,11 @@ export default class PerformQuery {
             this.resultArr = condRet;
             return this.resultArr;
         }
-        try {
-            if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
-                this.mCompareHandler(jsonObj, this.jsonData);
-            }
-            if (jsonObj.IS) {
-                this.sCompareHandler(jsonObj);
-            }
-        } catch (error) {
-            throw new InsightError(error);
+        if (jsonObj.LT || jsonObj.GT || jsonObj.EQ) {
+            this.mCompareHandler(jsonObj, this.jsonData);
+        }
+        if (jsonObj.IS) {
+            this.sCompareHandler(jsonObj);
         }
         if (jsonObj.NOT) {
             let cond1 = this.parseQuery(jsonObj.NOT, false);
@@ -253,42 +209,26 @@ export default class PerformQuery {
             this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
             return this.resultArr;
         }
-        if (!this.allFields.includes(Object.keys(jsonObj)[0]) && !this.filters.includes(Object.keys(jsonObj)[0])) {
+        if (!this.filters.includes(Object.keys(jsonObj)[0]) && firstCall === false) {
             throw new InsightError("invalid filter key");
         }
         return this.resultArr;
     }
 
-    public missingKeys(jsonObj: any): boolean {
-        let requiredValues = Object.keys(RequiredQueryKeys);
-        for (const v of requiredValues) {
-            if (!jsonObj.hasOwnProperty(v)) {
-                throw new InsightError("Missing where or options");
-            }
-        }
-        if (!jsonObj.OPTIONS.hasOwnProperty("COLUMNS")) {
-            throw new InsightError("Missing columns");
-        }
-        if (jsonObj.OPTIONS.hasOwnProperty("ORDER")) {
-            if (jsonObj.OPTIONS.ORDER === null) {
-                throw new InsightError("Order is null");
-            }
-        }
-        if (jsonObj.OPTIONS.COLUMNS.length === 0 || jsonObj.OPTIONS.COLUMNS.includes(null)) {
-            throw new InsightError("either columns is null or columns length is 0");
-        }
-        return true;
-    }
-
     public performQuery(query: any): Promise<any[]> {
+        let p = new PerformQueryCourseFunc();
         this.resultArr = [];
         return new Promise<any[]>((resolve, reject) => {
             try {
-                this.missingKeys(query);
+                p.missingKeys(query);
                 this.parseQuery(query, true);
                 this.handleOptions(query);
             } catch (error) {
-                return reject(error);
+                if (error.message === "Greater than max result size") {
+                    return reject (new ResultTooLargeError(error));
+                }
+                return reject(new InsightError(error));
+
             }
             return resolve(this.resultArr);
         });
