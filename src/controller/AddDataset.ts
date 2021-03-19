@@ -1,11 +1,7 @@
-/* eslint-disable no-console */
 import JSZip = require("jszip");
 import http = require("http");
 import parse5 = require("parse5");
 import {
-    InsightData,
-
-    InsightError, NotFoundError,
     RequiredCourseProperties
 } from "./IInsightFacade";
 

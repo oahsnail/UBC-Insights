@@ -1,6 +1,3 @@
-import * as fs from "fs-extra";
-import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
-import PerformQuery from "./PerformQuery";
 
 export default class PerformQueryRoomsFunc {
     public filters: string[];

@@ -1,6 +1,4 @@
-import * as fs from "fs-extra";
-import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
-import PerformQuery from "./PerformQuery";
+import { InsightError, RequiredQueryKeys } from "./IInsightFacade";
 
 export default class PerformQueryCourseFunc {
     public filters: string[];
