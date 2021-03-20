@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import http = require("http");
@@ -10,6 +11,7 @@ import {
 } from "./IInsightFacade";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
 import GetBuildingRoomHelpers from "./GetBuildingRoomHelpers";
+import { rejects } from "assert";
 
 export default class AddRoomDataset extends AddDataset {
     private filePathsFromHtmArray: string[];
@@ -58,51 +60,51 @@ export default class AddRoomDataset extends AddDataset {
                     res.on("end", () => {
                         let jsonObj = JSON.parse(rawData);
                         if (jsonObj.hasOwnProperty("error")) {
-                            return reject(new NotFoundError(jsonObj.error));
+                            reject(new NotFoundError(jsonObj.error));
                         }
-                        return resolve(JSON.parse(rawData));
+                        resolve(JSON.parse(rawData));
                     });
                 });
+
             } catch (error) {
-                return reject(new InsightError(error));
+                reject(new InsightError(error));
             }
         });
     }
 
-    public getRoomData(htmlJSON: any) {
+    public getRoomData(htmlJSON: any): Promise<RoomRowData> {
         let buildingInfo: BuildingInfo;
         let roomInfo: RoomInfo;
-        let geoInfo: any;
         if (this.helper.hasRooms(htmlJSON)) {
             let shortname = this.helper.getShortName(htmlJSON);
             buildingInfo = this.getBuildingSpecificInfo(htmlJSON, shortname);
             roomInfo = this.getRoomSpecificInfo(htmlJSON, shortname);
 
+            // TODO: If Geolocation is Error, skip the building
             return this.getGeoLocation(this.encodeAddress(buildingInfo.address)).then((geoObj) => {
-                const roomData: RoomRowData = {
-                    fullname: buildingInfo.fullname,
-                    shortname: shortname,
-                    number: roomInfo.number,
-                    name: roomInfo.name,
-                    address: buildingInfo.address,
-                    lat: 0,
-                    lon: 0,
-                    seats: roomInfo.seats,
-                    type: roomInfo.type,
-                    furniture: roomInfo.furniture,
-                    href: roomInfo.href
-                };
-                if (!geoObj.error) {
-                    roomData.lat = geoObj.lat;
-                    roomData.lon = geoObj.lon;
+                if (!geoObj.hasOwnProperty("error")) {
+                    const roomData: RoomRowData = {
+                        fullname: buildingInfo.fullname,
+                        shortname: shortname,
+                        number: roomInfo.number,
+                        name: roomInfo.name,
+                        address: buildingInfo.address,
+                        lat: geoObj.lat,
+                        lon: geoObj.lon,
+                        seats: roomInfo.seats,
+                        type: roomInfo.type,
+                        furniture: roomInfo.furniture,
+                        href: roomInfo.href
+                    };
+                    this.insightData.listOfRooms.push(roomData);
+                    this.insightData.numRows++;
+                    return Promise.resolve("success");
                 }
-                this.insightData.listOfRooms.push(roomData);
-                this.insightData.numRows++;
-                return Promise.resolve(roomData);
-            }).catch((err) => {
-                return err;
+                return Promise.resolve(null);
             });
         }
+        return Promise.resolve(null);
+
     }
 
 
@@ -160,6 +162,17 @@ export default class AddRoomDataset extends AddDataset {
         return null;
     }
 
+    public iterateRooms(resolvedRoomsJSONArr: any[]): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let roomPromisesArr = [];
+            for (const resolvedRoomJSON of resolvedRoomsJSONArr) {
+                roomPromisesArr.push(this.getRoomData(resolvedRoomJSON));
+            }
+            return resolve(Promise.all(roomPromisesArr));
+        });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string): Promise<string[]> {
         let roomsPromisesArray: Array<Promise<string>> = [];
         this.filePathsFromHtmArray = [];
@@ -177,33 +190,31 @@ export default class AddRoomDataset extends AddDataset {
                     return z;
                 }).then((jsz: JSZip[]) => {
                     for (const path of this.filePathsFromHtmArray) {
-                        roomsPromisesArray.push(jsz[0].file(path).async("text"));
+                        if (jsz[0].file(path) !== null) {
+                            roomsPromisesArray.push(jsz[0].file(path).async("text"));
+                        }
                     }
                     return Promise.all(roomsPromisesArray);
                 }).then((resolvedRoomsHTMLArr: any[]) => {
-                    let resolvedRoomJSONPromisesArr: any = [];
+                    let resolvedRoomJSONPromisesArr: any[] = [];
                     for (const resolvedRoomHtml of resolvedRoomsHTMLArr) {
                         resolvedRoomJSONPromisesArr.push(this.parseHTML(resolvedRoomHtml));
                     }
                     return Promise.all(resolvedRoomJSONPromisesArr);
                 }).then((resolvedRoomsJSONArr) => {
-                    for (const resolvedRoomJSON of resolvedRoomsJSONArr) {
-                        // this is being skipped over, need to make a promise?
-                        this.getRoomData(resolvedRoomJSON);
-                    }
-                    return this.insightData;
+                    return Promise.all([this.iterateRooms(resolvedRoomsJSONArr)]);
                 });
-            }).then((insData) => {
+            }).then(() => {
                 const detailedDataset: DetailedRoomDataset = {
-                    id: id, data: insData.listOfRooms, kind: InsightDatasetKind.Rooms
+                    id: id, data: this.insightData.listOfRooms, kind: InsightDatasetKind.Rooms
                 };
                 fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
-                insData.listOfDatasets.push();
+                this.insightData.listOfDatasets.push();
                 const retDataset: InsightDataset = {
-                    id: id, kind: InsightDatasetKind.Rooms, numRows: insData.numRows
+                    id: id, kind: InsightDatasetKind.Rooms, numRows: this.insightData.numRows
                 };
-                insData.listOfDatasets.push(retDataset);
-                resolve(AddRemoveListHelpers.getListOfDatasetIds(insData));
+                this.insightData.listOfDatasets.push(retDataset);
+                resolve(AddRemoveListHelpers.getListOfDatasetIds(this.insightData));
             }).catch((err) => {
                 reject(err);
             });
