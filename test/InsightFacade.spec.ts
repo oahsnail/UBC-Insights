@@ -87,7 +87,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     });
 
     it("Should add dataset for rooms and accept it", function () {
-        const id: string = "rooms";
+        const id: string = "roomsSmall";
         const expected: string[] = [id];
         const futureResult: Promise<string[]> =
             insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
