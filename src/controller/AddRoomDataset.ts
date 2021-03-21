@@ -70,25 +70,29 @@ export default class AddRoomDataset extends AddDataset {
         });
     }
 
-    public getRoomData(htmlJSON: any): Promise<RoomRowData> {
-        let buildingInfo: BuildingInfo;
-        let roomInfo: RoomInfo;
+    public getRoomData(htmlJSON: any): Promise<any> {
         if (this.helper.hasRooms(htmlJSON)) {
             let shortname = this.helper.getShortName(htmlJSON);
-            buildingInfo = this.getBuildingSpecificInfo(htmlJSON, shortname);
-            roomInfo = this.getRoomSpecificInfo(htmlJSON, shortname);
+            let buildingInfo: BuildingInfo = this.getBuildingSpecificInfo(htmlJSON, shortname);
+            let roomInfoArray: RoomInfo[] = [];
+            this.getRoomSpecificInfo(htmlJSON, shortname, roomInfoArray);
 
             // TODO: If Geolocation is Error, skip the building
             return this.getGeoLocation(this.encodeAddress(buildingInfo.address)).then((geoObj) => {
+                let geoInfo = { lat: 0, lon: 0 };
                 if (!geoObj.hasOwnProperty("error")) {
+                    geoInfo.lat = geoObj.lat;
+                    geoInfo.lon = geoObj.lon;
+                }
+                for (const roomInfo of roomInfoArray) {
                     const roomData: RoomRowData = {
                         fullname: buildingInfo.fullname,
                         shortname: shortname,
                         number: roomInfo.number,
                         name: roomInfo.name,
                         address: buildingInfo.address,
-                        lat: geoObj.lat,
-                        lon: geoObj.lon,
+                        lat: geoInfo.lat,
+                        lon: geoInfo.lon,
                         seats: roomInfo.seats,
                         type: roomInfo.type,
                         furniture: roomInfo.furniture,
@@ -96,9 +100,8 @@ export default class AddRoomDataset extends AddDataset {
                     };
                     this.insightData.listOfRooms.push(roomData);
                     this.insightData.numRows++;
-                    return Promise.resolve("success");
                 }
-                return Promise.resolve(null);
+                return Promise.resolve("success");
             });
         }
         return Promise.resolve(null);
@@ -130,7 +133,8 @@ export default class AddRoomDataset extends AddDataset {
         return false;
     }
 
-    public getRoomSpecificInfo(htmlJSON: any, shortname: string): RoomInfo | null {
+    // TODO: make it so that it exits on footer instead of recurse
+    public getRoomSpecificInfo(htmlJSON: any, shortname: string, roomInfoArray: RoomInfo[]): RoomInfo[] | null {
         // get table with all the rooms
         if (htmlJSON.nodeName === "tbody") {
             // loops through every room in the building
@@ -139,22 +143,26 @@ export default class AddRoomDataset extends AddDataset {
                     const roomRet: RoomInfo = {
                         number: this.helper.getRoomNumber(child),
                         name: shortname + "_" + this.helper.getRoomNumber(child),
-                        seats: this.helper.getRoomSeats(child),
+                        seats: Number(this.helper.getRoomSeats(child)),
                         type: this.helper.getRoomType(child),
                         furniture: this.helper.getRoomFurniture(child),
                         href: this.helper.getRoomHref(child)
                     };
-                    return roomRet;
+                    roomInfoArray.push(roomRet);
                 }
             }
+            return roomInfoArray;
         }
 
         if (htmlJSON.childNodes && htmlJSON.childNodes.length > 0) {
             for (let child of htmlJSON.childNodes) {
-                let ret = this.getRoomSpecificInfo(child, shortname);
-                if (ret !== null) {
+                let ret = this.getRoomSpecificInfo(child, shortname, roomInfoArray);
+                if (ret !== null && child.nodeName === "footer") {
                     return ret;
                 }
+                // if (ret !== null) {
+                //     return ret;
+                // }
             }
         }
         return null;
@@ -202,6 +210,9 @@ export default class AddRoomDataset extends AddDataset {
                     return Promise.all([this.iterateRooms(resolvedRoomsJSONArr)]);
                 });
             }).then(() => {
+                if (!this.insightData.listOfRooms) {
+                    throw new InsightError("No valid rooms in dataset");
+                }
                 const detailedDataset: DetailedRoomDataset = {
                     id: id, data: this.insightData.listOfRooms, kind: InsightDatasetKind.Rooms
                 };
