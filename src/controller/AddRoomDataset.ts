@@ -170,7 +170,6 @@ export default class AddRoomDataset extends AddDataset {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/tslint/config
     public addDataset(id: string, content: string): Promise<string[]> {
         let roomsPromisesArray: Array<Promise<string>> = [];
         this.filePathsFromHtmArray = [];
