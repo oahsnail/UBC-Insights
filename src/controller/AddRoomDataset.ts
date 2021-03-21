@@ -210,6 +210,9 @@ export default class AddRoomDataset extends AddDataset {
                     return Promise.all([this.iterateRooms(resolvedRoomsJSONArr)]);
                 });
             }).then(() => {
+                if (!this.insightData.listOfRooms) {
+                    throw new InsightError("No valid rooms in dataset");
+                }
                 const detailedDataset: DetailedRoomDataset = {
                     id: id, data: this.insightData.listOfRooms, kind: InsightDatasetKind.Rooms
                 };
