@@ -76,10 +76,6 @@ export default class AddCourseDataset extends AddDataset {
         let zip = new JSZip();
 
         return new Promise<string[]>((resolve, reject) => {
-            let idTestRet = AddRemoveListHelpers.idTestHelper(id, "add", this.insightData);
-            if (idTestRet !== null) {
-                return reject(idTestRet);
-            }
             // z = unzipped jszip object
             return Promise.all([zip.loadAsync(content, { base64: true })]).then((z: JSZip[]) => {
                 z[0].folder("courses").forEach(function (relativePath: string, file: JSZip.JSZipObject) {

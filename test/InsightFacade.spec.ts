@@ -41,7 +41,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         coursessmallvalid: "./test/data/coursessmallvalid.zip",
         rooms: "./test/data/rooms.zip",
         rooms_2: "./test/data/rooms_2.zip",
-        rooms3: "./test/data/rooms3.zip"
+        rooms3: "./test/data/rooms3.zip",
+        roomsSmall: "./test/data/roomsSmall.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
