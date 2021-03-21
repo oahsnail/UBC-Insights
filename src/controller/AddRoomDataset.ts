@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import JSZip = require("jszip");
 import * as fs from "fs-extra";
 import http = require("http");
@@ -11,7 +10,6 @@ import {
 } from "./IInsightFacade";
 import { AddRemoveListHelpers } from "./AddRemoveListHelpers";
 import GetBuildingRoomHelpers from "./GetBuildingRoomHelpers";
-import { rejects } from "assert";
 
 export default class AddRoomDataset extends AddDataset {
     private filePathsFromHtmArray: string[];
