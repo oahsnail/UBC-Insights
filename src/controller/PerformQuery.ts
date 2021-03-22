@@ -197,8 +197,8 @@ export default class PerformQuery {
         if (firstCall) {
             this.initializeParse(jsonObj);
             if (Object.keys(jsonObj.WHERE).length === 0) {
+                this.checkWhereSize(jsonObj, this.jsonData);
                 this.resultArr = this.jsonData;
-                this.checkWhereSize(jsonObj, this.resultArr);
                 return this.resultArr;
             }
             return this.parseQuery(jsonObj.WHERE, false);
