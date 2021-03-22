@@ -18,7 +18,6 @@ export default class PerformQueryCourseFunc {
         // for testing with memory/disk usage
         // let pqResArrCopy = JSON.parse(JSON.stringify(pqResultArr));
         // groupedArr = this.groupTransform(queryJson, pqResArrCopy);
-
         groupedArr = this.groupTransform(queryJson, pqResultArr);
         for (const applykey of Object.values(queryJson.TRANSFORMATIONS.APPLY)) {
             // get every applykey and push it to an array
@@ -103,10 +102,14 @@ export default class PerformQueryCourseFunc {
         let groupArr = [];
         if (jsonObj.TRANSFORMATIONS) {
             for (const row of resultArr) {
-                // if (row["id"] === "157") {
-                //     const test = "hello";
-                // }
+                if (row["id"] === "157") {
+                    const test = "hello";
+                }
                 for (const groupKey of jsonObj.TRANSFORMATIONS.GROUP) {
+                    if (!this.performQueryData.mFieldArr.includes(groupKey)
+                        && !this.performQueryData.sFieldArr.includes(groupKey)) {
+                        throw new InsightError("Group key contains an invalid key");
+                    }
                     let key = groupKey.split("_")[1];
                     let groupVal = row[key];
                     if (groupArr.length === 0) {
@@ -114,7 +117,7 @@ export default class PerformQueryCourseFunc {
                     } else {
                         let found: boolean = false;
                         for (const group of groupArr) {
-                            if (group[key] === groupVal) {
+                            if (group[0][key] === groupVal) {
                                 group.push(row);
                                 found = true;
                             }
