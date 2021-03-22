@@ -10,12 +10,16 @@ export default class PerformQueryCourseFunc {
     }
     // [[g1],[g2], [g3], [g4]], groupkeys : course_name
 
-    public transformationsKey(jsonObj: any, pqResultArr: any[]): any[] {
+    public transformationsKey(queryJson: any, pqResultArr: any[]): any[] {
         let applyKeyList: string[] = [];
         let groupedArr: any[] = [];
         let matchApplyKey: RegExp = /[^_]+/;
-        groupedArr = this.groupTransform(jsonObj, pqResultArr);
-        for (const applykey of Object.values(jsonObj.TRANSFORMATIONS.APPLY)) {
+        // for testing with memory/disk usage
+        // let pqResArrCopy = JSON.parse(JSON.stringify(pqResultArr));
+        // groupedArr = this.groupTransform(queryJson, pqResArrCopy);
+
+        groupedArr = this.groupTransform(queryJson, pqResultArr);
+        for (const applykey of Object.values(queryJson.TRANSFORMATIONS.APPLY)) {
             // get every applykey and push it to an array
             let keyVal: string = Object.keys(applykey)[0];
             if (!matchApplyKey.test(keyVal)) {
@@ -52,7 +56,7 @@ export default class PerformQueryCourseFunc {
             }
 
         }
-        groupedArr = this.trimColumns(jsonObj, groupedArr, applyKeyList);
+        groupedArr = this.trimColumns(queryJson, groupedArr, applyKeyList);
         // return the new result array after handling the transformations and the applytokens
         return [groupedArr, applyKeyList];
     }

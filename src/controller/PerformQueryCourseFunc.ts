@@ -1,3 +1,4 @@
+import Log from "../Util";
 import { InsightError, RequiredQueryKeys } from "./IInsightFacade";
 
 export default class PerformQueryCourseFunc {
@@ -61,17 +62,21 @@ export default class PerformQueryCourseFunc {
         return true;
     }
 
-    public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any): [boolean, any[]] {
+    public pushM(mCompOp: string, mkey: string, mkeyVal: number, jsonDataSingle: any, index: any): [boolean, any[]] {
         let resultArray: any[] = [];
         let mfield = mkey.split("_", 2)[1];
         let x = jsonDataSingle[mfield];
+
+        if (index === 1070) {
+            Log.test();
+        }
+
         if (mCompOp === "LT" && x < mkeyVal) {
             resultArray.push(jsonDataSingle);
             return [true, resultArray];
         }
         if (mCompOp === "GT" && x > mkeyVal) {
             resultArray.push(jsonDataSingle);
-            let value = 0;
             return [true, resultArray];
         }
         if (mCompOp === "EQ" && x === mkeyVal) {
