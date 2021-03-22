@@ -9,7 +9,9 @@ export default class PerformQueryRoomsFunc {
         if (orderCol.dir === "UP") {
             resultArr.sort((a, b) => {
                 for (const keys of orderCol.keys) {
-                    if (a[keys] < b[keys]) {
+                    if (a[keys] === b[keys]) {
+                        continue;
+                    } else if (a[keys] < b[keys]) {
                         return -1;
                     } else {
                         return 1;
@@ -20,7 +22,9 @@ export default class PerformQueryRoomsFunc {
         if (orderCol.dir === "DOWN") {
             resultArr.sort((a, b) => {
                 for (const keys of orderCol.keys) {
-                    if (a[keys] < b[keys]) {
+                    if (a[keys] === b[keys]) {
+                        continue;
+                    } else if (a[keys] < b[keys]) {
                         return 1;
                     } else {
                         return -1;
