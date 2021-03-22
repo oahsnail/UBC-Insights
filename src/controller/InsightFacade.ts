@@ -51,7 +51,7 @@ export default class InsightFacade implements IInsightFacade {
             }
             try {
                 // removes from disk
-                fs.unlinkSync("data/" + id + ".json");
+                fs.unlinkSync("data/" + id);
                 // removes from listOfDatasetIds
                 // const removeIndex = this.getListOfDatasetIds().indexOf(id);
                 const removeIndex = AddRemoveListHelpers.getListOfDatasetIds(this.insightData).indexOf(id);
