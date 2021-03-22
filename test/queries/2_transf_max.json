@@ -1,0 +1,147 @@
+{
+    "title": "SELECT courses_fail, group by title and apply overall avg",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 100
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "maxPass"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "maxPass": {
+                        "MAX": "courses_pass"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_title": "comp eng design",
+            "maxPass": 735
+        },
+        {
+            "courses_title": "technical commun",
+            "maxPass": 685
+        },
+        {
+            "courses_title": "biol bact cell",
+            "maxPass": 1307
+        },
+        {
+            "courses_title": "unicellular life",
+            "maxPass": 1546
+        },
+        {
+            "courses_title": "biology of cell",
+            "maxPass": 1578
+        },
+        {
+            "courses_title": "eco gen evol",
+            "maxPass": 1648
+        },
+        {
+            "courses_title": "gentcs ecol&evol",
+            "maxPass": 1817
+        },
+        {
+            "courses_title": "cell biology 1",
+            "maxPass": 1091
+        },
+        {
+            "courses_title": "fund cell bio",
+            "maxPass": 1133
+        },
+        {
+            "courses_title": "structural chem",
+            "maxPass": 1674
+        },
+        {
+            "courses_title": "strctr bond chem",
+            "maxPass": 1762
+        },
+        {
+            "courses_title": "phys & org chem",
+            "maxPass": 1530
+        },
+        {
+            "courses_title": "thm kin org chem",
+            "maxPass": 1545
+        },
+        {
+            "courses_title": "org chem biol sc",
+            "maxPass": 1073
+        },
+        {
+            "courses_title": "financial acctng",
+            "maxPass": 604
+        },
+        {
+            "courses_title": "comptn, progrmng",
+            "maxPass": 966
+        },
+        {
+            "courses_title": "prncpls micrecon",
+            "maxPass": 2438
+        },
+        {
+            "courses_title": "princpl macrecon",
+            "maxPass": 2169
+        },
+        {
+            "courses_title": "df calc ap ph sc",
+            "maxPass": 1058
+        },
+        {
+            "courses_title": "int calc ap ph s",
+            "maxPass": 1390
+        },
+        {
+            "courses_title": "dff calc ap c&ss",
+            "maxPass": 842
+        },
+        {
+            "courses_title": "int calc ap c&ss",
+            "maxPass": 1065
+        },
+        {
+            "courses_title": "linear systems",
+            "maxPass": 649
+        },
+        {
+            "courses_title": "calc socsci comm",
+            "maxPass": 573
+        },
+        {
+            "courses_title": "calculus 3",
+            "maxPass": 944
+        },
+        {
+            "courses_title": "energy & waves",
+            "maxPass": 1558
+        },
+        {
+            "courses_title": "mechanics i",
+            "maxPass": 815
+        },
+        {
+            "courses_title": "bio cog psych",
+            "maxPass": 2201
+        },
+        {
+            "courses_title": "dev soc cli psy",
+            "maxPass": 2289
+        }
+    ]
+}
