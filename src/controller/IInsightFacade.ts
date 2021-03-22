@@ -95,6 +95,13 @@ export interface InsightData {
     numRows: number;
 }
 
+export interface PQData {
+    sFieldArr: string[];
+    mFieldArr: string[];
+    filters: string[];
+    idString: string;
+}
+
 export class InsightError extends Error {
     constructor(...args: any[]) {
         super(...args);

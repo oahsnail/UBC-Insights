@@ -1,27 +1,30 @@
 import * as fs from "fs-extra";
-import { InsightError, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
+import { InsightError, PQData, ResultTooLargeError } from "./IInsightFacade";
 import PerformQueryCourseFunc from "./PerformQueryCourseFunc";
+import PerformQueryGroupFunc from "./PerformQueryGroupFunc";
 import PerformQueryRoomsFunc from "./PerformQueryRoomsFunc";
-import Log from "../Util";
 
 export default class PerformQuery {
-    public mfieldArr: string[];
-    public sfieldArr: string[];
-    public allFields: string[];
-    public resultArr: any[] = [];
-    public filters: string[];
+    public performQueryData: PQData;
+    public resultArr: any[];
+    public applyKeyList: any[];
     public jsonData: any;
-    public idstring: any;
     public maxResultSize: number;
     constructor() {
-        this.mfieldArr = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
-        this.sfieldArr = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
-            "address", "type", "furniture", "href"];
+        this.performQueryData = {
+            sFieldArr: ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
+                "address", "type", "furniture", "href"],
+            mFieldArr: ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"],
+            filters: ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"],
+            idString: ""
+        };
         this.resultArr = [];
-        this.filters = ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"];
+        this.applyKeyList = [];
         this.maxResultSize = 5000;
     }
 
+    // removes all columns not in COLUMNS: and calls sort
+    // also appends id string to from of the keys
     public handleOptions(query: any): boolean {
         let p = new PerformQueryRoomsFunc();
         let colArray: string[] = Object.values(query.OPTIONS.COLUMNS);
@@ -37,30 +40,32 @@ export default class PerformQuery {
                 throw new InsightError("Type in order is not contained in columns");
             }
         }
-        colArray = colArray.map((x) => x.split("_", 2)[1]);
-
+        for (const [columnIndex, column] of colArray.entries()) {
+            if (this.performQueryData.mFieldArr.includes(column) || this.performQueryData.sFieldArr.includes(column)) {
+                colArray[columnIndex] = column.split("_", 2)[1];
+            }
+        }
+        // colArray = colArray.map((x) => x.split("_", 2)[1]);
         if (this.resultArr === [] && colArray !== []) {
             this.resultArr = this.jsonData.data;
         }
-
-        for (const sectionObj of this.resultArr) {
-            let sectionFields = Object.keys(sectionObj);
-            for (const field of sectionFields) {
-                if (!colArray.includes(field)) {
-                    delete sectionObj[field];
-                } else {
-                    let newKey = this.idstring + "_" + field;
-                    // From: https://stackoverflow.com/questions/4647817/javascript-object-rename-key
-                    if (field !== newKey) {
-                        Object.defineProperty(sectionObj, newKey,
-                            Object.getOwnPropertyDescriptor(sectionObj, field));
+        if (!query.TRANSFORMATIONS) {
+            for (const sectionObj of this.resultArr) {
+                let sectionFields = Object.keys(sectionObj);
+                for (const field of sectionFields) {
+                    if (!colArray.includes(field)) {
                         delete sectionObj[field];
+                    } else {
+                        let newKey = this.performQueryData.idString + "_" + field;
+                        // From: https://stackoverflow.com/questions/4647817/javascript-object-rename-key
+                        if (field !== newKey) {
+                            Object.defineProperty(sectionObj, newKey,
+                                Object.getOwnPropertyDescriptor(sectionObj, field));
+                            delete sectionObj[field];
+                        }
                     }
                 }
             }
-        }
-        if (this.resultArr.length > this.maxResultSize) {
-            throw new ResultTooLargeError("Greater than max result size");
         }
         if (orderBy) {
             p.sortArray(this.resultArr, query.OPTIONS.ORDER, orderBy, sortExpansion);
@@ -82,7 +87,7 @@ export default class PerformQuery {
             keyObj = jsonObj.EQ;
             mCompOp = "EQ";
         }
-        for (const f of this.filters) {
+        for (const f of this.performQueryData.filters) {
             if (keyObj.hasOwnProperty(f)) {
                 throw new InsightError("Cannot have nested mComparators");
             }
@@ -95,7 +100,7 @@ export default class PerformQuery {
         if (typeof mkeyVal !== "number") {
             throw new InsightError("Invalid value type");
         }
-        if (this.mfieldArr.includes(mkey)) {
+        if (this.performQueryData.mFieldArr.includes(mkey)) {
             for (const singleCourse of jsonData.data) {
                 let valuePushM = p.pushM(mCompOp, mkey, mkeyVal, singleCourse);
                 this.pushToResultArr(valuePushM[0], valuePushM[1]);
@@ -109,14 +114,14 @@ export default class PerformQuery {
     public sCompareHandler(jsonObj: any): boolean {
         let p = new PerformQueryCourseFunc();
         let matchInputStr: RegExp = /[*]/;
-        if (this.filters.includes(jsonObj.IS)) {
+        if (this.performQueryData.filters.includes(jsonObj.IS)) {
             this.parseQuery(jsonObj.IS, false);
             return true;
         }
         if (Object.keys(jsonObj.IS).length !== 1) {
             throw new InsightError("Number of entries in mComparison must equal 1");
         }
-        if (!this.sfieldArr.includes(Object.keys(jsonObj.IS)[0])) {
+        if (!this.performQueryData.sFieldArr.includes(Object.keys(jsonObj.IS)[0])) {
             throw new InsightError("Invalid skey");
         }
         if (typeof Object.values(jsonObj.IS)[0] !== "string") {
@@ -139,7 +144,7 @@ export default class PerformQuery {
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                let valuePushS =  p.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
                 this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
@@ -164,10 +169,12 @@ export default class PerformQuery {
 
     public initializeParse(jsonObj: any) {
         let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
-        this.idstring = wholeKey.split("_", 1);
-        this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
-        this.sfieldArr = this.sfieldArr.map((x) => this.idstring.concat("_", x).join(""));
-        this.mfieldArr = this.mfieldArr.map((x) => this.idstring.concat("_", x).join(""));
+        this.performQueryData.idString = wholeKey.split("_", 1);
+        this.jsonData = JSON.parse(fs.readFileSync("data/" + this.performQueryData.idString + ".json", "utf8"));
+        this.performQueryData.sFieldArr = this.performQueryData.sFieldArr.map((x) =>
+            this.performQueryData.idString + "_" + x);
+        this.performQueryData.mFieldArr = this.performQueryData.mFieldArr.map((x) =>
+            this.performQueryData.idString + "_" + x);
     }
 
     public parseQuery(jsonObj: any, firstCall: boolean): any[] {
@@ -209,26 +216,32 @@ export default class PerformQuery {
             this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
             return this.resultArr;
         }
-        if (!this.filters.includes(Object.keys(jsonObj)[0]) && firstCall === false) {
+        if (!this.performQueryData.filters.includes(Object.keys(jsonObj)[0]) && firstCall === false) {
             throw new InsightError("invalid filter key");
         }
         return this.resultArr;
     }
 
     public performQuery(query: any): Promise<any[]> {
-        let p = new PerformQueryCourseFunc();
+        let pqCourseFunc = new PerformQueryCourseFunc();
+        let pqGroupFunc = new PerformQueryGroupFunc(this.performQueryData.idString, this.performQueryData);
         this.resultArr = [];
         return new Promise<any[]>((resolve, reject) => {
             try {
-                p.missingKeys(query);
+                pqCourseFunc.missingKeys(query);
                 this.parseQuery(query, true);
+                if (query.TRANSFORMATIONS) {
+                    [this.resultArr, this.applyKeyList] = pqGroupFunc.transformationsKey(query, this.resultArr);
+                }
                 this.handleOptions(query);
+                if (this.resultArr.length > this.maxResultSize) {
+                    throw new ResultTooLargeError("Greater than max result size");
+                }
             } catch (error) {
                 if (error.message === "Greater than max result size") {
-                    return reject (new ResultTooLargeError(error));
+                    return reject(new ResultTooLargeError(error));
                 }
                 return reject(new InsightError(error));
-
             }
             return resolve(this.resultArr);
         });
