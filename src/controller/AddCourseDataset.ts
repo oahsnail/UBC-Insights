@@ -9,6 +9,7 @@ import {
 
 export default class AddCourseDataset extends AddDataset {
     public insightData: InsightData;
+    private datasetID: string;
     constructor(insData: InsightData) {
         super();
         this.insightData = insData;
@@ -45,7 +46,7 @@ export default class AddCourseDataset extends AddDataset {
                     uuid: i.id.toString(),
                     year: year
                 };
-                this.insightData.listOfCourseSections.push(section);
+                this.insightData.listOfCourseSections[this.datasetID].push(section);
                 this.insightData.numRows++;
             }
         }
@@ -68,10 +69,11 @@ export default class AddCourseDataset extends AddDataset {
     }
 
     public addDataset(id: string, content: string): Promise<string[]> {
+        this.datasetID = id;
         let atLeastOneValid: boolean = false;
         let coursePromisesArray: Array<Promise<string>> = [];
         this.insightData.numRows = 0;
-        this.insightData.listOfCourseSections = [];
+        this.insightData.listOfCourseSections[id] = [];
 
         let zip = new JSZip();
 
@@ -93,12 +95,12 @@ export default class AddCourseDataset extends AddDataset {
                     }
                 }
                 const detailedDataset: DetailedCourseDataset = {
-                    id: id, data: this.insightData.listOfCourseSections, kind: InsightDatasetKind.Courses
+                    id: id, data: this.insightData.listOfCourseSections[id], kind: InsightDatasetKind.Courses
                 };
                 if (!atLeastOneValid) {
                     return reject(new InsightError("zip contains only empty jsons"));
                 }
-                fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
+                fs.writeFileSync("data/" + id, JSON.stringify(detailedDataset));
                 const retDataset: InsightDataset = {
                     id: id, kind: InsightDatasetKind.Courses, numRows: this.insightData.numRows
                 };

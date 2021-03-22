@@ -1,0 +1,25 @@
+{
+    "title": "Invalid, group is empty",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 100
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "countDept"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [],
+            "APPLY": [
+                {
+                    "countDept": {
+                        "COUNT": "courses_dept"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

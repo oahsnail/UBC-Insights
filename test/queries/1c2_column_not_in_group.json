@@ -1,0 +1,25 @@
+{
+    "title": "Column not in group",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 100
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "countDept", "courses_id"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title"],
+            "APPLY": [
+                {
+                    "countDept": {
+                        "COUNT": "courses_dept"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

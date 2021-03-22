@@ -11,13 +11,16 @@ export default class PerformQueryCourseFunc {
     // [[g1],[g2], [g3], [g4]], groupkeys : course_name
 
     public transformationsKey(jsonObj: any, pqResultArr: any[]): any[] {
-        let value = this.performQueryData.sFieldArr;
         let applyKeyList: string[] = [];
         let groupedArr: any[] = [];
+        let matchApplyKey: RegExp = /[^_]+/;
         groupedArr = this.groupTransform(jsonObj, pqResultArr);
         for (const applykey of Object.values(jsonObj.TRANSFORMATIONS.APPLY)) {
             // get every applykey and push it to an array
             let keyVal: string = Object.keys(applykey)[0];
+            if (!matchApplyKey.test(keyVal)) {
+                throw new InsightError("Apply key contains an underscore");
+            }
             applyKeyList.push(keyVal);
             let applyTokenKeyParent: any = Object.values(applykey);
             let applyTokenKey = Object.keys(applyTokenKeyParent[0])[0];
@@ -56,8 +59,12 @@ export default class PerformQueryCourseFunc {
 
     public trimColumns(jsonObj: any, groupArr: any[], applyKeyList: string[]): any[] {
         let compressArr = [];
+        let groupKeyArr = jsonObj.TRANSFORMATIONS.GROUP;
         let colArray: string[] = Object.values(jsonObj.OPTIONS.COLUMNS);
         for (const [columnIndex, column] of colArray.entries()) {
+            if (!groupKeyArr.includes(column) && !applyKeyList.includes(column)) {
+                throw new InsightError("Column value in COLUMN is not contained in GROUP or APPLY");
+            }
             if (this.performQueryData.mFieldArr.includes(column) || this.performQueryData.sFieldArr.includes(column)) {
                 colArray[columnIndex] = column.split("_", 2)[1];
             }
@@ -180,7 +187,7 @@ export default class PerformQueryCourseFunc {
                 let key = field.split("_", 2)[1];
                 let checkVal = singleRow[key];
                 let decVal = new Decimal(checkVal);
-                total.add(decVal);
+                total = Decimal.add(total, decVal);
             }
             for (const singleRow of singleArr) {
                 // push applykey and value
@@ -191,6 +198,24 @@ export default class PerformQueryCourseFunc {
         }
         return groupArr;
     }
+
+    // public avgToken(field: string, groupArr: any[], keyVal: any): any[] {
+    //     for (const singleArr of groupArr) {
+    //         let total = 0;
+    //         for (const singleRow of singleArr) {
+    //             let key = field.split("_", 2)[1];
+    //             let checkVal = singleRow[key];
+    //             total += checkVal;
+    //         }
+    //         for (const singleRow of singleArr) {
+    //             // push applykey and value
+    //             let avg = total / singleArr.length;
+    //             avg = Number(avg.toFixed(2));
+    //             singleRow[keyVal] = avg;
+    //         }
+    //     }
+    //     return groupArr;
+    // }
 
     public sumToken(field: string, groupArr: any[], keyVal: any): any[] {
         for (const singleArr of groupArr) {

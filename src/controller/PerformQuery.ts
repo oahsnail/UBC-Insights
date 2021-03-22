@@ -1,5 +1,5 @@
 import * as fs from "fs-extra";
-import { InsightError, PQData, ResultTooLargeError } from "./IInsightFacade";
+import { InsightData, InsightError, PQData, ResultTooLargeError, RoomRowData, SectionData } from "./IInsightFacade";
 import PerformQueryCourseFunc from "./PerformQueryCourseFunc";
 import PerformQueryGroupFunc from "./PerformQueryGroupFunc";
 import PerformQueryRoomsFunc from "./PerformQueryRoomsFunc";
@@ -8,9 +8,10 @@ export default class PerformQuery {
     public performQueryData: PQData;
     public resultArr: any[];
     public applyKeyList: any[];
-    public jsonData: any;
+    public jsonData: SectionData[] & RoomRowData[];
     public maxResultSize: number;
-    constructor() {
+    public insightData: InsightData;
+    constructor(insData: InsightData) {
         this.performQueryData = {
             sFieldArr: ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
                 "address", "type", "furniture", "href"],
@@ -18,6 +19,8 @@ export default class PerformQuery {
             filters: ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"],
             idString: ""
         };
+        this.jsonData = [];
+        this.insightData = insData;
         this.resultArr = [];
         this.applyKeyList = [];
         this.maxResultSize = 5000;
@@ -45,9 +48,8 @@ export default class PerformQuery {
                 colArray[columnIndex] = column.split("_", 2)[1];
             }
         }
-        // colArray = colArray.map((x) => x.split("_", 2)[1]);
         if (this.resultArr === [] && colArray !== []) {
-            this.resultArr = this.jsonData.data;
+            this.resultArr = this.jsonData;
         }
         if (!query.TRANSFORMATIONS) {
             for (const sectionObj of this.resultArr) {
@@ -101,7 +103,7 @@ export default class PerformQuery {
             throw new InsightError("Invalid value type");
         }
         if (this.performQueryData.mFieldArr.includes(mkey)) {
-            for (const singleCourse of jsonData.data) {
+            for (const singleCourse of jsonData) {
                 let valuePushM = p.pushM(mCompOp, mkey, mkeyVal, singleCourse);
                 this.pushToResultArr(valuePushM[0], valuePushM[1]);
             }
@@ -137,24 +139,24 @@ export default class PerformQuery {
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "btwn");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData, "btwn");
                 this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(0) === "*") {
                 let inputString = wholeInputStr.substr(1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData, "beg");
                 this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "end");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData, "end");
                 this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else {
-                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "none");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData, "none");
                 this.pushToResultArr(valuePushS[0], valuePushS[1]);
             }
         }
@@ -170,7 +172,15 @@ export default class PerformQuery {
     public initializeParse(jsonObj: any) {
         let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
         this.performQueryData.idString = wholeKey.split("_", 1);
-        this.jsonData = JSON.parse(fs.readFileSync("data/" + this.performQueryData.idString + ".json", "utf8"));
+        let jsonFromFile = JSON.parse(fs.readFileSync("data/" + this.performQueryData.idString, "utf8"));
+        this.jsonData = jsonFromFile.data;
+        // if (this.insightData.listOfCourseSections.hasOwnProperty(this.performQueryData.idString)) {
+        //     this.jsonData = this.insightData.listOfCourseSections[this.performQueryData.idString];
+        // } else if (this.insightData.listOfRooms.hasOwnProperty(this.performQueryData.idString)) {
+        //     this.jsonData = this.insightData.listOfRooms[this.performQueryData.idString];
+        // } else {
+        //     throw new InsightError("no dataset matching the ID was found");
+        // }
         this.performQueryData.sFieldArr = this.performQueryData.sFieldArr.map((x) =>
             this.performQueryData.idString + "_" + x);
         this.performQueryData.mFieldArr = this.performQueryData.mFieldArr.map((x) =>
@@ -180,6 +190,10 @@ export default class PerformQuery {
     public parseQuery(jsonObj: any, firstCall: boolean): any[] {
         if (firstCall) {
             this.initializeParse(jsonObj);
+            if (Object.keys(jsonObj.WHERE).length === 0) {
+                this.resultArr = this.jsonData;
+                return this.resultArr;
+            }
             return this.parseQuery(jsonObj.WHERE, false);
         } else if (Object.keys(jsonObj).length > 1) {
             throw new InsightError("Can't have more than one filter in a object");
@@ -212,7 +226,7 @@ export default class PerformQuery {
         }
         if (jsonObj.NOT) {
             let cond1 = this.parseQuery(jsonObj.NOT, false);
-            this.resultArr = this.jsonData.data;
+            this.resultArr = this.jsonData;
             this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
             return this.resultArr;
         }
@@ -226,24 +240,34 @@ export default class PerformQuery {
         let pqCourseFunc = new PerformQueryCourseFunc();
         let pqGroupFunc = new PerformQueryGroupFunc(this.performQueryData.idString, this.performQueryData);
         this.resultArr = [];
-        return new Promise<any[]>((resolve, reject) => {
-            try {
-                pqCourseFunc.missingKeys(query);
-                this.parseQuery(query, true);
-                if (query.TRANSFORMATIONS) {
-                    [this.resultArr, this.applyKeyList] = pqGroupFunc.transformationsKey(query, this.resultArr);
-                }
-                this.handleOptions(query);
-                if (this.resultArr.length > this.maxResultSize) {
-                    throw new ResultTooLargeError("Greater than max result size");
-                }
-            } catch (error) {
-                if (error.message === "Greater than max result size") {
-                    return reject(new ResultTooLargeError(error));
-                }
-                return reject(new InsightError(error));
+        this.jsonData = [];
+
+        try {
+            pqCourseFunc.missingKeys(query);
+            this.parseQuery(query, true);
+            if (query.TRANSFORMATIONS) {
+                [this.resultArr, this.applyKeyList] = pqGroupFunc.transformationsKey(query, this.resultArr);
             }
-            return resolve(this.resultArr);
-        });
+            this.handleOptions(query);
+            if (this.resultArr.length > this.maxResultSize) {
+                throw new ResultTooLargeError("Greater than max result size");
+            }
+            return Promise.resolve(this.resultArr);
+
+        } catch (error) {
+            if (error.message === "Greater than max result size") {
+                return Promise.reject(new ResultTooLargeError(error));
+            }
+            return Promise.reject(new InsightError(error));
+        }
+
+        // return new Promise<any[]>((resolve, reject) => {
+        //     return resolve(this.resultArr);
+        // }).catch((err) => {
+        //     if (err.message === "Greater than max result size") {
+        //         return reject(new ResultTooLargeError(err));
+        //     }
+        //     return reject(new InsightError(err));
+        // });
     }
 }

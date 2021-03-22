@@ -27,11 +27,17 @@ export default class PerformQueryCourseFunc {
                 throw new InsightError("Order is null");
             }
             if (jsonObj.OPTIONS.ORDER.keys || jsonObj.OPTIONS.ORDER.dir) {
-                if (!jsonObj.OPTIONS.ORDER.hasOwnProperty("keys") && jsonObj.OPTIONS.ORDER.hasOwnProperty("dir")) {
+                if (!jsonObj.OPTIONS.ORDER.hasOwnProperty("keys") && !jsonObj.OPTIONS.ORDER.hasOwnProperty("dir")) {
                     throw new InsightError("Missing either keys or dir");
+                }
+                if (jsonObj.OPTIONS.ORDER.keys === null) {
+                    throw new InsightError("Keys column is null");
                 }
                 if (!dirOpt.includes(jsonObj.OPTIONS.ORDER.dir)) {
                     throw new InsightError("Invalid keys in dir column");
+                }
+                if (jsonObj.OPTIONS.ORDER.dir === null) {
+                    throw new InsightError("Dir column is null");
                 }
                 let orderKeys: string[] = Object.values(jsonObj.OPTIONS.ORDER.keys);
                 let colArray: string[] = Object.values(jsonObj.OPTIONS.COLUMNS);
@@ -47,6 +53,9 @@ export default class PerformQueryCourseFunc {
         if (jsonObj.hasOwnProperty("TRANSFORMATIONS")) {
             if (!jsonObj.TRANSFORMATIONS.hasOwnProperty("GROUP") || !jsonObj.TRANSFORMATIONS.hasOwnProperty("APPLY")) {
                 throw new InsightError("Transformations is missing group or apply columns");
+            }
+            if (jsonObj.TRANSFORMATIONS.GROUPS === "[]") {
+                throw new InsightError("Groups cannot be an empty array");
             }
         }
         return true;
