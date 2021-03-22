@@ -21,8 +21,8 @@ export default class InsightFacade implements IInsightFacade {
         Log.trace("InsightFacadeImpl::init()");
         this.insightData = {
             listOfDatasets: [],
-            listOfCourseSections: [],
-            listOfRooms: [],
+            listOfCourseSections: {},
+            listOfRooms: {},
             numRows: 0
         };
     }
@@ -66,7 +66,7 @@ export default class InsightFacade implements IInsightFacade {
 
     public performQuery(query: any): Promise<any[]> {
         // return Promise.reject("Not implemented.");
-        let p = new PerformQuery();
+        let p = new PerformQuery(this.insightData);
         return p.performQuery(query);
     }
 

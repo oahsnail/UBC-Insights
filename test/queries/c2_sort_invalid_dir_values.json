@@ -1,0 +1,19 @@
+{
+    "title": "Invalid query, missing WHERE",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 97
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_dept", "courses_avg"],
+            "ORDER": {
+                "dir": "hi",
+                "keys": ["courses_avg", "courses_dept"]
+            }
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

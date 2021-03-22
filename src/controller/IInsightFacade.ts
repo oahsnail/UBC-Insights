@@ -90,9 +90,13 @@ export interface BuildingInfo {
 
 export interface InsightData {
     listOfDatasets: InsightDataset[];
-    listOfCourseSections: SectionData[];
-    listOfRooms: RoomRowData[];
+    listOfCourseSections: DatasetDict;
+    listOfRooms: DatasetDict;
     numRows: number;
+}
+
+export interface DatasetDict {
+    [id: string]: SectionData[] & RoomRowData[];
 }
 
 export interface PQData {
@@ -101,6 +105,7 @@ export interface PQData {
     filters: string[];
     idString: string;
 }
+
 
 export class InsightError extends Error {
     constructor(...args: any[]) {

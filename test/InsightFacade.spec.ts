@@ -94,6 +94,15 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return expect(futureResult).to.eventually.deep.equal(expected);
     });
 
+    // // This is a unit test. You should create more like this!
+    it("Should add a valid dataset: small dataset", function () {
+        const id: string = "coursessmallvalid";
+        const expected: string[] = [id];
+        const futureResult: Promise<string[]> =
+            insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        return expect(futureResult).to.eventually.deep.equal(expected);
+    });
+
     it("getGeoLocation should return object with lat and long", function () {
         const addRoom = new AddRoomDataset(insightFacade.insightData);
         const expected: any = { lat: 49.26125, lon: -123.24807 };
@@ -106,6 +115,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         const futureResult: Promise<string> = addRoom.getGeoLocation("da_trap_house");
         return expect(futureResult).to.be.rejectedWith(NotFoundError);
     });
+
 
     // it("Should add a second dataset", function () {
     //     const id: string = "rooms";
@@ -146,14 +156,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     //     });
     // });
 
-    // // // This is a unit test. You should create more like this!
-    // it("Should add a valid dataset: small dataset", function () {
-    //     const id: string = "coursessmallvalid";
-    //     const expected: string[] = [id];
-    //     const futureResult: Promise<string[]> =
-    //         insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-    //     return expect(futureResult).to.eventually.deep.equal(expected);
-    // });
 
     // it("Should add a valid dataset: large dataset", function () {
     //     const id: string = "courses";

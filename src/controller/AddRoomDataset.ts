@@ -15,6 +15,7 @@ export default class AddRoomDataset extends AddDataset {
     private filePathsFromHtmArray: string[];
     private helper: GetBuildingRoomHelpers;
     public insightData: InsightData;
+    private datasetID: string;
     constructor(insData: InsightData) {
         super();
         this.filePathsFromHtmArray = [];
@@ -98,7 +99,7 @@ export default class AddRoomDataset extends AddDataset {
                         furniture: roomInfo.furniture,
                         href: roomInfo.href
                     };
-                    this.insightData.listOfRooms.push(roomData);
+                    this.insightData.listOfRooms[this.datasetID].push(roomData);
                     this.insightData.numRows++;
                 }
                 return Promise.resolve("success");
@@ -178,14 +179,15 @@ export default class AddRoomDataset extends AddDataset {
         });
     }
 
+
     public addDataset(id: string, content: string): Promise<string[]> {
+        this.datasetID = id;
         let roomsPromisesArray: Array<Promise<string>> = [];
         this.filePathsFromHtmArray = [];
         this.insightData.numRows = 0;
-        this.insightData.listOfRooms = [];
+        this.insightData.listOfRooms[id] = [];
 
         let zip = new JSZip();
-
         return new Promise<string[]>((resolve, reject) => {
             return (Promise.all([zip.loadAsync(content, { base64: true })])).then((z: JSZip[]) => {
                 return z[0].file("rooms/index.htm").async("text").then((htmlstring: string) => {
@@ -214,9 +216,9 @@ export default class AddRoomDataset extends AddDataset {
                     throw new InsightError("No valid rooms in dataset");
                 }
                 const detailedDataset: DetailedRoomDataset = {
-                    id: id, data: this.insightData.listOfRooms, kind: InsightDatasetKind.Rooms
+                    id: id, data: this.insightData.listOfRooms[id], kind: InsightDatasetKind.Rooms
                 };
-                fs.writeFileSync("data/" + id + ".json", JSON.stringify(detailedDataset));
+                fs.writeFileSync("data/" + id, JSON.stringify(detailedDataset));
                 this.insightData.listOfDatasets.push();
                 const retDataset: InsightDataset = {
                     id: id, kind: InsightDatasetKind.Rooms, numRows: this.insightData.numRows
