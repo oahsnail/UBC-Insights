@@ -187,11 +187,18 @@ export default class PerformQuery {
             this.performQueryData.idString + "_" + x);
     }
 
+    public checkWhereSize(jsonObj: any, resultArr: any[]) {
+        if (!jsonObj.TRANSFORMATIONS && resultArr.length > this.maxResultSize) {
+            throw new ResultTooLargeError("Greater than max result size");
+        }
+    }
+
     public parseQuery(jsonObj: any, firstCall: boolean): any[] {
         if (firstCall) {
             this.initializeParse(jsonObj);
             if (Object.keys(jsonObj.WHERE).length === 0) {
                 this.resultArr = this.jsonData;
+                this.checkWhereSize(jsonObj, this.resultArr);
                 return this.resultArr;
             }
             return this.parseQuery(jsonObj.WHERE, false);

@@ -1,5 +1,6 @@
 import Decimal from "decimal.js";
-import { InsightError, PQData } from "./IInsightFacade";
+import Log from "../Util";
+import { InsightError, PQData, ResultTooLargeError } from "./IInsightFacade";
 
 export default class PerformQueryCourseFunc {
     public applyTokenArr: string[];
@@ -117,6 +118,9 @@ export default class PerformQueryCourseFunc {
                     }
                 }
             }
+        }
+        if (groupArr.length > 5000) {
+            throw new ResultTooLargeError("Greater than max result size");
         }
         return groupArr;
     }
