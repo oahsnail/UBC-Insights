@@ -103,8 +103,8 @@ export default class PerformQuery {
             throw new InsightError("Invalid value type");
         }
         if (this.performQueryData.mFieldArr.includes(mkey)) {
-            for (const singleCourse of jsonData) {
-                let valuePushM = p.pushM(mCompOp, mkey, mkeyVal, singleCourse);
+            for (const [index, singleCourse] of jsonData.entries()) {
+                let valuePushM = p.pushM(mCompOp, mkey, mkeyVal, singleCourse, index);
                 this.pushToResultArr(valuePushM[0], valuePushM[1]);
             }
         } else {
@@ -170,6 +170,8 @@ export default class PerformQuery {
     }
 
     public initializeParse(jsonObj: any) {
+        this.jsonData = [];
+        this.resultArr = [];
         let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
         this.performQueryData.idString = wholeKey.split("_", 1);
         let jsonFromFile = JSON.parse(fs.readFileSync("data/" + this.performQueryData.idString, "utf8"));
@@ -179,7 +181,7 @@ export default class PerformQuery {
         // } else if (this.insightData.listOfRooms.hasOwnProperty(this.performQueryData.idString)) {
         //     this.jsonData = this.insightData.listOfRooms[this.performQueryData.idString];
         // } else {
-        //     throw new InsightError("no dataset matching the ID was found");
+        //     throw new InsightError("no dataset matching the given id was found");
         // }
         this.performQueryData.sFieldArr = this.performQueryData.sFieldArr.map((x) =>
             this.performQueryData.idString + "_" + x);
@@ -246,8 +248,6 @@ export default class PerformQuery {
     public performQuery(query: any): Promise<any[]> {
         let pqCourseFunc = new PerformQueryCourseFunc();
         let pqGroupFunc = new PerformQueryGroupFunc(this.performQueryData.idString, this.performQueryData);
-        this.resultArr = [];
-        this.jsonData = [];
 
         try {
             pqCourseFunc.missingKeys(query);
