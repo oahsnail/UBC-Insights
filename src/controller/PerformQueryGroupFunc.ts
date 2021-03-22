@@ -99,15 +99,18 @@ export default class PerformQueryCourseFunc {
         let groupArr = [];
         if (jsonObj.TRANSFORMATIONS) {
             for (const row of resultArr) {
+                // if (row["id"] === "157") {
+                //     const test = "hello";
+                // }
                 for (const groupKey of jsonObj.TRANSFORMATIONS.GROUP) {
-                    let key = groupKey.split("_", 2)[1];
+                    let key = groupKey.split("_")[1];
                     let groupVal = row[key];
                     if (groupArr.length === 0) {
                         groupArr.push([row]);
                     } else {
                         let found: boolean = false;
                         for (const group of groupArr) {
-                            if (Object.values(group[0]).includes(groupVal)) {
+                            if (group[key] === groupVal) {
                                 group.push(row);
                                 found = true;
                             }
