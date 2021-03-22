@@ -1,8 +1,8 @@
 import * as fs from "fs-extra";
-import { InsightError, PQData, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
+import { InsightError, PQData, ResultTooLargeError } from "./IInsightFacade";
 import PerformQueryCourseFunc from "./PerformQueryCourseFunc";
-import PerformQueryRoomsFunc from "./PerformQueryRoomsFunc";
 import PerformQueryGroupFunc from "./PerformQueryGroupFunc";
+import PerformQueryRoomsFunc from "./PerformQueryRoomsFunc";
 
 export default class PerformQuery {
     public performQueryData: PQData;
@@ -25,7 +25,6 @@ export default class PerformQuery {
 
     // removes all columns not in COLUMNS: and calls sort
     // also appends id string to from of the keys
-    // eslint-disable-next-line @typescript-eslint/tslint/config
     public handleOptions(query: any): boolean {
         let p = new PerformQueryRoomsFunc();
         let colArray: string[] = Object.values(query.OPTIONS.COLUMNS);
