@@ -1,12 +1,10 @@
-import * as fs from "fs-extra";
-import Log from "../Util";
-import { InsightError, PQData, RequiredQueryKeys, ResultTooLargeError } from "./IInsightFacade";
-import PerformQuery from "./PerformQuery";
+import Decimal from "decimal.js";
+import { InsightError, PQData } from "./IInsightFacade";
 
 export default class PerformQueryCourseFunc {
     public applyTokenArr: string[];
     public performQueryData: PQData;
-    constructor(pqData: PQData) {
+    constructor(id: string, pqData: PQData) {
         this.performQueryData = pqData;
         this.applyTokenArr = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
     }
@@ -14,7 +12,6 @@ export default class PerformQueryCourseFunc {
 
     public transformationsKey(jsonObj: any, pqResultArr: any[]): any[] {
         let value = this.performQueryData.sFieldArr;
-        Log.test(value);
         let applyKeyList: string[] = [];
         let groupedArr: any[] = [];
         groupedArr = this.groupTransform(jsonObj, pqResultArr);
@@ -29,26 +26,22 @@ export default class PerformQueryCourseFunc {
                 throw new InsightError("More than one apply token");
             }
             if (this.performQueryData.sFieldArr.includes(field)) {
-                if (Object.keys(applyTokenKey)[0] === "COUNT") {
+                if (applyTokenKey === "COUNT") {
                     groupedArr = this.countToken(field, groupedArr, keyVal);
                 } else {
                     throw new InsightError("Cannot use another function other than count for string values");
                 }
             }
-            if (this.performQueryData.mFieldArr.includes("courses_pass")) {
+            if (this.performQueryData.mFieldArr.includes(field)) {
                 if (applyTokenKey === "COUNT") {
                     groupedArr = this.countToken(field, groupedArr, keyVal);
-                }
-                if (applyTokenKey === "MAX") {
+                } else if (applyTokenKey === "MAX") {
                     groupedArr = this.maxToken(field, groupedArr, keyVal);
-                }
-                if (applyTokenKey === "MIN") {
+                } else if (applyTokenKey === "MIN") {
                     groupedArr = this.minToken(field, groupedArr, keyVal);
-                }
-                if (applyTokenKey === "AVG") {
+                } else if (applyTokenKey === "AVG") {
                     groupedArr = this.avgToken(field, groupedArr, keyVal);
-                }
-                if (applyTokenKey === "SUM") {
+                } else if (applyTokenKey === "SUM") {
                     groupedArr = this.sumToken(field, groupedArr, keyVal);
                 } else {
                     throw new InsightError("Transformation function does not exist");
@@ -56,16 +49,51 @@ export default class PerformQueryCourseFunc {
             }
 
         }
+        groupedArr = this.trimColumns(jsonObj, groupedArr, applyKeyList);
         // return the new result array after handling the transformations and the applytokens
         return [groupedArr, applyKeyList];
     }
+
+    public trimColumns(jsonObj: any, groupArr: any[], applyKeyList: string[]): any[] {
+        let compressArr = [];
+        let colArray: string[] = Object.values(jsonObj.OPTIONS.COLUMNS);
+        for (const [columnIndex, column] of colArray.entries()) {
+            if (this.performQueryData.mFieldArr.includes(column) || this.performQueryData.sFieldArr.includes(column)) {
+                colArray[columnIndex] = column.split("_", 2)[1];
+            }
+        }
+        for (const singleArr of groupArr) {
+            for (const singleRow of singleArr) {
+                for (const field of Object.keys(singleRow)) {
+                    if (!colArray.includes(field)) {
+                        delete singleRow[field];
+                    } else {
+                        if (!applyKeyList.includes(field)) {
+                            let newKey = this.performQueryData.idString + "_" + field;
+                            // From: https://stackoverflow.com/questions/4647817/javascript-object-rename-key
+                            if (field !== newKey) {
+                                Object.defineProperty(singleRow, newKey,
+                                    Object.getOwnPropertyDescriptor(singleRow, field));
+                                delete singleRow[field];
+                            }
+                        }
+                    }
+                }
+            }
+            // TODO could b better optimized
+            compressArr.push(singleArr[0]);
+        }
+        return compressArr;
+    }
+
 
     public groupTransform(jsonObj: any, resultArr: any[]): any[] {
         let groupArr = [];
         if (jsonObj.TRANSFORMATIONS) {
             for (const row of resultArr) {
                 for (const groupKey of jsonObj.TRANSFORMATIONS.GROUP) {
-                    let groupVal = row[groupKey];
+                    let key = groupKey.split("_", 2)[1];
+                    let groupVal = row[key];
                     if (groupArr.length === 0) {
                         groupArr.push([row]);
                     } else {
@@ -87,46 +115,98 @@ export default class PerformQueryCourseFunc {
     }
 
     public maxToken(field: string, groupArr: any[], keyVal: any): any[] {
-        let compressArr: [];
-        let max = 0;
+        // let compressArr: [];
         for (const singleArr of groupArr) {
+            let max = 0;
             for (const singleRow of singleArr) {
-                let checkVal = singleRow[field];
+                let key = field.split("_", 2)[1];
+                let checkVal = singleRow[key];
                 if (checkVal > max) {
                     max = checkVal;
-                    Log.test(max);
                 }
-                // push the key and value to compressArr
+            }
+            for (const singleRow of singleArr) {
+                // push applykey and value
+                singleRow[keyVal] = max;
             }
         }
-        return compressArr;
+        return groupArr;
     }
 
     public countToken(field: string, groupArr: any[], keyVal: any): any[] {
-        let compressArr: [];
-        let max = 0;
         for (const singleArr of groupArr) {
+            let countArr: any[] = [];
             for (const singleRow of singleArr) {
-                let checkVal = singleRow[field];
-                if (checkVal > max) {
-                    max = checkVal;
+                let key = field.split("_", 2)[1];
+                let checkVal = singleRow[key];
+                if (countArr.length === 0) {
+                    countArr.push(checkVal);
+                } else if (!countArr.includes(checkVal)) {
+                    countArr.push(checkVal);
                 }
-                // push the key and value to compressArr
+            }
+            for (const singleRow of singleArr) {
+                // push applykey and value
+                singleRow[keyVal] = countArr.length;
             }
         }
-        return compressArr;
+        return groupArr;
     }
 
-    public minToken(field: string, resultArr: any[], keyVal: any): any[] {
-        return;
+    public minToken(field: string, groupArr: any[], keyVal: any): any[] {
+        // let compressArr: [];
+        for (const singleArr of groupArr) {
+            let min = Number.POSITIVE_INFINITY;
+            for (const singleRow of singleArr) {
+                let key = field.split("_", 2)[1];
+                let checkVal = singleRow[key];
+                if (checkVal < min) {
+                    min = checkVal;
+                }
+            }
+            for (const singleRow of singleArr) {
+                // push applykey and value
+                singleRow[keyVal] = min;
+            }
+        }
+        return groupArr;
     }
 
-    public avgToken(field: string, resultArr: any[], keyVal: any): any[] {
-        return;
+    // TODO Fix
+    public avgToken(field: string, groupArr: any[], keyVal: any): any[] {
+        for (const singleArr of groupArr) {
+            let total = new Decimal(0);
+            for (const singleRow of singleArr) {
+                let key = field.split("_", 2)[1];
+                let checkVal = singleRow[key];
+                let decVal = new Decimal(checkVal);
+                total.add(decVal);
+            }
+            for (const singleRow of singleArr) {
+                // push applykey and value
+                let avg = total.toNumber() / singleArr.length;
+                avg = Number(avg.toFixed(2));
+                singleRow[keyVal] = avg;
+            }
+        }
+        return groupArr;
     }
 
-    public sumToken(field: string, resultArr: any[], keyVal: any): any[] {
-        return;
+    public sumToken(field: string, groupArr: any[], keyVal: any): any[] {
+        for (const singleArr of groupArr) {
+            let sum = 0;
+            for (const singleRow of singleArr) {
+                let key = field.split("_", 2)[1];
+                let checkVal = singleRow[key];
+                sum += checkVal;
+            }
+            for (const singleRow of singleArr) {
+                // push applykey and value
+                let sumVal = Number(sum.toFixed(2));
+                singleRow[keyVal] = sumVal;
+            }
+        }
+        return groupArr;
     }
 }
 

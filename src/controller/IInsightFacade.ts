@@ -99,6 +99,7 @@ export interface PQData {
     sFieldArr: string[];
     mFieldArr: string[];
     filters: string[];
+    idString: string;
 }
 
 export class InsightError extends Error {

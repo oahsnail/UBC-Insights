@@ -3,26 +3,28 @@ import { InsightError, PQData, RequiredQueryKeys, ResultTooLargeError } from "./
 import PerformQueryCourseFunc from "./PerformQueryCourseFunc";
 import PerformQueryRoomsFunc from "./PerformQueryRoomsFunc";
 import PerformQueryGroupFunc from "./PerformQueryGroupFunc";
-import Log from "../Util";
 
 export default class PerformQuery {
     public performQueryData: PQData;
-    public resultArr: any[] = [];
-    public filters: string[];
+    public resultArr: any[];
+    public applyKeyList: any[];
     public jsonData: any;
-    public idstring: any;
     public maxResultSize: number;
     constructor() {
         this.performQueryData = {
             sFieldArr: ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
-            "address", "type", "furniture", "href"],
+                "address", "type", "furniture", "href"],
             mFieldArr: ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"],
-            filters: ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"]
+            filters: ["AND", "OR", "LT", "GT", "EQ", "IS", "NOT"],
+            idString: ""
         };
         this.resultArr = [];
+        this.applyKeyList = [];
         this.maxResultSize = 5000;
     }
 
+    // removes all columns not in COLUMNS: and calls sort
+    // also appends id string to from of the keys
     // eslint-disable-next-line @typescript-eslint/tslint/config
     public handleOptions(query: any): boolean {
         let p = new PerformQueryRoomsFunc();
@@ -39,41 +41,29 @@ export default class PerformQuery {
                 throw new InsightError("Type in order is not contained in columns");
             }
         }
-        // for (let column of colArray) {
-        //     if (this.mfieldArr.includes(column) || this.sfieldArr.includes(column)) {
-        //         column = column.split("_", 2)[1];
-        //         Log.test(column);
-        //     } else {
-        //         let testVal2 = query.TRANSFORMATI.APPLY.hasOwnProperty(column);
-        //         Log.test(Object.values(query.TRANSFORMATIONS.APPLY));
-        //         if (Object.values(query.TRANSFORMATIONS.APPLY).includes(column)) {
-        //             let test = query.TRANSFORMATIONS.APPLY.column;
-        //             Log.test(test);
-        //         }
-        //     }
-        // }
-        colArray = colArray.map((x) => x.split("_", 2)[1]);
+        for (const [columnIndex, column] of colArray.entries()) {
+            if (this.performQueryData.mFieldArr.includes(column) || this.performQueryData.sFieldArr.includes(column)) {
+                colArray[columnIndex] = column.split("_", 2)[1];
+            }
+        }
+        // colArray = colArray.map((x) => x.split("_", 2)[1]);
         if (this.resultArr === [] && colArray !== []) {
             this.resultArr = this.jsonData.data;
         }
-
-        for (const sectionObj of this.resultArr) {
-            let sectionFields = Object.keys(sectionObj);
-            for (const field of sectionFields) {
-                // if (query.OPTIONS.TRANSFORMATIONS) {
-                //     if (query.OPTIONS.TRANSFORMATIONS.APPLY) {
-                //         // placeholder
-                //     }
-                // }
-                if (!colArray.includes(field)) {
-                    delete sectionObj[field];
-                } else {
-                    let newKey = this.idstring + "_" + field;
-                    // From: https://stackoverflow.com/questions/4647817/javascript-object-rename-key
-                    if (field !== newKey) {
-                        Object.defineProperty(sectionObj, newKey,
-                            Object.getOwnPropertyDescriptor(sectionObj, field));
+        if (!query.TRANSFORMATIONS) {
+            for (const sectionObj of this.resultArr) {
+                let sectionFields = Object.keys(sectionObj);
+                for (const field of sectionFields) {
+                    if (!colArray.includes(field)) {
                         delete sectionObj[field];
+                    } else {
+                        let newKey = this.performQueryData.idString + "_" + field;
+                        // From: https://stackoverflow.com/questions/4647817/javascript-object-rename-key
+                        if (field !== newKey) {
+                            Object.defineProperty(sectionObj, newKey,
+                                Object.getOwnPropertyDescriptor(sectionObj, field));
+                            delete sectionObj[field];
+                        }
                     }
                 }
             }
@@ -98,7 +88,7 @@ export default class PerformQuery {
             keyObj = jsonObj.EQ;
             mCompOp = "EQ";
         }
-        for (const f of this.filters) {
+        for (const f of this.performQueryData.filters) {
             if (keyObj.hasOwnProperty(f)) {
                 throw new InsightError("Cannot have nested mComparators");
             }
@@ -125,7 +115,7 @@ export default class PerformQuery {
     public sCompareHandler(jsonObj: any): boolean {
         let p = new PerformQueryCourseFunc();
         let matchInputStr: RegExp = /[*]/;
-        if (this.filters.includes(jsonObj.IS)) {
+        if (this.performQueryData.filters.includes(jsonObj.IS)) {
             this.parseQuery(jsonObj.IS, false);
             return true;
         }
@@ -155,7 +145,7 @@ export default class PerformQuery {
                 if (matchInputStr.test(inputString)) {
                     throw new InsightError("Invalid input string");
                 }
-                let valuePushS =  p.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
+                let valuePushS = p.pushS(sfield[1], inputStr, this.jsonData.data, "beg");
                 this.pushToResultArr(valuePushS[0], valuePushS[1]);
             } else if (wholeInputStr.charAt(strLen - 1) === "*") {
                 let inputString = wholeInputStr.substr(0, wholeInputStr.length - 1);
@@ -180,12 +170,12 @@ export default class PerformQuery {
 
     public initializeParse(jsonObj: any) {
         let wholeKey = jsonObj.OPTIONS.COLUMNS[0];
-        this.idstring = wholeKey.split("_", 1);
-        this.jsonData = JSON.parse(fs.readFileSync("data/" + this.idstring + ".json", "utf8"));
+        this.performQueryData.idString = wholeKey.split("_", 1);
+        this.jsonData = JSON.parse(fs.readFileSync("data/" + this.performQueryData.idString + ".json", "utf8"));
         this.performQueryData.sFieldArr = this.performQueryData.sFieldArr.map((x) =>
-            this.idstring.concat("_", x).join(""));
+            this.performQueryData.idString + "_" + x);
         this.performQueryData.mFieldArr = this.performQueryData.mFieldArr.map((x) =>
-            this.idstring.concat("_", x).join(""));
+            this.performQueryData.idString + "_" + x);
     }
 
     public parseQuery(jsonObj: any, firstCall: boolean): any[] {
@@ -227,31 +217,32 @@ export default class PerformQuery {
             this.resultArr = this.resultArr.filter((x) => !cond1.includes(x));
             return this.resultArr;
         }
-        if (!this.filters.includes(Object.keys(jsonObj)[0]) && firstCall === false) {
+        if (!this.performQueryData.filters.includes(Object.keys(jsonObj)[0]) && firstCall === false) {
             throw new InsightError("invalid filter key");
         }
         return this.resultArr;
     }
 
     public performQuery(query: any): Promise<any[]> {
-        let p = new PerformQueryCourseFunc();
-        let t = new PerformQueryGroupFunc(this.performQueryData);
+        let pqCourseFunc = new PerformQueryCourseFunc();
+        let pqGroupFunc = new PerformQueryGroupFunc(this.performQueryData.idString, this.performQueryData);
         this.resultArr = [];
         return new Promise<any[]>((resolve, reject) => {
             try {
-                p.missingKeys(query);
+                pqCourseFunc.missingKeys(query);
                 this.parseQuery(query, true);
+                if (query.TRANSFORMATIONS) {
+                    [this.resultArr, this.applyKeyList] = pqGroupFunc.transformationsKey(query, this.resultArr);
+                }
                 this.handleOptions(query);
-                t.transformationsKey(query, this.resultArr);
                 if (this.resultArr.length > this.maxResultSize) {
                     throw new ResultTooLargeError("Greater than max result size");
                 }
             } catch (error) {
                 if (error.message === "Greater than max result size") {
-                    return reject (new ResultTooLargeError(error));
+                    return reject(new ResultTooLargeError(error));
                 }
                 return reject(new InsightError(error));
-
             }
             return resolve(this.resultArr);
         });
