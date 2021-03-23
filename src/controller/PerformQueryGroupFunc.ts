@@ -137,10 +137,10 @@ export default class PerformQueryCourseFunc {
 
     public maxToken(field: string, groupArr: any[], keyVal: any): any[] {
         // let compressArr: [];
+        let key = field.split("_", 2)[1];
         for (const singleArr of groupArr) {
             let max = 0;
             for (const singleRow of singleArr) {
-                let key = field.split("_", 2)[1];
                 let checkVal = singleRow[key];
                 if (checkVal > max) {
                     max = checkVal;
@@ -155,10 +155,10 @@ export default class PerformQueryCourseFunc {
     }
 
     public countToken(field: string, groupArr: any[], keyVal: any): any[] {
+        let key = field.split("_", 2)[1];
         for (const singleArr of groupArr) {
             let countArr: any[] = [];
             for (const singleRow of singleArr) {
-                let key = field.split("_", 2)[1];
                 let checkVal = singleRow[key];
                 if (countArr.length === 0) {
                     countArr.push(checkVal);
@@ -176,10 +176,10 @@ export default class PerformQueryCourseFunc {
 
     public minToken(field: string, groupArr: any[], keyVal: any): any[] {
         // let compressArr: [];
+        let key = field.split("_", 2)[1];
         for (const singleArr of groupArr) {
             let min = Number.POSITIVE_INFINITY;
             for (const singleRow of singleArr) {
-                let key = field.split("_", 2)[1];
                 let checkVal = singleRow[key];
                 if (checkVal < min) {
                     min = checkVal;
@@ -195,10 +195,10 @@ export default class PerformQueryCourseFunc {
 
     // TODO Fix
     public avgToken(field: string, groupArr: any[], keyVal: any): any[] {
+        let key = field.split("_", 2)[1];
         for (const singleArr of groupArr) {
             let total = new Decimal(0);
             for (const singleRow of singleArr) {
-                let key = field.split("_", 2)[1];
                 let checkVal = singleRow[key];
                 let decVal = new Decimal(checkVal);
                 total = Decimal.add(total, decVal);
@@ -232,10 +232,10 @@ export default class PerformQueryCourseFunc {
     // }
 
     public sumToken(field: string, groupArr: any[], keyVal: any): any[] {
+        let key = field.split("_", 2)[1];
         for (const singleArr of groupArr) {
             let sum = 0;
             for (const singleRow of singleArr) {
-                let key = field.split("_", 2)[1];
                 let checkVal = singleRow[key];
                 sum += checkVal;
             }

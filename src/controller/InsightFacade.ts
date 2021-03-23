@@ -29,9 +29,10 @@ export default class InsightFacade implements IInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 
-        let idTestRet = AddRemoveListHelpers.idTestHelper(id, "add", this.insightData);
-        if (idTestRet !== null) {
-            return Promise.reject(idTestRet);
+        try {
+            AddRemoveListHelpers.idTestHelper(id, "add", this.insightData);
+        } catch (error) {
+            return Promise.reject(error);
         }
 
         if (kind === InsightDatasetKind.Courses) {
@@ -45,10 +46,12 @@ export default class InsightFacade implements IInsightFacade {
 
     public removeDataset(id: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            let idTestRet = AddRemoveListHelpers.idTestHelper(id, "remove", this.insightData);
-            if (idTestRet !== null) {
-                return reject(idTestRet);
+            try {
+                AddRemoveListHelpers.idTestHelper(id, "remove", this.insightData);
+            } catch (error) {
+                return reject(error);
             }
+
             try {
                 // removes from disk
                 fs.unlinkSync("data/" + id);

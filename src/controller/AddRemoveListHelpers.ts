@@ -33,7 +33,7 @@ export class AddRemoveListHelpers {
                 throw new NotFoundError("Cannot remove, ID does not exists");
             }
         } catch (error) {
-            return error;
+            throw error;
         }
 
         return null;
