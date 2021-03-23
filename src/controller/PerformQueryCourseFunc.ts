@@ -1,4 +1,3 @@
-import Log from "../Util";
 import { InsightError, RequiredQueryKeys } from "./IInsightFacade";
 
 export default class PerformQueryCourseFunc {
@@ -66,10 +65,6 @@ export default class PerformQueryCourseFunc {
         let resultArray: any[] = [];
         let mfield = mkey.split("_", 2)[1];
         let x = jsonDataSingle[mfield];
-
-        if (index === 1070) {
-            Log.test();
-        }
 
         if (mCompOp === "LT" && x < mkeyVal) {
             resultArray.push(jsonDataSingle);
