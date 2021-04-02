@@ -4,6 +4,7 @@
 
 import fs = require("fs");
 import restify = require("restify");
+import InsightFacade from "../controller/InsightFacade";
 import Log from "../Util";
 
 /**
@@ -13,10 +14,12 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+    private insightFacade: InsightFacade;
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
+        this.insightFacade = new InsightFacade();
     }
 
     /**
@@ -51,7 +54,7 @@ export default class Server {
                 that.rest = restify.createServer({
                     name: "insightUBC",
                 });
-                that.rest.use(restify.bodyParser({mapFiles: true, mapParams: true}));
+                that.rest.use(restify.bodyParser({ mapFiles: true, mapParams: true }));
                 that.rest.use(
                     function crossOrigin(req, res, next) {
                         res.header("Access-Control-Allow-Origin", "*");
@@ -64,6 +67,7 @@ export default class Server {
                 that.rest.get("/echo/:msg", Server.echo);
 
                 // NOTE: your endpoints should go here
+                that.rest.get("/datasets", that.getDatasets); // TODO not sure if works
 
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
@@ -95,10 +99,10 @@ export default class Server {
         try {
             const response = Server.performEcho(req.params.msg);
             Log.info("Server::echo(..) - responding " + 200);
-            res.json(200, {result: response});
+            res.json(200, { result: response });
         } catch (err) {
             Log.error("Server::echo(..) - responding 400");
-            res.json(400, {error: err});
+            res.json(400, { error: err });
         }
         return next();
     }
@@ -130,4 +134,34 @@ export default class Server {
         });
     }
 
+    private putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        const publicDir = "data/";
+        if (req.url !== "/dataset/:id/:kind") {
+            // path = publicDir + req.url.split("/").pop();
+        }
+        // this.insightFacade.addDataset(id, "", kind).then((retList) => {
+        //     if (retList) {
+        //         res.send(200, { result: retList });
+        //         return next();
+        //     }
+        // }).catch((err) => {
+        //     res.send(400, { error: "error" });
+        //     return next();
+        // });
+    }
+
+    private getDatasets(req: restify.Request, res: restify.Response, next: restify.Next) {
+        const publicDir = "data/";
+        if (req.url !== "/datasets") {
+            // path = publicDir + req.url.split("/").pop();
+        }
+        this.insightFacade.listDatasets().then((retList) => {
+            if (retList) {
+                res.send(200, { result: retList });
+                return next();
+            }
+        });
+
+        return next();
+    }
 }
