@@ -28,12 +28,10 @@ describe("Facade D3", function () {
         rooms3: "./test/data/rooms3.zip",
         roomsSmall: "./test/data/roomsSmall.zip"
     };
-    let datasets: { [id: string]: string } = {};
-    let insightFacade: InsightFacade;
+    let datasets: { [id: string]: any } = {};
     const cacheDir = __dirname + "/../data";
 
     before(function () {
-        facade = new InsightFacade();
         server = new Server(4321);
 
         // TODO: start server here once and handle errors properly
@@ -44,12 +42,7 @@ describe("Facade D3", function () {
             fs.mkdirSync(cacheDir);
         }
         for (const id of Object.keys(datasetsToLoad)) {
-            datasets[id] = fs.readFileSync(datasetsToLoad[id]).toString("base64");
-        }
-        try {
-            insightFacade = new InsightFacade();
-        } catch (err) {
-            Log.error(err);
+            datasets[id] = fs.readFileSync(datasetsToLoad[id]);
         }
     });
 
@@ -66,6 +59,10 @@ describe("Facade D3", function () {
     afterEach(function () {
         // might want to add some process logging here to keep track of what"s going on
         Log.test(`After: ${this.test.parent.title}`);
+        // call delete request from server using
+
+        server.resetInsightFacade();
+
     });
 
     // Sample on how to format PUT requests
@@ -90,10 +87,32 @@ describe("Facade D3", function () {
     });
     */
 
+    it("Successful GET test for empty datasets", function () {
+        try {
+            return chai.request(server.getUrl())
+                .get("/datasets")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.test("Logging result: " + res);
+                    expect(res.status).to.be.equal(200);
+                    expect(res.body).to.be.equal({ result: [] });
+                })
+                .catch(function (err) {
+                    // some logging here please!
+                    Log.test("Logging then catch error: " + err);
+                    expect.fail();
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.test("Failed in catch block: " + err);
+        }
+    });
+
+
     it("Successful PUT test for courses dataset", function () {
         try {
             return chai.request(server.getUrl())
-                .put("/dataset/courses")
+                .put("/dataset/courses/courses")
                 .send(datasets["courses"])
                 .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
@@ -116,34 +135,13 @@ describe("Facade D3", function () {
     it("Failed PUT test for courses dataset", function () {
         try {
             return chai.request(server.getUrl())
-                .put("/dataset/courses")
+                .put("/dataset/courses_2/courses")
                 .send(datasets["courses_2"])
                 .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
                     // some logging here please!
                     Log.test("Logging result: " + res);
                     expect(res.status).to.be.equal(400);
-                })
-                .catch(function (err) {
-                    // some logging here please!
-                    Log.test("Logging then catch error: " + err);
-                    expect.fail();
-                });
-        } catch (err) {
-            // and some more logging here!
-            Log.test("Failed in catch block: " + err);
-        }
-    });
-
-    it("Successful GET test for empty datasets", function () {
-        try {
-            return chai.request(server.getUrl())
-                .get("/datasets")
-                .then(function (res: Response) {
-                    // some logging here please!
-                    Log.test("Logging result: " + res);
-                    expect(res.status).to.be.equal(200);
-                    expect(res.body).to.be.equal({ result: [] });
                 })
                 .catch(function (err) {
                     // some logging here please!
@@ -179,7 +177,7 @@ describe("Facade D3", function () {
         }
     });
 
-    it("Successful DELETE 404 test for courses dataset", function () {
+    it("Failed DELETE 404 test for courses dataset", function () {
         try {
             return chai.request(server.getUrl())
                 .del("/dataset/courses4")
@@ -201,7 +199,7 @@ describe("Facade D3", function () {
         }
     });
 
-    it("Successful DELETE 400 test for courses dataset", function () {
+    it("Failed DELETE 400 test for courses dataset", function () {
         try {
             return chai.request(server.getUrl())
                 .del("/dataset/courses_4")
@@ -211,6 +209,37 @@ describe("Facade D3", function () {
                     // some logging here please!
                     Log.test("Logging result: " + res);
                     expect(res.status).to.be.equal(400);
+                })
+                .catch(function (err) {
+                    // some logging here please!
+                    Log.test("Logging then catch error");
+                    expect.fail();
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.test("Failed in try catch block");
+        }
+    });
+
+    it("Successful POST test for courses dataset", function () {
+        try {
+            return chai.request(server.getUrl())
+                .put("/datasets/courses/courses")
+                .send(datasets["courses"])
+                .set("Content-Type", "application/x-zip-compressed")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.test("Logging result: " + res);
+                    expect(res.status).to.be.equal(200);
+                    return chai.request(server.getUrl())
+                        .post("/query")
+                        .send("json here") // copy and paste json here
+                        .set("Content-Type", "application/json")
+                        .then(function (res2: Response) {
+                            // some logging here please!
+                            Log.test("Logging result: " + res2);
+                            expect(res2.status).to.be.equal(200);
+                        });
                 })
                 .catch(function (err) {
                     // some logging here please!

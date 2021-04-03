@@ -1,0 +1,147 @@
+{
+    "title": "SELECT courses_fail, group by title and apply overall avg",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 100
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "overallAvg"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "overallAvg": {
+                        "AVG": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_title": "comp eng design",
+            "overallAvg": 73.64
+        },
+        {
+            "courses_title": "technical commun",
+            "overallAvg": 67.23
+        },
+        {
+            "courses_title": "biol bact cell",
+            "overallAvg": 67.77
+        },
+        {
+            "courses_title": "unicellular life",
+            "overallAvg": 69.54
+        },
+        {
+            "courses_title": "biology of cell",
+            "overallAvg": 70.02
+        },
+        {
+            "courses_title": "eco gen evol",
+            "overallAvg": 66.88
+        },
+        {
+            "courses_title": "gentcs ecol&evol",
+            "overallAvg": 67.37
+        },
+        {
+            "courses_title": "cell biology 1",
+            "overallAvg": 67.82
+        },
+        {
+            "courses_title": "fund cell bio",
+            "overallAvg": 68.89
+        },
+        {
+            "courses_title": "structural chem",
+            "overallAvg": 69.15
+        },
+        {
+            "courses_title": "strctr bond chem",
+            "overallAvg": 69.06
+        },
+        {
+            "courses_title": "phys & org chem",
+            "overallAvg": 70.38
+        },
+        {
+            "courses_title": "thm kin org chem",
+            "overallAvg": 72.83
+        },
+        {
+            "courses_title": "org chem biol sc",
+            "overallAvg": 65.54
+        },
+        {
+            "courses_title": "financial acctng",
+            "overallAvg": 67.06
+        },
+        {
+            "courses_title": "comptn, progrmng",
+            "overallAvg": 72.34
+        },
+        {
+            "courses_title": "prncpls micrecon",
+            "overallAvg": 68.59
+        },
+        {
+            "courses_title": "princpl macrecon",
+            "overallAvg": 68.61
+        },
+        {
+            "courses_title": "df calc ap ph sc",
+            "overallAvg": 68.16
+        },
+        {
+            "courses_title": "int calc ap ph s",
+            "overallAvg": 65.78
+        },
+        {
+            "courses_title": "dff calc ap c&ss",
+            "overallAvg": 65.46
+        },
+        {
+            "courses_title": "int calc ap c&ss",
+            "overallAvg": 65.79
+        },
+        {
+            "courses_title": "linear systems",
+            "overallAvg": 65.4
+        },
+        {
+            "courses_title": "calc socsci comm",
+            "overallAvg": 61.89
+        },
+        {
+            "courses_title": "calculus 3",
+            "overallAvg": 66.73
+        },
+        {
+            "courses_title": "energy & waves",
+            "overallAvg": 71.67
+        },
+        {
+            "courses_title": "mechanics i",
+            "overallAvg": 68.96
+        },
+        {
+            "courses_title": "bio cog psych",
+            "overallAvg": 68.66
+        },
+        {
+            "courses_title": "dev soc cli psy",
+            "overallAvg": 68.83
+        }
+    ]
+}

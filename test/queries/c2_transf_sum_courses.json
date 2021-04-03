@@ -1,0 +1,55 @@
+{
+    "title": "SELECT courses_fail, group by title and apply overall avg",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 100
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "sumPass"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title"],
+            "APPLY": [
+                {
+                    "sumPass": {
+                        "SUM": "courses_pass"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_title": "comp eng design", "sumPass": 3333 },
+        { "courses_title": "technical commun", "sumPass": 685 },
+        { "courses_title": "biol bact cell", "sumPass": 1307 },
+        { "courses_title": "unicellular life", "sumPass": 5622 },
+        { "courses_title": "biology of cell", "sumPass": 1578 },
+        { "courses_title": "eco gen evol", "sumPass": 1648 },
+        { "courses_title": "gentcs ecol&evol", "sumPass": 8793 },
+        { "courses_title": "cell biology 1", "sumPass": 6051 },
+        { "courses_title": "fund cell bio", "sumPass": 2217 },
+        { "courses_title": "structural chem", "sumPass": 9638 },
+        { "courses_title": "strctr bond chem", "sumPass": 3461 },
+        { "courses_title": "phys & org chem", "sumPass": 5669 },
+        { "courses_title": "thm kin org chem", "sumPass": 1545 },
+        { "courses_title": "org chem biol sc", "sumPass": 6725 },
+        { "courses_title": "financial acctng", "sumPass": 604 },
+        { "courses_title": "comptn, progrmng", "sumPass": 3407 },
+        { "courses_title": "prncpls micrecon", "sumPass": 19500 },
+        { "courses_title": "princpl macrecon", "sumPass": 17295 },
+        { "courses_title": "df calc ap ph sc", "sumPass": 3065 },
+        { "courses_title": "int calc ap ph s", "sumPass": 9991 },
+        { "courses_title": "dff calc ap c&ss", "sumPass": 842 },
+        { "courses_title": "int calc ap c&ss", "sumPass": 4848 },
+        { "courses_title": "linear systems", "sumPass": 3086 },
+        { "courses_title": "calc socsci comm", "sumPass": 1085 },
+        { "courses_title": "calculus 3", "sumPass": 4671 },
+        { "courses_title": "energy & waves", "sumPass": 8699 },
+        { "courses_title": "mechanics i", "sumPass": 2385 },
+        { "courses_title": "bio cog psych", "sumPass": 8941 },
+        { "courses_title": "dev soc cli psy", "sumPass": 9002 }
+    ]
+}
