@@ -4,6 +4,7 @@
 
 import fs = require("fs");
 import restify = require("restify");
+import { InsightError } from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
 import Log from "../Util";
 
@@ -68,6 +69,9 @@ export default class Server {
 
                 // NOTE: your endpoints should go here
                 that.rest.get("/datasets", that.getDatasets); // TODO not sure if works
+                that.rest.put("/datasets/:id/:kind", that.putDataset); // TODO not sure if works
+                that.rest.del("/dataset/:id", that.deleteDataset);
+                that.rest.post("/query", that.postQuery);
 
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
@@ -89,6 +93,14 @@ export default class Server {
                 reject(err);
             }
         });
+    }
+
+    public getUrl() {
+        return this.rest.url;
+    }
+
+    public resetInsightFacade() {
+        this.insightFacade = new InsightFacade();
     }
 
     // The next two methods handle the echo service.
@@ -135,29 +147,57 @@ export default class Server {
     }
 
     private putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-        const publicDir = "data/";
-        if (req.url !== "/dataset/:id/:kind") {
-            // path = publicDir + req.url.split("/").pop();
-        }
-        // this.insightFacade.addDataset(id, "", kind).then((retList) => {
-        //     if (retList) {
-        //         res.send(200, { result: retList });
-        //         return next();
-        //     }
-        // }).catch((err) => {
-        //     res.send(400, { error: "error" });
-        //     return next();
-        // });
+        let id = req.params.id;
+        let kind = req.params.kind;
+        let zip = req.body.toString("base64");
+
+        this.insightFacade.addDataset(id, zip, kind).then((retList) => {
+            if (retList) {
+                res.json(200, { result: retList });
+                return next();
+            }
+        }).catch((err) => {
+            res.json(400, { error: "error" });
+            return next();
+        });
+    }
+
+    private postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let query = req.body;
+        this.insightFacade.performQuery(query).then((resArr) => {
+            if (resArr) {
+                res.json(200, { result: resArr });
+                return next();
+            }
+        }).catch((err) => {
+            res.json(400, { error: "error" });
+            return next();
+        });
+    }
+
+    private deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let id = req.params.id;
+        this.insightFacade.removeDataset(id).then((idStr) => {
+            res.json(200, { result: idStr });
+            return next();
+        }).catch((err) => {
+            if (err.includes("InsightError")) {
+                res.json(400, { error: "error" });
+            } else if (err.includes("NotFoundError")) {
+                res.json(404, { error: "dataset not found" });
+            }
+            return next();
+        });
     }
 
     private getDatasets(req: restify.Request, res: restify.Response, next: restify.Next) {
-        const publicDir = "data/";
-        if (req.url !== "/datasets") {
-            // path = publicDir + req.url.split("/").pop();
-        }
+        // if (req.url !== "/datasets") {
+        //     Log.test("invalid url for getDatasets");
+        //     return next();
+        // }
         this.insightFacade.listDatasets().then((retList) => {
             if (retList) {
-                res.send(200, { result: retList });
+                res.json(200, { result: retList });
                 return next();
             }
         });

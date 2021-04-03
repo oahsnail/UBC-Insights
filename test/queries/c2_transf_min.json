@@ -1,0 +1,55 @@
+{
+    "title": "SELECT courses_fail, group by title and apply overall min",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 100
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "minPass"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title"],
+            "APPLY": [
+                {
+                    "minPass": {
+                        "MIN": "courses_pass"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_title": "comp eng design", "minPass": 576 },
+        { "courses_title": "technical commun", "minPass": 685 },
+        { "courses_title": "biol bact cell", "minPass": 1307 },
+        { "courses_title": "unicellular life", "minPass": 1215 },
+        { "courses_title": "biology of cell", "minPass": 1578 },
+        { "courses_title": "eco gen evol", "minPass": 1648 },
+        { "courses_title": "gentcs ecol&evol", "minPass": 1670 },
+        { "courses_title": "cell biology 1", "minPass": 915 },
+        { "courses_title": "fund cell bio", "minPass": 1084 },
+        { "courses_title": "structural chem", "minPass": 1526 },
+        { "courses_title": "strctr bond chem", "minPass": 1699 },
+        { "courses_title": "phys & org chem", "minPass": 1359 },
+        { "courses_title": "thm kin org chem", "minPass": 1545 },
+        { "courses_title": "org chem biol sc", "minPass": 880 },
+        { "courses_title": "financial acctng", "minPass": 604 },
+        { "courses_title": "comptn, progrmng", "minPass": 736 },
+        { "courses_title": "prncpls micrecon", "minPass": 1948 },
+        { "courses_title": "princpl macrecon", "minPass": 1705 },
+        { "courses_title": "df calc ap ph sc", "minPass": 963 },
+        { "courses_title": "int calc ap ph s", "minPass": 982 },
+        { "courses_title": "dff calc ap c&ss", "minPass": 842 },
+        { "courses_title": "int calc ap c&ss", "minPass": 911 },
+        { "courses_title": "linear systems", "minPass": 581 },
+        { "courses_title": "calc socsci comm", "minPass": 512 },
+        { "courses_title": "calculus 3", "minPass": 668 },
+        { "courses_title": "energy & waves", "minPass": 1342 },
+        { "courses_title": "mechanics i", "minPass": 772 },
+        { "courses_title": "bio cog psych", "minPass": 1383 },
+        { "courses_title": "dev soc cli psy", "minPass": 1391 }
+    ]
+}

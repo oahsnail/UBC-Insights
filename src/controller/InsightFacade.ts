@@ -31,6 +31,9 @@ export default class InsightFacade implements IInsightFacade {
 
         try {
             AddRemoveListHelpers.idTestHelper(id, "add", this.insightData);
+            if (content === null || kind === null) {
+                throw new InsightError("invalid payload");
+            }
         } catch (error) {
             return Promise.reject(error);
         }
@@ -61,7 +64,7 @@ export default class InsightFacade implements IInsightFacade {
                 // this.getListOfDatasetIds().splice(removeIndex, 1);
                 this.insightData.listOfDatasets.splice(removeIndex, 1);
             } catch (error) {
-                return reject(new InsightError(error));
+                return reject(error);
             }
             return resolve(id);
         });
