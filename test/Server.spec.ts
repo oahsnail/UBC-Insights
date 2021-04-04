@@ -35,7 +35,7 @@ describe("Facade D3", function () {
         server = new Server(4321);
 
         // TODO: start server here once and handle errors properly
-        server.start();
+        server.start().then();
 
         Log.test(`Before all`);
         if (!fs.existsSync(cacheDir)) {
@@ -60,8 +60,8 @@ describe("Facade D3", function () {
         // might want to add some process logging here to keep track of what"s going on
         Log.test(`After: ${this.test.parent.title}`);
         // call delete request from server using
-
-        server.resetInsightFacade();
+        // fs.removeSync(cacheDir);
+        // server.resetInsightFacade();
 
     });
 
@@ -87,31 +87,79 @@ describe("Facade D3", function () {
     });
     */
 
-    it("Successful GET test for empty datasets", function () {
+    // it("Successful POST test for courses dataset", function () {
+    //     try {
+    //         return chai.request(server.getUrl())
+    //             .put("/datasets/courses/courses")
+    //             .send(datasets["courses"])
+    //             .set("Content-Type", "application/x-zip-compressed")
+    //             .then(function (res: Response) {
+    //                 // some logging here please!
+    //                 Log.test("Logging result: " + res);
+    //                 expect(res.status).to.be.equal(200);
+    //                 return chai.request(server.getUrl())
+    //                     .post("/query")
+    //                     .send("json here") // copy and paste json here
+    //                     .set("Content-Type", "application/json")
+    //                     .then(function (res2: Response) {
+    //                         // some logging here please!
+    //                         Log.test("Logging result: " + res2);
+    //                         expect(res2.status).to.be.equal(200);
+    //                     });
+    //             })
+    //             .catch(function (err) {
+    //                 // some logging here please!
+    //                 Log.test("Logging then catch error");
+    //                 expect.fail();
+    //             });
+    //     } catch (err) {
+    //         // and some more logging here!
+    //         Log.test("Failed in try catch block");
+    //     }
+    // });
+
+    // it("Successful GET test for empty datasets", function () {
+    //     try {
+    //         return chai.request(server.getUrl())
+    //             .get("/datasets")
+    //             .then(function (res: Response) {
+    //                 // some logging here please!
+    //                 Log.test("Logging result: " + res);
+    //                 expect(res.status).to.be.equal(200);
+    //                 expect(res.body).to.be.equal({ result: [] });
+    //             })
+    //             .catch(function (err) {
+    //                 // some logging here please!
+    //                 Log.test("Logging then catch error: " + err);
+    //                 expect.fail();
+    //             });
+    //     } catch (err) {
+    //         // and some more logging here!
+    //         Log.test("Failed in catch block: " + err);
+    //     }
+    // });
+
+    it("PUT test for courses dataset", function () {
         try {
-            return chai.request(server.getUrl())
-                .get("/datasets")
+            return chai.request("http://localhost:4321/")
+                .get("/echo/Hello")
                 .then(function (res: Response) {
                     // some logging here please!
-                    Log.test("Logging result: " + res);
-                    expect(res.status).to.be.equal(200);
-                    expect(res.body).to.be.equal({ result: [] });
+                    expect(res.status).to.be.equal(204);
                 })
                 .catch(function (err) {
                     // some logging here please!
-                    Log.test("Logging then catch error: " + err);
                     expect.fail();
                 });
         } catch (err) {
             // and some more logging here!
-            Log.test("Failed in catch block: " + err);
         }
     });
 
 
     it("Successful PUT test for courses dataset", function () {
         try {
-            return chai.request(server.getUrl())
+            return chai.request("http://localhost:4321/")
                 .put("/dataset/courses/courses")
                 .send(datasets["courses"])
                 .set("Content-Type", "application/x-zip-compressed")
@@ -119,11 +167,13 @@ describe("Facade D3", function () {
                     // some logging here please!
                     Log.test("Logging result: " + res);
                     expect(res.status).to.be.equal(200);
-                    expect(res.body).to.be.equal({ result: ["courses"] });
+                    // expect(res.body).to.be.equal({ result: ["courses"] });
                 })
                 .catch(function (err) {
                     // some logging here please!
-                    Log.test("Logging then catch error");
+                    // eslint-disable-next-line no-console
+                    console.log("reached first catch");
+                    Log.test("Logging then catch error: " + err);
                     expect.fail();
                 });
         } catch (err) {
@@ -134,7 +184,7 @@ describe("Facade D3", function () {
 
     it("Failed PUT test for courses dataset", function () {
         try {
-            return chai.request(server.getUrl())
+            return chai.request("http://localhost:4321/")
                 .put("/dataset/courses_2/courses")
                 .send(datasets["courses_2"])
                 .set("Content-Type", "application/x-zip-compressed")
@@ -209,37 +259,6 @@ describe("Facade D3", function () {
                     // some logging here please!
                     Log.test("Logging result: " + res);
                     expect(res.status).to.be.equal(400);
-                })
-                .catch(function (err) {
-                    // some logging here please!
-                    Log.test("Logging then catch error");
-                    expect.fail();
-                });
-        } catch (err) {
-            // and some more logging here!
-            Log.test("Failed in try catch block");
-        }
-    });
-
-    it("Successful POST test for courses dataset", function () {
-        try {
-            return chai.request(server.getUrl())
-                .put("/datasets/courses/courses")
-                .send(datasets["courses"])
-                .set("Content-Type", "application/x-zip-compressed")
-                .then(function (res: Response) {
-                    // some logging here please!
-                    Log.test("Logging result: " + res);
-                    expect(res.status).to.be.equal(200);
-                    return chai.request(server.getUrl())
-                        .post("/query")
-                        .send("json here") // copy and paste json here
-                        .set("Content-Type", "application/json")
-                        .then(function (res2: Response) {
-                            // some logging here please!
-                            Log.test("Logging result: " + res2);
-                            expect(res2.status).to.be.equal(200);
-                        });
                 })
                 .catch(function (err) {
                     // some logging here please!

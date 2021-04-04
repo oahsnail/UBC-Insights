@@ -15,12 +15,11 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
-    private insightFacade: InsightFacade;
+    private static insightFacade: InsightFacade = new InsightFacade();
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
-        this.insightFacade = new InsightFacade();
     }
 
     /**
@@ -68,10 +67,10 @@ export default class Server {
                 that.rest.get("/echo/:msg", Server.echo);
 
                 // NOTE: your endpoints should go here
-                that.rest.get("/datasets", that.getDatasets); // TODO not sure if works
-                that.rest.put("/datasets/:id/:kind", that.putDataset); // TODO not sure if works
-                that.rest.del("/dataset/:id", that.deleteDataset);
-                that.rest.post("/query", that.postQuery);
+                that.rest.get("/datasets", Server.getDatasets); // TODO not sure if works
+                that.rest.put("/dataset/:id/:kind", Server.putDataset); // TODO not sure if works
+                that.rest.del("/dataset/:id", Server.deleteDataset);
+                that.rest.post("/query", Server.postQuery);
 
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
@@ -99,9 +98,9 @@ export default class Server {
         return this.rest.url;
     }
 
-    public resetInsightFacade() {
-        this.insightFacade = new InsightFacade();
-    }
+    // public resetInsightFacade() {
+    //     this.insightFacade = new InsightFacade();
+    // }
 
     // The next two methods handle the echo service.
     // These are almost certainly not the best place to put these, but are here for your reference.
@@ -146,25 +145,25 @@ export default class Server {
         });
     }
 
-    private putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+    private static putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id = req.params.id;
         let kind = req.params.kind;
         let zip = req.body.toString("base64");
-
-        this.insightFacade.addDataset(id, zip, kind).then((retList) => {
-            if (retList) {
-                res.json(200, { result: retList });
-                return next();
-            }
+        Log.test("id" + id);
+        Log.test("kind" + kind);
+        Server.insightFacade.addDataset(id, zip, kind).then((retList) => {
+            Log.test("Reached here");
+            res.json(200, { result: retList });
+            return next();
         }).catch((err) => {
             res.json(400, { error: "error" });
             return next();
         });
     }
 
-    private postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
+    private static postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
         let query = req.body;
-        this.insightFacade.performQuery(query).then((resArr) => {
+        Server.insightFacade.performQuery(query).then((resArr) => {
             if (resArr) {
                 res.json(200, { result: resArr });
                 return next();
@@ -175,9 +174,9 @@ export default class Server {
         });
     }
 
-    private deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+    private static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id = req.params.id;
-        this.insightFacade.removeDataset(id).then((idStr) => {
+        Server.insightFacade.removeDataset(id).then((idStr) => {
             res.json(200, { result: idStr });
             return next();
         }).catch((err) => {
@@ -190,12 +189,12 @@ export default class Server {
         });
     }
 
-    private getDatasets(req: restify.Request, res: restify.Response, next: restify.Next) {
+    private static getDatasets(req: restify.Request, res: restify.Response, next: restify.Next) {
         // if (req.url !== "/datasets") {
         //     Log.test("invalid url for getDatasets");
         //     return next();
         // }
-        this.insightFacade.listDatasets().then((retList) => {
+        Server.insightFacade.listDatasets().then((retList) => {
             if (retList) {
                 res.json(200, { result: retList });
                 return next();
