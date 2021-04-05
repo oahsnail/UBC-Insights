@@ -4,7 +4,7 @@
 
 import fs = require("fs");
 import restify = require("restify");
-import { InsightError } from "../controller/IInsightFacade";
+import { InsightError, NotFoundError } from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
 import Log from "../Util";
 
@@ -166,7 +166,7 @@ export default class Server {
                 return next();
             }
         }).catch((err) => {
-            res.json(400, { error: "error" });
+            res.json(400, { error: err });
             return next();
         });
     }
@@ -178,9 +178,9 @@ export default class Server {
             res.json(200, { result: idStr });
             return next();
         }).catch((err) => {
-            if (err.message.includes("Cannot remove, ID does not exists")) {
+            if (err.constructor === NotFoundError) {
                 res.json(404, { error: err });
-            } else {
+            } else if (err.constructor === InsightError) {
                 res.json(400, { error: err });
             }
             return next();
