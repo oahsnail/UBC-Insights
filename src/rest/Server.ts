@@ -153,7 +153,7 @@ export default class Server {
             res.json(200, { result: retList });
             return next();
         }).catch((err) => {
-            res.json(400, { error: err });
+            res.json(400, { error: JSON.stringify(err) });
             return next();
         });
     }
@@ -166,7 +166,7 @@ export default class Server {
                 return next();
             }
         }).catch((err) => {
-            res.json(400, { error: err });
+            res.json(400, { error: JSON.stringify(err) });
             return next();
         });
     }
@@ -178,10 +178,15 @@ export default class Server {
             res.json(200, { result: idStr });
             return next();
         }).catch((err) => {
+            let errString = JSON.stringify(err);
             if (err.constructor === NotFoundError) {
-                res.json(404, { error: err });
+                res.json(404, { error: errString });
             } else if (err.constructor === InsightError) {
-                res.json(400, { error: err });
+                res.json(400, { error: errString });
+            } else {
+                Log.error("unhandled error: " + errString);
+                res.json(400, { error: errString });
+
             }
             return next();
         });
