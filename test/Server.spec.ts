@@ -87,68 +87,18 @@ describe("Facade D3", function () {
     });
     */
 
-    // it("Successful POST test for courses dataset", function () {
-    //     try {
-    //         return chai.request(server.getUrl())
-    //             .put("/datasets/courses/courses")
-    //             .send(datasets["courses"])
-    //             .set("Content-Type", "application/x-zip-compressed")
-    //             .then(function (res: Response) {
-    //                 // some logging here please!
-    //                 Log.test("Logging result: " + res);
-    //                 expect(res.status).to.be.equal(200);
-    //                 return chai.request(server.getUrl())
-    //                     .post("/query")
-    //                     .send("json here") // copy and paste json here
-    //                     .set("Content-Type", "application/json")
-    //                     .then(function (res2: Response) {
-    //                         // some logging here please!
-    //                         Log.test("Logging result: " + res2);
-    //                         expect(res2.status).to.be.equal(200);
-    //                     });
-    //             })
-    //             .catch(function (err) {
-    //                 // some logging here please!
-    //                 Log.test("Logging then catch error");
-    //                 expect.fail();
-    //             });
-    //     } catch (err) {
-    //         // and some more logging here!
-    //         Log.test("Failed in try catch block");
-    //     }
-    // });
-
-    // it("Successful GET test for empty datasets", function () {
-    //     try {
-    //         return chai.request(server.getUrl())
-    //             .get("/datasets")
-    //             .then(function (res: Response) {
-    //                 // some logging here please!
-    //                 Log.test("Logging result: " + res);
-    //                 expect(res.status).to.be.equal(200);
-    //                 expect(res.body).to.be.equal({ result: [] });
-    //             })
-    //             .catch(function (err) {
-    //                 // some logging here please!
-    //                 Log.test("Logging then catch error: " + err);
-    //                 expect.fail();
-    //             });
-    //     } catch (err) {
-    //         // and some more logging here!
-    //         Log.test("Failed in catch block: " + err);
-    //     }
-    // });
-
-    it("PUT test for courses dataset", function () {
+    it("ECHO test for courses dataset", function () {
         try {
             return chai.request("http://localhost:4321/")
                 .get("/echo/Hello")
                 .then(function (res: Response) {
                     // some logging here please!
-                    expect(res.status).to.be.equal(204);
+                    Log.test("Logging result: " + res);
+                    expect(res.status).to.be.equal(200);
                 })
                 .catch(function (err) {
                     // some logging here please!
+                    Log.test("Logging then catch error: " + err);
                     expect.fail();
                 });
         } catch (err) {
@@ -190,7 +140,70 @@ describe("Facade D3", function () {
                 .then(function (res: Response) {
                     // some logging here please!
                     Log.test("Logging result: " + res);
-                    expect(res.status).to.be.equal(400);
+                    expect.fail();
+                })
+                .catch(function (err) {
+                    // some logging here please!
+                    Log.test("Logging then catch error: " + err);
+                    expect(err.status).to.be.equal(400);
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.test("Failed in catch block: " + err);
+        }
+    });
+
+    // it("Successful POST test for courses dataset", function () {
+    //     try {
+    //         return chai.request(server.getUrl())
+    //             .put("/dataset/courses/courses")
+    //             .send(datasets["courses"])
+    //             .set("Content-Type", "application/x-zip-compressed")
+    //             .then(function (res: Response) {
+    //                 // some logging here please!
+    //                 Log.test("Logging result: " + res);
+    //                 expect(res.status).to.be.equal(200);
+    //                 return chai.request(server.getUrl())
+    //                     .post("/query")
+    //                     .send({
+    //                         WHERE: {
+    //                             GT: {
+    //                                 courses_avg: 97
+    //                             }
+    //                         },
+    //                         OPTIONS: {
+    //                             COLUMNS: ["courses_dept", "courses_avg"],
+    //                             ORDER: "courses_avg"
+    //                         }
+    //                     }) // copy and paste json here
+    //                     .set("Content-Type", "application/json")
+    //                     .then(function (res2: Response) {
+    //                         // some logging here please!
+    //                         Log.test("Logging result: " + res2);
+    //                         expect(res2.status).to.be.equal(200);
+    //                     });
+    //             })
+    //             .catch(function (err) {
+    //                 // some logging here please!
+    //                 Log.test("Logging then catch error");
+    //                 expect.fail();
+    //             });
+    //     } catch (err) {
+    //         // and some more logging here!
+    //         Log.test("Failed in try catch block");
+    //     }
+    // });
+
+
+    it("Successful GET test for empty datasets", function () {
+        try {
+            return chai.request(server.getUrl())
+                .get("/datasets")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.test("Logging result: " + res);
+                    expect(res.status).to.be.equal(200);
+                    // expect(res.body).to.be.equal({ result: [] });
                 })
                 .catch(function (err) {
                     // some logging here please!

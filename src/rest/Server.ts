@@ -156,7 +156,7 @@ export default class Server {
             res.json(200, { result: retList });
             return next();
         }).catch((err) => {
-            res.json(400, { error: "error" });
+            res.json(400, { error: err });
             return next();
         });
     }
