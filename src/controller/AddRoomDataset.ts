@@ -59,7 +59,7 @@ export default class AddRoomDataset extends AddDataset {
                     res.on("end", () => {
                         let jsonObj = JSON.parse(rawData);
                         if (jsonObj.hasOwnProperty("error")) {
-                            reject(new NotFoundError(jsonObj.error));
+                            reject(new InsightError(jsonObj.error));
                         }
                         resolve(JSON.parse(rawData));
                     });

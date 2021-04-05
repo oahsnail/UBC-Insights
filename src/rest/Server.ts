@@ -149,10 +149,7 @@ export default class Server {
         let id = req.params.id;
         let kind = req.params.kind;
         let zip = req.body.toString("base64");
-        Log.test("id" + id);
-        Log.test("kind" + kind);
         Server.insightFacade.addDataset(id, zip, kind).then((retList) => {
-            Log.test("Reached here");
             res.json(200, { result: retList });
             return next();
         }).catch((err) => {
@@ -181,22 +178,16 @@ export default class Server {
             res.json(200, { result: idStr });
             return next();
         }).catch((err) => {
-            if (err.includes("InsightError")) {
-                res.json(400, { error: err });
-                // return next();
-            } else if (err.includes("NotFoundError")) {
+            if (err.message.includes("Cannot remove, ID does not exists")) {
                 res.json(404, { error: err });
-                // return next();
+            } else {
+                res.json(400, { error: err });
             }
             return next();
         });
     }
 
     private static getDatasets(req: restify.Request, res: restify.Response, next: restify.Next) {
-        // if (req.url !== "/datasets") {
-        //     Log.test("invalid url for getDatasets");
-        //     return next();
-        // }
         Server.insightFacade.listDatasets().then((retList) => {
             if (retList) {
                 res.json(200, { result: retList });
