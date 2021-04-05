@@ -6,7 +6,16 @@
  */
 CampusExplorer.sendQuery = (query) => {
     return new Promise((resolve, reject) => {
-        // TODO: implement!
-        console.log("CampusExplorer.sendQuery not implemented yet.");
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/query", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = (res) => {
+            resolve(res);
+        }
+        xhr.addEventListener("error", (err) => {
+            reject(err);
+        })
+        xhr.send(JSON.stringify(query));
+        // console.log("CampusExplorer.sendQuery not implemented yet.");
     });
 };

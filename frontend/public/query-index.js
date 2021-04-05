@@ -9,3 +9,15 @@
  */
 
 // TODO: implement!
+
+CampusExplorer.sendQuery({
+    WHERE: {
+        GT: {
+            courses_avg: 97,
+        },
+    },
+    OPTIONS: {
+        COLUMNS: ["courses_dept", "courses_avg"],
+        ORDER: "courses_avg",
+    },
+});
