@@ -216,6 +216,44 @@ describe("Facade D3", function () {
         }
     });
 
+    it("Successful DELETE test for courses dataset", function () {
+        try {
+            return chai.request("http://localhost:4321/")
+                .put("/dataset/courses/courses")
+                .send(datasets["courses"])
+                .set("Content-Type", "application/x-zip-compressed")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.test("Logging result: " + res);
+                    expect(res.status).to.be.equal(200);
+                    return chai.request(server.getUrl())
+                    .del("/dataset/courses")
+                    // .send(datasets["courses"])
+                    .set("Content-Type", "application/x-zip-compressed")
+                    .then(function (res2: Response) {
+                        // some logging here please!
+                        Log.test("Logging result: " + res2);
+                        expect(res2.status).to.be.equal(200);
+                        // expect(res2.body).to.be.equal({ result: "courses" });
+                    })
+                    .catch(function (err) {
+                        // some logging here please!
+                        Log.test("Logging then catch error" + err);
+                        expect.fail();
+                    });
+                })
+                .catch(function (err) {
+                    // some logging here please!
+                    // console.log("reached first catch");
+                    Log.test("Logging then catch error: " + err);
+                    expect.fail();
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.test("Failed in try catch block");
+        }
+    });
+
     // it("Successful DELETE test for courses dataset", function () {
     //     try {
     //         return chai.request(server.getUrl())
@@ -248,12 +286,12 @@ describe("Facade D3", function () {
     //             .then(function (res: Response) {
     //                 // some logging here please!
     //                 Log.test("Logging result: " + res);
-    //                 expect(res.status).to.be.equal(404);
+    //                 expect.fail();
     //             })
     //             .catch(function (err) {
     //                 // some logging here please!
     //                 Log.test("Logging then catch error");
-    //                 expect.fail();
+    //                 expect(err.status).to.be.equal(404);
     //             });
     //     } catch (err) {
     //         // and some more logging here!
@@ -270,12 +308,12 @@ describe("Facade D3", function () {
     //             .then(function (res: Response) {
     //                 // some logging here please!
     //                 Log.test("Logging result: " + res);
-    //                 expect(res.status).to.be.equal(400);
+    //                 expect.fail();
     //             })
     //             .catch(function (err) {
     //                 // some logging here please!
     //                 Log.test("Logging then catch error");
-    //                 expect.fail();
+    //                 expect(err.status).to.be.equal(400);
     //             });
     //     } catch (err) {
     //         // and some more logging here!

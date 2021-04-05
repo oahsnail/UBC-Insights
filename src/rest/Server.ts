@@ -176,14 +176,17 @@ export default class Server {
 
     private static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id = req.params.id;
+
         Server.insightFacade.removeDataset(id).then((idStr) => {
             res.json(200, { result: idStr });
             return next();
         }).catch((err) => {
             if (err.includes("InsightError")) {
-                res.json(400, { error: "error" });
+                res.json(400, { error: err });
+                // return next();
             } else if (err.includes("NotFoundError")) {
-                res.json(404, { error: "dataset not found" });
+                res.json(404, { error: err });
+                // return next();
             }
             return next();
         });
