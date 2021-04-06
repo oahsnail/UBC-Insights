@@ -6,6 +6,7 @@
  */
 CampusExplorer.sendQuery = (query) => {
     return new Promise((resolve, reject) => {
+        // Referenced Katharine's C3 slides and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequestEventTarget/onload
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/query", true);
         xhr.setRequestHeader("Content-Type", "application/json");
