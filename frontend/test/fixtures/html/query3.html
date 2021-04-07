@@ -26,10 +26,10 @@
                         <option value="audit">
                             Audit
                         </option>
-                        <option value="avg">
+                        <option value="avg" selected="selected">
                             Average
                         </option>
-                        <option value="dept" selected="selected">
+                        <option value="dept">
                             Department
                         </option>
                         <option value="fail">
@@ -60,10 +60,10 @@
                         <option value="EQ">
                             EQ
                         </option>
-                        <option value="GT">
+                        <option value="GT" selected="selected">
                             GT
                         </option>
-                        <option value="IS" selected="selected">
+                        <option value="IS">
                             IS
                         </option>
                         <option value="LT">
@@ -72,7 +72,67 @@
                     </select>
                 </div>
                 <div class="control term">
-                    <input type="text" value="cpsc" />
+                    <input type="text" value="96" />
+                </div>
+                <a class="icon icon-minus" href="#"></a>
+            </div>
+            <div class="control-group condition">
+                <div class="control not">
+                    <input type="checkbox" checked="checked" />
+                    <label>Not</label>
+                </div>
+                <div class="control fields">
+                    <select>
+                        <option value="audit">
+                            Audit
+                        </option>
+                        <option value="avg">
+                            Average
+                        </option>
+                        <option value="dept">
+                            Department
+                        </option>
+                        <option value="fail">
+                            Fail
+                        </option>
+                        <option value="id">
+                            ID
+                        </option>
+                        <option value="instructor">
+                            Instructor
+                        </option>
+                        <option value="pass">
+                            Pass
+                        </option>
+                        <option value="title">
+                            Title
+                        </option>
+                        <option value="uuid">
+                            UUID
+                        </option>
+                        <option value="year" selected="selected">
+                            Year
+                        </option>
+                    </select>
+                </div>
+                <div class="control operators">
+                    <select>
+                        <option value="EQ" selected="selected">
+                            EQ
+                        </option>
+                        <option value="GT">
+                            GT
+                        </option>
+                        <option value="IS">
+                            IS
+                        </option>
+                        <option value="LT">
+                            LT
+                        </option>
+                    </select>
+                </div>
+                <div class="control term">
+                    <input type="text" value="2015" />
                 </div>
                 <a class="icon icon-minus" href="#"></a>
             </div>
@@ -87,11 +147,11 @@
                 <label for="courses-columns-field-audit">Audit</label>
             </div>
             <div class="control field">
-                <input type="checkbox" id="courses-columns-field-avg" data-key="avg" value="avg" />
+                <input type="checkbox" id="courses-columns-field-avg" data-key="avg" value="avg" checked="checked" />
                 <label for="courses-columns-field-avg">Average</label>
             </div>
             <div class="control field">
-                <input type="checkbox" id="courses-columns-field-dept" data-key="dept" value="dept" checked="checked" />
+                <input type="checkbox" id="courses-columns-field-dept" data-key="dept" value="dept" />
                 <label for="courses-columns-field-dept">Department</label>
             </div>
             <div class="control field">
@@ -119,7 +179,7 @@
                 <label for="courses-columns-field-uuid">UUID</label>
             </div>
             <div class="control field">
-                <input type="checkbox" id="courses-columns-field-year" data-key="year" value="year" />
+                <input type="checkbox" id="courses-columns-field-year" data-key="year" value="year" checked="checked" />
                 <label for="courses-columns-field-year">Year</label>
             </div>
         </div>
@@ -141,7 +201,7 @@
                     <option value="fail">
                         Fail
                     </option>
-                    <option value="id" selected="selected">
+                    <option value="id">
                         ID
                     </option>
                     <option value="instructor">
@@ -156,13 +216,13 @@
                     <option value="uuid">
                         UUID
                     </option>
-                    <option value="year">
+                    <option value="year" selected="selected">
                         Year
                     </option>
                 </select>
             </div>
             <div class="control descending">
-                <input type="checkbox" id="courses-order" />
+                <input type="checkbox" id="courses-order" checked="checked" />
                 <label for="courses-order">Descending</label>
             </div>
         </div>

@@ -2,5 +2,54 @@
     "query1": {
         "WHERE": { "IS": { "courses_dept": "cpsc" } },
         "OPTIONS": { "COLUMNS": ["courses_dept", "courses_id"], "ORDER": "courses_id" }
+    },
+    "query2": {
+        "WHERE": {
+            "GT": {
+                "rooms_seats": 27
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["rooms_shortname", "sumSeats"],
+            "ORDER": {
+                "dir": "UP",
+                "keys": ["rooms_shortname"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [
+                {
+                    "sumSeats": {
+                        "SUM": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
+    "query3": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 96
+                    }
+                },
+                {
+                    "NOT": {
+                        "EQ": {
+                            "courses_year": 2015
+                        }
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_avg", "courses_id", "courses_year"],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["courses_year"]
+            }
+        }
     }
 }
