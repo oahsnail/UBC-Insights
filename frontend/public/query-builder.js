@@ -14,21 +14,21 @@ CampusExplorer.buildQuery = () => {
     // take the html and convert to json
 
     // let datasetTypeTab = document.getElementsByTagName("form");
-    let datasetTypeTab = document.getElementsByClassName("nav-item tab active");
+    let datasetTypeTab = document.getElementsByClassName("tab-panel active");
     if (datasetTypeTab[0].getAttribute("data-type") === "courses") {
         let id = "courses";
         let jsonNavigator = query.WHERE = {};
 
-        let conditions = document.getElementsByClassName("control-group condition");
+        let conditions = datasetTypeTab[0].getElementsByClassName("control-group condition");
 
         // WHERE/condition type
         if (conditions.length > 1) {
             if (document.getElementById("courses-conditiontype-all").getAttribute("checked") === "checked") {
-                jsonNavigator = jsonNavigator.AND = {};
+                jsonNavigator = jsonNavigator.AND = [];
             } else if (document.getElementById("courses-conditiontype-any").getAttribute("checked") === "checked") {
-                jsonNavigator = jsonNavigator.OR = {};
+                jsonNavigator = jsonNavigator.OR = [];
             } else if (document.getElementById("courses-conditiontype-none").getAttribute("checked") === "checked") {
-                jsonNavigator = jsonNavigator.NOT = {};
+                jsonNavigator = jsonNavigator.NOT = [];
             }
         }
 
@@ -36,8 +36,8 @@ CampusExplorer.buildQuery = () => {
         // WHERE/CONDITIONS
 
         for (let i = 0; i < conditions.length; i++) {
-            // condNavigator is a temp pointer
-            let condNavigator = jsonNavigator;
+            let retCondObj = {};
+            let condNavigator = retCondObj;
             if (conditions[i].getElementsByClassName("control not")[0].getElementsByTagName("input")[0].getAttribute("checked") === "checked") {
                 condNavigator = condNavigator.NOT = {}
             }
@@ -45,13 +45,22 @@ CampusExplorer.buildQuery = () => {
             condNavigator = condNavigator[condOP] = {};
 
             let condField = conditions[i].getElementsByClassName("control fields")[0].getElementsByTagName("select")[0].value;
-            condField = id + "_" + condField;
 
             let condTerm = conditions[i].getElementsByClassName("control term")[0].getElementsByTagName("input")[0].value;
+            if (isNumber(condTerm) && !(condField === "id" || condField === "uuid" || condField === "number")) {
+                condTerm = Number(condTerm);
+            }
 
+            condField = id + "_" + condField;
             condNavigator[condField] = condTerm;
-        }
 
+            if (conditions.length > 1) {
+                jsonNavigator.push(retCondObj);
+            } else {
+                jsonNavigator = jsonNavigator[condOP] = {};
+                jsonNavigator[condField] = condTerm;
+            }
+        }
 
         // OPTIONS/COLUMNS
 
@@ -61,7 +70,6 @@ CampusExplorer.buildQuery = () => {
 
         // TRANSFORMATIONS/APPLY
 
-        console.log("CampusExplorer.buildQuery not implemented yet.");
     }
 
 
@@ -75,3 +83,7 @@ CampusExplorer.buildQuery = () => {
 
     return query;
 };
+
+function isNumber(value) {
+    return /^-?[0-9]\d*(\.\d+)?$/.test(value);
+}
