@@ -62,11 +62,70 @@ CampusExplorer.buildQuery = () => {
             }
         }
 
-        // OPTIONS/COLUMNS
+        jsonNavigator = query.OPTIONS = {};
+        // // OPTIONS/COLUMNS
+        let columnNavigator = jsonNavigator.COLUMNS = [];
+        let columns = datasetTypeTab[0].getElementsByClassName("form-group columns")[0].getElementsByTagName("input");
+
+        for (let i = 0; i < columns.length; i++) {
+            if (columns[i].getAttribute("checked") === "checked") {
+                let colField = columns[i].value;
+                if (columns[i].hasAttribute("id")) {
+                    colField = id + "_" + colField;
+                }
+                columnNavigator.push(colField);
+            }
+        }
 
         // OPTIONS/ORDER
 
+        let descendingChecked = false;
+        let orderDescending = datasetTypeTab[0].getElementsByClassName("form-group order")[0].getElementsByTagName("input")[0];
+        if (orderDescending.getAttribute("checked") === "checked") {
+            query.OPTIONS.ORDER = {};
+            query.OPTIONS.ORDER.dir = "DOWN";
+            descendingChecked = true;
+        }
+
+        let selectedAttrs = [];
+        let orderAttrs = datasetTypeTab[0].getElementsByClassName("form-group order")[0].getElementsByTagName("select")[0].getElementsByClassName("option");
+        for (let i = 0; i < orderAttrs.length; i++) {
+            if (orderAttrs[i].getAttribute("selected") === "selected") {
+                let attrVal = orderAttrs[i].value;
+                if (!orderAttrs[i].classList.contains("transformation")) {
+                    attrVal = id + "_" + attrVal;
+                }
+                selectedAttrs.push(attrVal);
+            }
+        }
+        if (selectedAttrs.length !== 0) {
+            console.log("Selected attributes: ===============================");
+            console.log(selectedAttrs);
+            if (!descendingChecked) {
+                query.OPTIONS.ORDER = {};
+                query.OPTIONS.ORDER.dir = "UP";
+            }
+            query.OPTIONS.ORDER.keys = ["test"];
+            query.OPTIONS.ORDER.keys.push(...selectedAttrs);
+        }
+
+
+
+
         // TRANSFORMATIONS/GROUP
+
+        // let groupsNavigator = jsonNavigator.GROUPS = [];
+        // let groups = datasetTypeTab[0].getElementsByClassName("form-group groups")[0].getElementsByTagName("input");
+        // for (let i = 0; i < groups.length; i++) {
+        //     if (groups[i].getAttribute("checked") === "checked") {
+        //         grpField = groups[i].value;
+        //         if (groups[i].hasAttribute("id")) {
+        //             grpField = id + "_" + grpField;
+        //         }
+        //         groupsNavigator.push(grpField);
+        //     }
+
+        // }
 
         // TRANSFORMATIONS/APPLY
 
