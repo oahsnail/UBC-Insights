@@ -318,6 +318,41 @@ describe("Facade D3", function () {
         }
     });
 
+    it("Successful DELETE test for courses dataset", function () {
+        try {
+            return chai
+                .request("http://localhost:4321/")
+                .put("/dataset/onlyOne/courses")
+                .send(datasets["onlyOne"])
+                .set("Content-Type", "application/x-zip-compressed")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.test("Logging result: " + res);
+                    expect(res.status).to.be.equal(200);
+                    return chai
+                        .request("http://localhost:4321/")
+                        .del("/dataset/onlyOne")
+                        .set("Content-Type", "application/x-zip-compressed")
+                        .then(function (res2: Response) {
+                            // some logging here please!
+                            Log.test("Logging result: " + res2);
+                            expect(res2.status).to.be.equal(200);
+                            // expect(res2.body).to.deep.equal({ result: ["onlyOne"] });
+                        });
+                })
+                .catch(function (err) {
+                    // some logging here please!
+                    // console.log("reached first catch");
+                    Log.test("Logging then catch error: " + err);
+                    expect.fail();
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.test("Failed in try catch block");
+        }
+    });
+
+
     it("Failed DELETE 404 test for courses dataset", function () {
         try {
             return chai
