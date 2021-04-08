@@ -9,3 +9,24 @@
  */
 
 // TODO: implement!
+
+document.getElementById("submit-button").addEventListener("click", function () {
+    // do stuff here
+    let query = CampusExplorer.buildQuery();
+    CampusExplorer.sendQuery(query).then((res) => {
+        // let renderJson = JSON.parse(res.target.response);
+        CampusExplorer.renderResult(res);
+    });
+});
+
+// CampusExplorer.sendQuery({
+//     WHERE: {
+//         GT: {
+//             courses_avg: 97,
+//         },
+//     },
+//     OPTIONS: {
+//         COLUMNS: ["courses_dept", "courses_avg"],
+//         ORDER: "courses_avg",
+//     },
+// });

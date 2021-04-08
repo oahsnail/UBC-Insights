@@ -4,6 +4,8 @@
 
 import fs = require("fs");
 import restify = require("restify");
+import { InsightError, NotFoundError } from "../controller/IInsightFacade";
+import InsightFacade from "../controller/InsightFacade";
 import Log from "../Util";
 
 /**
@@ -13,6 +15,7 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+    private static insightFacade: InsightFacade = new InsightFacade();
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
@@ -51,7 +54,7 @@ export default class Server {
                 that.rest = restify.createServer({
                     name: "insightUBC",
                 });
-                that.rest.use(restify.bodyParser({mapFiles: true, mapParams: true}));
+                that.rest.use(restify.bodyParser({ mapFiles: true, mapParams: true }));
                 that.rest.use(
                     function crossOrigin(req, res, next) {
                         res.header("Access-Control-Allow-Origin", "*");
@@ -64,6 +67,10 @@ export default class Server {
                 that.rest.get("/echo/:msg", Server.echo);
 
                 // NOTE: your endpoints should go here
+                that.rest.get("/datasets", Server.getDatasets); // TODO not sure if works
+                that.rest.put("/dataset/:id/:kind", Server.putDataset); // TODO not sure if works
+                that.rest.del("/dataset/:id", Server.deleteDataset);
+                that.rest.post("/query", Server.postQuery);
 
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
@@ -87,6 +94,14 @@ export default class Server {
         });
     }
 
+    public getUrl() {
+        return this.rest.url;
+    }
+
+    // public resetInsightFacade() {
+    //     this.insightFacade = new InsightFacade();
+    // }
+
     // The next two methods handle the echo service.
     // These are almost certainly not the best place to put these, but are here for your reference.
     // By updating the Server.echo function pointer above, these methods can be easily moved.
@@ -95,10 +110,10 @@ export default class Server {
         try {
             const response = Server.performEcho(req.params.msg);
             Log.info("Server::echo(..) - responding " + 200);
-            res.json(200, {result: response});
+            res.json(200, { result: response });
         } catch (err) {
             Log.error("Server::echo(..) - responding 400");
-            res.json(400, {error: err});
+            res.json(400, { error: err });
         }
         return next();
     }
@@ -130,4 +145,61 @@ export default class Server {
         });
     }
 
+    private static putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let id = req.params.id;
+        let kind = req.params.kind;
+        let zip = req.body.toString("base64");
+        Server.insightFacade.addDataset(id, zip, kind).then((retList) => {
+            res.json(200, { result: retList });
+            return next();
+        }).catch((err) => {
+            res.json(400, { error: JSON.stringify(err) });
+            return next();
+        });
+    }
+
+    private static postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let query = req.body;
+        Server.insightFacade.performQuery(query).then((resArr) => {
+            if (resArr) {
+                res.json(200, { result: resArr });
+                return next();
+            }
+        }).catch((err) => {
+            res.json(400, { error: JSON.stringify(err) });
+            return next();
+        });
+    }
+
+    private static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let id = req.params.id;
+
+        Server.insightFacade.removeDataset(id).then((idStr) => {
+            res.json(200, { result: idStr });
+            return next();
+        }).catch((err) => {
+            let errString = JSON.stringify(err);
+            if (err.constructor === NotFoundError) {
+                res.json(404, { error: errString });
+            } else if (err.constructor === InsightError) {
+                res.json(400, { error: errString });
+            } else {
+                Log.error("unhandled error: " + errString);
+                res.json(400, { error: errString });
+
+            }
+            return next();
+        });
+    }
+
+    private static getDatasets(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Server.insightFacade.listDatasets().then((retList) => {
+            if (retList) {
+                res.json(200, { result: retList });
+                return next();
+            }
+        });
+
+        return next();
+    }
 }

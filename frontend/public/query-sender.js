@@ -6,7 +6,20 @@
  */
 CampusExplorer.sendQuery = (query) => {
     return new Promise((resolve, reject) => {
-        // TODO: implement!
-        console.log("CampusExplorer.sendQuery not implemented yet.");
+        // Referenced Katharine's C3 slides and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequestEventTarget/onload
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/query", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = (res) => {
+            if (res) {
+                let renderJson = JSON.parse(res.target.response);
+                resolve(renderJson);
+            }
+        }
+        xhr.addEventListener("error", (err) => {
+            reject(err);
+        })
+        xhr.send(JSON.stringify(query));
+        // console.log("CampusExplorer.sendQuery not implemented yet.");
     });
 };
