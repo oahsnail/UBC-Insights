@@ -22,18 +22,22 @@ CampusExplorer.buildQuery = () => {
         id = "rooms";
     }
 
-    let jsonNavigator = query.WHERE = {};
+    query.WHERE = {};
+    let jsonNavigator = query.WHERE;
 
     let conditions = datasetTypeTab[0].getElementsByClassName("control-group condition");
 
     // WHERE/condition type
     if (conditions.length > 1) {
-        if (document.getElementById("courses-conditiontype-all").getAttribute("checked") === "checked") {
-            jsonNavigator = jsonNavigator.AND = [];
-        } else if (document.getElementById("courses-conditiontype-any").getAttribute("checked") === "checked") {
-            jsonNavigator = jsonNavigator.OR = [];
+        if (document.getElementById("courses-conditiontype-any").getAttribute("checked") === "checked") {
+            jsonNavigator.OR = [];
+            jsonNavigator = jsonNavigator.OR;
         } else if (document.getElementById("courses-conditiontype-none").getAttribute("checked") === "checked") {
-            jsonNavigator = jsonNavigator.NOT = [];
+            jsonNavigator.NOT = [];
+            jsonNavigator = jsonNavigator.NOT;
+        } else {
+            jsonNavigator.AND = [];
+            jsonNavigator = jsonNavigator.AND;
         }
     }
 

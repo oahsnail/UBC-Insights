@@ -11,7 +11,8 @@ CampusExplorer.sendQuery = (query) => {
         xhr.open("POST", "/query", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = (res) => {
-            resolve(res);
+            let renderJson = JSON.parse(res.target.response);
+            resolve(renderJson);
         }
         xhr.addEventListener("error", (err) => {
             reject(err);
