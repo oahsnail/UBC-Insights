@@ -97,40 +97,74 @@ export default class PerformQueryCourseFunc {
         return compressArr;
     }
 
-
     public groupTransform(jsonObj: any, resultArr: any[]): any[] {
         let groupArr = [];
+        let groupMap = new Map();
         if (jsonObj.TRANSFORMATIONS) {
             for (const row of resultArr) {
+                let mapKeys = "";
                 for (const groupKey of jsonObj.TRANSFORMATIONS.GROUP) {
                     if (!this.performQueryData.mFieldArr.includes(groupKey)
-                        && !this.performQueryData.sFieldArr.includes(groupKey)) {
-                        throw new InsightError("Group key contains an invalid key");
+                            && !this.performQueryData.sFieldArr.includes(groupKey)) {
+                            throw new InsightError("Group key contains an invalid key");
                     }
+                    // "fullnametype"
                     let key = groupKey.split("_")[1];
-                    let groupVal = row[key];
-                    if (groupArr.length === 0) {
-                        groupArr.push([row]);
-                    } else {
-                        let found: boolean = false;
-                        for (const group of groupArr) {
-                            if (group[0][key] === groupVal) {
-                                group.push(row);
-                                found = true;
-                            }
-                        }
-                        if (found === false) {
-                            groupArr.push([row]);
-                        }
-                    }
+                    mapKeys += row[key].toString();
                 }
+                if (!groupMap.has(mapKeys)) {
+                    groupMap.set(mapKeys, []);
+                    groupMap.get(mapKeys).push(row);
+                } else {
+                    groupMap.get(mapKeys).push(row);
+                }
+
+            }
+            for (const mapVal of groupMap) {
+                let value = groupMap.get(mapVal[0]);
+                groupArr.push(value);
             }
         }
         if (groupArr.length > 5000) {
             throw new ResultTooLargeError("Greater than max result size");
         }
+
         return groupArr;
     }
+
+    // public groupTransform(jsonObj: any, resultArr: any[]): any[] {
+    //     let groupArr = [];
+    //     if (jsonObj.TRANSFORMATIONS) {
+    //         for (const row of resultArr) {
+    //             for (const groupKey of jsonObj.TRANSFORMATIONS.GROUP) {
+    //                 if (!this.performQueryData.mFieldArr.includes(groupKey)
+    //                     && !this.performQueryData.sFieldArr.includes(groupKey)) {
+    //                     throw new InsightError("Group key contains an invalid key");
+    //                 }
+    //                 let key = groupKey.split("_")[1];
+    //                 let groupVal = row[key];
+    //                 if (groupArr.length === 0) {
+    //                     groupArr.push([row]);
+    //                 } else {
+    //                     let found: boolean = false;
+    //                     for (const group of groupArr) {
+    //                         if (group[0][key] === groupVal) {
+    //                             group.push(row);
+    //                             found = true;
+    //                         }
+    //                     }
+    //                     if (found === false) {
+    //                         groupArr.push([row]);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     if (groupArr.length > 5000) {
+    //         throw new ResultTooLargeError("Greater than max result size");
+    //     }
+    //     return groupArr;
+    // }
 
     public maxToken(field: string, groupArr: any[], keyVal: any): any[] {
         let key = field.split("_")[1];
